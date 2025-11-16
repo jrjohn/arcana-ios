@@ -1,11 +1,3 @@
-# Generated documentation
-api/**
-!api/.gitkeep
-
-# Generated diagrams
-# Note: PNG files are kept in git for GitHub display
-diagrams/.gitkeep
-
 # Node modules (if npm is run in docs directory)
 node_modules/
 
