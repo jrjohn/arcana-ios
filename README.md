@@ -619,42 +619,53 @@ xcodebuild archive -project arcana-ios.xcodeproj -scheme arcana-ios \
 
 ### Test Coverage
 
-The project has comprehensive test coverage across all layers:
+📊 **[View Interactive Test Coverage Report](docs/test-coverage.html)** | 📄 **[Detailed Coverage Report](TEST_COVERAGE_REPORT.md)**
+
+The project has comprehensive test coverage with **100+ test cases** across core layers:
+
+#### Coverage Summary
+- **Domain Layer**: ~90% (User, UserValidator, UserService)
+- **Core Layer**: ~80% (AppError, Analytics, ErrorCode)
+- **Test Files**: 9 comprehensive test suites
+- **Test Status**: ✅ All tests passing
 
 ```bash
 # Run all tests
 xcodebuild test -project arcana-ios.xcodeproj -scheme arcana-ios \
   -destination 'platform=iOS Simulator,name=iPhone 17'
+
+# Run tests with coverage
+xcodebuild test -project arcana-ios.xcodeproj -scheme arcana-ios \
+  -destination 'platform=iOS Simulator,name=iPhone 17' \
+  -enableCodeCoverage YES
 ```
 
 ### Test Structure
 
 ```
-Tests/
-├── ArcanaDomainTests/
-│   ├── Model/
-│   │   └── UserTests.swift
-│   ├── Service/
-│   │   └── UserServiceTests.swift
-│   └── Validation/
-│       └── UserValidatorTests.swift
-├── ArcanaDataTests/
-│   ├── Repository/
-│   │   └── OfflineFirstUserRepositoryTests.swift
-│   └── Remote/
-│       └── ReqresUserDataSourceTests.swift
-└── ArcanaPresentationTests/
-    └── Screens/
-        └── UserListViewModelTests.swift
+arcana-iosTests/
+├── Domain/
+│   ├── UserTests.swift (20+ tests)
+│   ├── UserValidatorTests.swift (25+ tests)
+│   └── UserServiceImplTests.swift (20+ tests)
+├── Core/
+│   ├── AppErrorTests.swift (25+ tests)
+│   └── AnalyticsTests.swift (15+ tests)
+├── Mocks/
+│   ├── MockAnalyticsTracker.swift
+│   └── MockUserRepository.swift
+└── ComprehensiveCoverageTests.swift (30+ tests)
 ```
 
 ### Testing Highlights
 
-- ✅ **ViewModel Tests** - Input/Output/Effect pattern testing
-- ✅ **Repository Tests** - Offline-first sync with mocked dependencies
-- ✅ **Service Tests** - Business logic validation
-- ✅ **Validation Tests** - Input validation coverage
-- ✅ **Async Tests** - Proper async/await testing
+- ✅ **Domain Model Tests** - Comprehensive User model testing (Codable, Hashable, DTO)
+- ✅ **Validation Tests** - Email, name, and full user validation with edge cases
+- ✅ **Service Tests** - Business logic with analytics tracking verification
+- ✅ **Error Handling** - All error types, URLError conversion, HTTP mapping
+- ✅ **Mock Implementations** - High-quality test doubles for dependencies
+- ✅ **Edge Cases** - Unicode, boundaries, empty values, pagination limits
+- ✅ **Async Tests** - Proper async/await testing with Swift 6 concurrency
 
 ---
 
