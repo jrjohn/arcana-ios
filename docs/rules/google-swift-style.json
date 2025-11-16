@@ -1,0 +1,241 @@
+{
+  "name": "Google Swift Style Guide",
+  "description": "Rules based on Google's Swift Style Guide (https://google.github.io/swift)",
+  "severity": "warning",
+  "enabled": true,
+  "rules": [
+    {
+      "id": "GSG001",
+      "name": "No Semicolons",
+      "description": "Statements should not end with semicolons",
+      "pattern": ";\\s*$",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "test|generated",
+      "severity": "warning",
+      "message": "Remove semicolons at end of statements (Google Swift Style Guide)"
+    },
+    {
+      "id": "GSG002",
+      "name": "Use Shorthand Array/Dictionary Syntax",
+      "description": "Prefer [Type] over Array<Type> and [Key: Value] over Dictionary<Key, Value>",
+      "pattern": "(Array|Dictionary)\\s*<",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "test|typealias",
+      "severity": "info",
+      "message": "Use shorthand syntax: [Type] instead of Array<Type>, [Key: Value] instead of Dictionary<Key, Value>"
+    },
+    {
+      "id": "GSG003",
+      "name": "No ALL_CAPS Constants",
+      "description": "Global constants should use lowerCamelCase, not ALL_CAPS",
+      "pattern": "let\\s+[A-Z][A-Z_0-9]+\\s*=",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "test",
+      "severity": "warning",
+      "message": "Use lowerCamelCase for constants, not ALL_CAPS (Google Swift Style Guide)"
+    },
+    {
+      "id": "GSG004",
+      "name": "Prefer Guard for Early Exit",
+      "description": "Use guard statements for early exit instead of nested if conditions",
+      "pattern": "if\\s+.*\\{\\s*return",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "test",
+      "severity": "info",
+      "message": "Consider using guard statement for early exit to reduce nesting"
+    },
+    {
+      "id": "GSG005",
+      "name": "No Force Try in Production",
+      "description": "Avoid try! force-try except in tests",
+      "pattern": "try!",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "test|mock|preview",
+      "severity": "warning",
+      "message": "Avoid force-try (try!) in production code. Use proper error handling with do-catch"
+    },
+    {
+      "id": "GSG006",
+      "name": "Document Public APIs",
+      "description": "All public and open declarations must have documentation comments",
+      "pattern": "^\\s*(public|open)\\s+(class|struct|enum|func|var|let)",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "test|///",
+      "severity": "warning",
+      "message": "Public/open APIs must have documentation comments (///)"
+    },
+    {
+      "id": "GSG007",
+      "name": "Use Triple-Slash Comments",
+      "description": "Documentation should use /// not /** */",
+      "pattern": "/\\*\\*",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "test|file header",
+      "severity": "info",
+      "message": "Use triple-slash (///) for documentation comments instead of /** */"
+    },
+    {
+      "id": "GSG008",
+      "name": "No Playground Literals",
+      "description": "Playground literals are forbidden in production code",
+      "pattern": "#(colorLiteral|imageLiteral|fileLiteral)",
+      "file_pattern": "**/Sources/**/*.swift",
+      "severity": "error",
+      "message": "Playground literals (#colorLiteral, #imageLiteral, #fileLiteral) are forbidden in production code"
+    },
+    {
+      "id": "GSG009",
+      "name": "Explicit Access Control",
+      "description": "Use explicit access modifiers instead of relying on defaults",
+      "pattern": "^\\s*(class|struct|enum|func|var|let)\\s+[^{]*\\{",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(private|fileprivate|internal|public|open|test|init|case)",
+      "severity": "info",
+      "message": "Consider using explicit access control modifiers (private, fileprivate, internal, public, open)"
+    },
+    {
+      "id": "GSG010",
+      "name": "Avoid Sentinel Values",
+      "description": "Use optionals instead of sentinel values like -1, NSNotFound",
+      "pattern": "(==|!=)\\s*(-1|NSNotFound)",
+      "file_pattern": "**/Sources/**/*.swift",
+      "severity": "warning",
+      "message": "Use optionals for valid absence instead of sentinel values like -1 or NSNotFound"
+    },
+    {
+      "id": "GSG011",
+      "name": "Implicitly Unwrapped Optionals Only for UI",
+      "description": "Implicitly unwrapped optionals should only be used for @IBOutlet and test fixtures",
+      "pattern": "var\\s+\\w+:\\s*\\w+!",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(@IBOutlet|test|Test)",
+      "severity": "warning",
+      "message": "Avoid implicitly unwrapped optionals (!) except for @IBOutlet and test fixtures"
+    },
+    {
+      "id": "GSG012",
+      "name": "Prefer Self in Initializers",
+      "description": "Use explicit self. when assigning to properties in initializers",
+      "pattern": "init\\([^)]*\\)\\s*\\{[^}]*\\n\\s*\\w+\\s*=",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(self\\.|let|var|guard|test)",
+      "severity": "info",
+      "message": "Use explicit 'self.' when assigning to properties in initializers for clarity"
+    },
+    {
+      "id": "GSG013",
+      "name": "No Horizontal Alignment",
+      "description": "Don't pad whitespace to align type annotations across declarations",
+      "pattern": ":\\s{3,}\\w+",
+      "file_pattern": "**/Sources/**/*.swift",
+      "severity": "info",
+      "message": "Avoid horizontal alignment with extra whitespace. Use consistent single spacing."
+    },
+    {
+      "id": "GSG014",
+      "name": "One Statement Per Line",
+      "description": "Each statement should be on its own line",
+      "pattern": ";\\s*[a-zA-Z]",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "test",
+      "severity": "warning",
+      "message": "Put each statement on its own line (except single-line early returns)"
+    },
+    {
+      "id": "GSG015",
+      "name": "MARK Comments for Organization",
+      "description": "Use // MARK: comments to organize code sections",
+      "pattern": "class\\s+\\w+.*\\{",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(// MARK:|test|protocol|extension)",
+      "severity": "info",
+      "message": "Consider using // MARK: comments to organize code sections logically"
+    },
+    {
+      "id": "GSG016",
+      "name": "File Names Match Primary Type",
+      "description": "File names should describe the primary type they contain",
+      "pattern": "class\\s+([A-Z]\\w+)|struct\\s+([A-Z]\\w+)|enum\\s+([A-Z]\\w+)",
+      "file_pattern": "**/Sources/**/*.swift",
+      "severity": "info",
+      "message": "File name should match primary type (e.g., MyType.swift for MyType class)"
+    },
+    {
+      "id": "GSG017",
+      "name": "Avoid Fallthrough",
+      "description": "Combine switch cases instead of using fallthrough",
+      "pattern": "fallthrough",
+      "file_pattern": "**/Sources/**/*.swift",
+      "severity": "warning",
+      "message": "Avoid standalone 'fallthrough'. Combine cases with comma-separation instead."
+    },
+    {
+      "id": "GSG018",
+      "name": "Computed Property Get Block",
+      "description": "Omit explicit get block in computed properties when there's only a getter",
+      "pattern": "var\\s+\\w+:\\s*\\w+\\s*\\{\\s*get\\s*\\{",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "set",
+      "severity": "info",
+      "message": "Omit explicit 'get' block for read-only computed properties"
+    },
+    {
+      "id": "GSG019",
+      "name": "Import Complete Modules",
+      "description": "Import entire modules, not individual declarations",
+      "pattern": "import\\s+(class|struct|enum|func|let|var)\\s+",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "@testable",
+      "severity": "warning",
+      "message": "Import complete modules instead of individual declarations"
+    },
+    {
+      "id": "GSG020",
+      "name": "Trailing Closure Syntax",
+      "description": "Always use trailing closure syntax for single trailing closure",
+      "pattern": "\\w+\\([^)]*\\{",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "test",
+      "severity": "info",
+      "message": "Use trailing closure syntax when function has single trailing closure parameter"
+    },
+    {
+      "id": "GSG021",
+      "name": "Avoid Cryptic Operators",
+      "description": "Only define custom operators when clear domain meaning exists",
+      "pattern": "^\\s*(infix|prefix|postfix)\\s+operator\\s+[^a-zA-Z0-9]",
+      "file_pattern": "**/Sources/**/*.swift",
+      "severity": "warning",
+      "message": "Custom operators should only be defined when they have clear, well-understood meaning in the domain"
+    },
+    {
+      "id": "GSG022",
+      "name": "Protocol Conformance Extensions",
+      "description": "Use separate extensions for protocol conformance",
+      "pattern": "class\\s+\\w+.*:.*,.*\\{",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(test|where|protocol)",
+      "severity": "info",
+      "message": "Consider separating protocol conformances into dedicated extensions for better organization"
+    },
+    {
+      "id": "GSG023",
+      "name": "Error Handling Over Force",
+      "description": "Use throws and error handling instead of force operations",
+      "pattern": "(try!|!)(?!\\s*=)",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(test|mock|preview|Bool|String)",
+      "severity": "warning",
+      "message": "Prefer proper error handling (throws/do-catch) over force operations"
+    },
+    {
+      "id": "GSG024",
+      "name": "Two-Space Indentation",
+      "description": "Use 2-space indentation (informational - not strictly enforceable)",
+      "pattern": "^    [^ ]",
+      "file_pattern": "**/Sources/**/*.swift",
+      "severity": "info",
+      "message": "Google Swift Style uses 2-space indentation (this appears to use 4 spaces)"
+    }
+  ]
+}

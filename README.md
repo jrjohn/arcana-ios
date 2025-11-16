@@ -64,6 +64,7 @@
 - 🏗️ **MVVM Pattern** - Clean ViewModel architecture with Input/Output/Effect pattern
 - 🌍 **Internationalization** - Multi-language support (English, Chinese)
 - ⚙️ **Configuration Management** - Environment-specific configs with .plist files
+- 🏗️ **Architecture Compliance** - 67 automated rules validating Clean Architecture, Swift.org API Design, and Google Swift Style
 - 📝 **Comprehensive Documentation** - Auto-generated API docs and architecture diagrams
 
 ---
@@ -528,6 +529,7 @@ open docs/diagrams/
 - 📊 [Pagination Guide](docs/PAGINATION.md) - Lazy loading implementation
 - ⚙️ [Configuration Guide](CONFIGURATION_GUIDE.md) - Environment-specific configuration management
 - 🌍 [Internationalization Guide](I18N_GUIDE.md) - Multi-language support
+- 🏗️ [Architecture Compliance](ARCHITECTURE_COMPLIANCE.md) - 67 automated rules (Clean Architecture, Swift.org API Design, Google Swift Style)
 - 📝 [Configuration Migration](CONFIGURATION_MIGRATION.md) - Hardcoded values migration report
 - ♿ [Accessibility Identifiers](ACCESSIBILITY_IDENTIFIERS.md) - UI testing accessibility guide
 

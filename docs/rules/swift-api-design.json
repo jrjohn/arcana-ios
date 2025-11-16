@@ -1,0 +1,222 @@
+{
+  "name": "Swift API Design Guidelines",
+  "description": "Rules based on Swift.org API Design Guidelines (https://www.swift.org/documentation/api-design-guidelines)",
+  "severity": "warning",
+  "enabled": true,
+  "rules": [
+    {
+      "id": "API001",
+      "name": "Clarity at Point of Use",
+      "description": "Include all needed words, omit needless words",
+      "pattern": "func\\s+(get|set|make|create|do|perform)([A-Z]\\w+)\\s*\\(",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(test|mock|preview|getData|getUser)",
+      "severity": "info",
+      "message": "Consider removing redundant words like 'get', 'make', 'do' from method names. Swift prefers concise names at call site."
+    },
+    {
+      "id": "API002",
+      "name": "Boolean Properties Read as Assertions",
+      "description": "Boolean properties and methods should read as assertions about the receiver",
+      "pattern": "(var|let)\\s+(\\w+)(Enabled|Disabled|Flag|Boolean|Bool)\\s*:",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "test",
+      "severity": "info",
+      "message": "Boolean properties should read as assertions (e.g., 'isEmpty', 'hasPrefix') rather than stating they are booleans"
+    },
+    {
+      "id": "API003",
+      "name": "Protocols Describing What Something Is",
+      "description": "Protocols that describe what something is should read as nouns",
+      "pattern": "protocol\\s+([A-Z]\\w*)(able|ing)\\s*:\\s*",
+      "file_pattern": "**/Sources/**/*.swift",
+      "severity": "info",
+      "message": "Protocols describing capabilities should use 'able', 'ible' suffix (e.g., Equatable, ProgressReporting)"
+    },
+    {
+      "id": "API004",
+      "name": "Mutating vs Non-mutating Methods",
+      "description": "Mutating methods should use verb form, non-mutating should use past participle or gerund",
+      "pattern": "mutating\\s+func\\s+(\\w+ed|\\w+ing)\\s*\\(",
+      "file_pattern": "**/Sources/**/*.swift",
+      "severity": "info",
+      "message": "Mutating methods should use imperative verb (e.g., 'sort'), non-mutating use past participle (e.g., 'sorted')"
+    },
+    {
+      "id": "API005",
+      "name": "Factory Method Naming",
+      "description": "Factory methods should begin with 'make'",
+      "pattern": "static\\s+func\\s+([^m]\\w+|m[^a]\\w+|ma[^k]\\w+|mak[^e]\\w*)\\s*\\([^)]*\\)\\s*->\\s*Self",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(init|test|from|with)",
+      "severity": "info",
+      "message": "Factory methods returning Self should typically begin with 'make' (e.g., 'makeIterator')"
+    },
+    {
+      "id": "API006",
+      "name": "Parameter Names for Type Conversions",
+      "description": "When initializer performs value preserving type conversion, omit first argument label",
+      "pattern": "init\\s*\\(\\s*(from|with)\\s+\\w+:",
+      "file_pattern": "**/Sources/**/*.swift",
+      "severity": "info",
+      "message": "For value-preserving type conversions, omit first argument label (e.g., 'init(_ value: Int)' not 'init(from value: Int)')"
+    },
+    {
+      "id": "API007",
+      "name": "Compensate for Weak Type Information",
+      "description": "Compensate for weak type information in parameter names",
+      "pattern": "func\\s+\\w+\\s*\\(\\s*_\\s+(\\w+):\\s*(Any|AnyObject|NSObject)\\s*[,)]",
+      "file_pattern": "**/Sources/**/*.swift",
+      "severity": "warning",
+      "message": "When parameter type is weakly constrained (Any, AnyObject), include role-describing noun in parameter name"
+    },
+    {
+      "id": "API008",
+      "name": "Argument Labels for Prepositional Phrases",
+      "description": "When first argument forms part of prepositional phrase, give it an argument label",
+      "pattern": "func\\s+\\w+(At|On|By|With|From|To|For|In)\\s*\\(\\s*_\\s+",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "test",
+      "severity": "info",
+      "message": "When method name includes preposition, first argument should have a label (e.g., 'removeBoxes(havingLength:)')"
+    },
+    {
+      "id": "API009",
+      "name": "Avoid Abbreviations",
+      "description": "Avoid obscure abbreviations",
+      "pattern": "(func|var|let|class|struct|enum)\\s+\\w*(Btn|Lbl|Txt|Img|Mgr|Cfg|Num|Str|Arr|Dict|Ptr|Idx|Len|Pos|Qty|Cnt)\\w*\\s*[(:=]",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(test|URL|HTML|HTTP|API|ID|UUID|JSON|XML|UI|VC)",
+      "severity": "warning",
+      "message": "Avoid abbreviations. Use full words for clarity (e.g., 'button' not 'btn', 'manager' not 'mgr')"
+    },
+    {
+      "id": "API010",
+      "name": "Embrace Precedent",
+      "description": "Don't optimize terms of art",
+      "pattern": "(func|var|let)\\s+\\w*(Array|List|Queue|Stack|Tree|Graph|Map|Dictionary|Set)\\s*[(:=]",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(Array|Dictionary|Set|test)",
+      "severity": "info",
+      "message": "Use established terms from domain (List, Array, etc.) rather than inventing new terminology"
+    },
+    {
+      "id": "API011",
+      "name": "Prefer Method and Property Names",
+      "description": "Prefer methods and properties to free functions",
+      "pattern": "^func\\s+[a-z]\\w*\\s*\\<[^>]+\\>\\s*\\([^)]*\\)\\s*->",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(operator|test|main)",
+      "severity": "info",
+      "message": "Consider whether this free function would be better as a method or property"
+    },
+    {
+      "id": "API012",
+      "name": "Follow Case Conventions",
+      "description": "Types and protocols are UpperCamelCase, everything else is lowerCamelCase",
+      "pattern": "(func|var|let)\\s+[A-Z]\\w*\\s*[(:=]",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(case|enum|test|URL|HTTP|API|ID|UUID)",
+      "severity": "error",
+      "message": "Functions, variables, and constants should use lowerCamelCase, not UpperCamelCase"
+    },
+    {
+      "id": "API013",
+      "name": "Type Names as UpperCamelCase",
+      "description": "Types should use UpperCamelCase",
+      "pattern": "(class|struct|enum|protocol|typealias)\\s+[a-z]\\w*\\s*[:{]",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "test",
+      "severity": "error",
+      "message": "Type names (class, struct, enum, protocol) must use UpperCamelCase"
+    },
+    {
+      "id": "API014",
+      "name": "Enum Cases as lowerCamelCase",
+      "description": "Enumeration cases should use lowerCamelCase",
+      "pattern": "case\\s+[A-Z]\\w*\\s*[,=\\n]",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "test",
+      "severity": "warning",
+      "message": "Enumeration cases should use lowerCamelCase (e.g., 'case someValue' not 'case SomeValue')"
+    },
+    {
+      "id": "API015",
+      "name": "Prefer Terminology Well",
+      "description": "Use terminology consistent with existing culture",
+      "pattern": "func\\s+\\w*(append|insert|remove)Item\\s*\\(",
+      "file_pattern": "**/Sources/**/*.swift",
+      "severity": "info",
+      "message": "Use standard collection terminology: append/insert/remove for elements, not 'Item'"
+    },
+    {
+      "id": "API016",
+      "name": "Document Complexity",
+      "description": "Document computational complexity if not O(1)",
+      "pattern": "func\\s+(sort|search|find|filter|contains|indexOf)\\w*\\s*\\(",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "///.*O\\(|//.*complexity|test",
+      "severity": "info",
+      "message": "Document computational complexity for operations that are not O(1)"
+    },
+    {
+      "id": "API017",
+      "name": "Closure Parameters Should Be Unnamed",
+      "description": "Closure parameters at call site should typically be unnamed",
+      "pattern": "\\{\\s*\\(\\s*\\w+:\\s*",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "test",
+      "severity": "info",
+      "message": "Closure parameters are typically unnamed at call site (e.g., '{ x in }' not '{ (x: Int) in }')"
+    },
+    {
+      "id": "API018",
+      "name": "Use Default Parameters",
+      "description": "Take advantage of defaulted parameters when simplifying common uses",
+      "pattern": "func\\s+\\w+\\s*\\([^)]*\\)\\s*\\{[^}]*func\\s+\\w+\\s*\\(",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "test",
+      "severity": "info",
+      "message": "Consider using default parameters instead of overloading methods"
+    },
+    {
+      "id": "API019",
+      "name": "Prefer Labeled Arguments",
+      "description": "Label closure and tuple parameters",
+      "pattern": "func\\s+\\w+\\s*\\([^)]*\\(\\s*[A-Z]\\w+\\s*,",
+      "file_pattern": "**/Sources/**/*.swift",
+      "severity": "info",
+      "message": "Consider labeling tuple parameters for clarity at use site"
+    },
+    {
+      "id": "API020",
+      "name": "Choose Good Parameter Names",
+      "description": "Provide useful argument labels",
+      "pattern": "func\\s+\\w+\\s*\\([^)]*_\\s+\\w+:\\s*[^,)]*,\\s*_\\s+\\w+:",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(init|operator|test|+|-|*|/)",
+      "severity": "info",
+      "message": "Avoid excessive use of unlabeled parameters. Labels improve clarity at call sites."
+    },
+    {
+      "id": "API021",
+      "name": "Avoid Returning Optional Collection",
+      "description": "Prefer empty collection over nil",
+      "pattern": "->\\s*\\[\\w+\\]\\?",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "test",
+      "severity": "warning",
+      "message": "Prefer returning empty collection instead of optional collection. Return [] instead of nil."
+    },
+    {
+      "id": "API022",
+      "name": "Side Effect Naming",
+      "description": "Methods with side effects should use imperative verb phrases",
+      "pattern": "func\\s+(is|has|can|should|will)\\w+\\s*\\([^)]*\\)\\s*\\{[^}]*(self\\.\\w+\\s*=|\\w+\\.\\w+\\s*=)",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "test",
+      "severity": "warning",
+      "message": "Methods with side effects should use imperative verbs. Boolean queries should be non-mutating."
+    }
+  ]
+}

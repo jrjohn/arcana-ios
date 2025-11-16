@@ -1,0 +1,47 @@
+{
+  "name": "Configuration Management",
+  "description": "Ensure proper use of configuration system",
+  "severity": "warning",
+  "enabled": true,
+  "rules": [
+    {
+      "id": "CM001",
+      "name": "No Hardcoded URLs",
+      "description": "URLs should come from configuration",
+      "pattern": "https?://[^\"'\\s]+",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(test|mock|preview|comment|AppConfiguration)",
+      "severity": "warning",
+      "message": "Use AppConstants or configuration for URLs instead of hardcoding"
+    },
+    {
+      "id": "CM002",
+      "name": "No Hardcoded Timeouts",
+      "description": "Timeout values should come from configuration",
+      "pattern": "timeout(Interval)?\\s*[=:]\\s*\\d+",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(AppConfiguration|test)",
+      "severity": "warning",
+      "message": "Use AppConstants.API.timeout for timeout values"
+    },
+    {
+      "id": "CM003",
+      "name": "No Hardcoded Page Sizes",
+      "description": "Pagination values should come from configuration",
+      "pattern": "(perPage|pageSize)\\s*=\\s*\\d+",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(AppConfiguration|test)",
+      "severity": "warning",
+      "message": "Use AppConstants.Pagination for page size values"
+    },
+    {
+      "id": "CM004",
+      "name": "Use AppConstants",
+      "description": "Encourage use of AppConstants over direct config access",
+      "pattern": "AppConfiguration\\.shared\\.",
+      "file_pattern": "**/Presentation/**/*.swift",
+      "severity": "info",
+      "message": "Consider using AppConstants for cleaner syntax"
+    }
+  ]
+}

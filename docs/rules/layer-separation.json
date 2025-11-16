@@ -1,0 +1,53 @@
+{
+  "name": "Layer Separation",
+  "description": "Enforce Clean Architecture layer boundaries",
+  "severity": "error",
+  "enabled": true,
+  "rules": [
+    {
+      "id": "LS001",
+      "name": "Domain Layer Independence",
+      "description": "Domain layer must not import Presentation or Data layers",
+      "pattern": "import\\s+(ArcanaPresentation|ArcanaData|SwiftUI|UIKit)",
+      "file_pattern": "**/ArcanaDomain/**/*.swift",
+      "severity": "error",
+      "message": "Domain layer must not depend on Presentation or Data layers"
+    },
+    {
+      "id": "LS002",
+      "name": "Presentation No Data Import",
+      "description": "Presentation layer should not directly import Data layer",
+      "pattern": "import\\s+ArcanaData",
+      "file_pattern": "**/ArcanaPresentation/**/*.swift",
+      "severity": "warning",
+      "message": "Presentation layer should access data through Domain layer, not directly"
+    },
+    {
+      "id": "LS003",
+      "name": "Data No Presentation Import",
+      "description": "Data layer must not import Presentation layer",
+      "pattern": "import\\s+(ArcanaPresentation|SwiftUI)",
+      "file_pattern": "**/ArcanaData/**/*.swift",
+      "severity": "error",
+      "message": "Data layer must not depend on Presentation layer"
+    },
+    {
+      "id": "LS004",
+      "name": "SwiftUI in Presentation Only",
+      "description": "SwiftUI should only be used in Presentation layer",
+      "pattern": "import\\s+SwiftUI",
+      "file_pattern": "**/Arcana{Domain,Data,Core}/**/*.swift",
+      "severity": "error",
+      "message": "SwiftUI should only be imported in Presentation layer"
+    },
+    {
+      "id": "LS005",
+      "name": "No UIKit Usage",
+      "description": "Prefer SwiftUI over UIKit in new code",
+      "pattern": "import\\s+UIKit",
+      "file_pattern": "**/Sources/**/*.swift",
+      "severity": "info",
+      "message": "Consider using SwiftUI instead of UIKit for new code"
+    }
+  ]
+}

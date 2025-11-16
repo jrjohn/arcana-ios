@@ -1,0 +1,36 @@
+{
+  "timestamp": "2025-11-16T12:59:15.137129Z",
+  "project": "arcana-ios",
+  "summary": {
+    "total": 3,
+    "errors": 0,
+    "warnings": 3,
+    "info": 0
+  },
+  "violations": [
+    {
+      "ruleId": "BP005",
+      "severity": "warning",
+      "file": "/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaPresentation/Screens/User/UserListViewModel.swift",
+      "line": 15,
+      "message": "ViewModels should be annotated with @MainActor for UI updates",
+      "code": "final class UserListViewModel {"
+    },
+    {
+      "ruleId": "BP005",
+      "severity": "warning",
+      "file": "/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaPresentation/Screens/User/UserFormViewModel.swift",
+      "line": 14,
+      "message": "ViewModels should be annotated with @MainActor for UI updates",
+      "code": "final class UserFormViewModel: ObservableObject {"
+    },
+    {
+      "ruleId": "BP005",
+      "severity": "warning",
+      "file": "/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaPresentation/Screens/User/MainViewModel.swift",
+      "line": 15,
+      "message": "ViewModels should be annotated with @MainActor for UI updates",
+      "code": "final class MainViewModel {"
+    }
+  ]
+}

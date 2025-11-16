@@ -1,0 +1,53 @@
+{
+  "name": "Naming Conventions",
+  "description": "Enforce consistent naming conventions across the codebase",
+  "severity": "warning",
+  "enabled": true,
+  "rules": [
+    {
+      "id": "NC001",
+      "name": "ViewModel Naming",
+      "description": "ViewModels must end with 'ViewModel'",
+      "pattern": "class\\s+([A-Z][a-zA-Z0-9]*)(?<!ViewModel)\\s*:\\s*.*ObservableObject",
+      "file_pattern": "**/*ViewModel.swift",
+      "severity": "error",
+      "message": "ViewModel classes must end with 'ViewModel' suffix"
+    },
+    {
+      "id": "NC002",
+      "name": "View Naming",
+      "description": "SwiftUI Views must end with 'View'",
+      "pattern": "struct\\s+([A-Z][a-zA-Z0-9]*)(?<!View)\\s*:\\s*View",
+      "file_pattern": "**/Presentation/**/*.swift",
+      "severity": "warning",
+      "message": "SwiftUI View structs should end with 'View' suffix"
+    },
+    {
+      "id": "NC003",
+      "name": "Repository Naming",
+      "description": "Repository implementations must end with 'Repository'",
+      "pattern": "class\\s+([A-Z][a-zA-Z0-9]*)(?<!Repository)\\s*:\\s*.*Repository\\s*\\{",
+      "file_pattern": "**/Repository/**/*.swift",
+      "severity": "error",
+      "message": "Repository implementations must end with 'Repository' suffix"
+    },
+    {
+      "id": "NC004",
+      "name": "Service Naming",
+      "description": "Service implementations must end with 'Service'",
+      "pattern": "class\\s+([A-Z][a-zA-Z0-9]*)(?<!Service)\\s*:.*Service(?:Impl)?\\s*\\{",
+      "file_pattern": "**/Service/**/*.swift",
+      "severity": "warning",
+      "message": "Service implementations should end with 'Service' or 'ServiceImpl' suffix"
+    },
+    {
+      "id": "NC005",
+      "name": "Protocol Naming",
+      "description": "Protocols should use descriptive names (avoid 'Protocol' suffix)",
+      "pattern": "protocol\\s+([A-Z][a-zA-Z0-9]*)Protocol\\s*\\{",
+      "file_pattern": "**/*.swift",
+      "severity": "info",
+      "message": "Avoid 'Protocol' suffix in protocol names, use descriptive names instead"
+    }
+  ]
+}

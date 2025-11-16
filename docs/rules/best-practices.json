@@ -1,0 +1,78 @@
+{
+  "name": "Best Practices",
+  "description": "Swift and iOS development best practices",
+  "severity": "warning",
+  "enabled": true,
+  "rules": [
+    {
+      "id": "BP001",
+      "name": "No Force Unwrap",
+      "description": "Avoid force unwrapping optionals",
+      "pattern": "![\\s\\)]",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(test|mock|preview|sample)",
+      "severity": "warning",
+      "message": "Avoid force unwrapping (!), use optional binding or guard instead"
+    },
+    {
+      "id": "BP002",
+      "name": "No Print Statements",
+      "description": "Use proper logging instead of print()",
+      "pattern": "\\bprint\\s*\\(",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(test|debug|preview)",
+      "severity": "warning",
+      "message": "Use Logger or os_log instead of print() for production code"
+    },
+    {
+      "id": "BP003",
+      "name": "Mark TODO and FIXME",
+      "description": "Track technical debt with TODO/FIXME comments",
+      "pattern": "(TODO|FIXME):\\s*(.+)",
+      "file_pattern": "**/Sources/**/*.swift",
+      "severity": "info",
+      "message": "Technical debt marker found",
+      "collect": true
+    },
+    {
+      "id": "BP004",
+      "name": "Async/Await Usage",
+      "description": "Prefer async/await over completion handlers",
+      "pattern": "@escaping\\s*\\([^)]*->\\s*Void\\)",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(legacy|compatibility)",
+      "severity": "info",
+      "message": "Consider using async/await instead of completion handlers"
+    },
+    {
+      "id": "BP005",
+      "name": "MainActor Annotation",
+      "description": "ViewModels should be marked with @MainActor",
+      "pattern": "class\\s+\\w+ViewModel.*\\{",
+      "inverse_pattern": "@MainActor",
+      "file_pattern": "**/*ViewModel.swift",
+      "severity": "warning",
+      "message": "ViewModels should be annotated with @MainActor for UI updates"
+    },
+    {
+      "id": "BP006",
+      "name": "Sendable Conformance",
+      "description": "Types crossing actor boundaries should conform to Sendable",
+      "pattern": "(struct|class|enum)\\s+\\w+.*\\{",
+      "check_context": "async|Task|actor",
+      "file_pattern": "**/Model/**/*.swift",
+      "severity": "info",
+      "message": "Consider conforming to Sendable for types used in concurrent contexts"
+    },
+    {
+      "id": "BP007",
+      "name": "Magic Numbers",
+      "description": "Avoid magic numbers, use named constants",
+      "pattern": "\\s(\\d{3,})\\s",
+      "file_pattern": "**/Sources/**/*.swift",
+      "exclude_pattern": "(test|version|port)",
+      "severity": "info",
+      "message": "Consider extracting magic number to a named constant"
+    }
+  ]
+}
