@@ -74,8 +74,10 @@ struct UserListView: View {
                         Image(systemName: "plus")
                             .foregroundStyle(ArcanaTheme.Colors.primaryPurple)
                     }
+                    .accessibilityIdentifier("AddUserButton")
+                    .accessibilityLabel("Add User")
                 }
-                
+
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
                         viewModel.send(.refresh)
@@ -83,6 +85,7 @@ struct UserListView: View {
                         Image(systemName: "arrow.clockwise")
                             .foregroundStyle(ArcanaTheme.Colors.primaryPurple)
                     }
+                    .accessibilityIdentifier("RefreshButton")
                     .disabled(viewModel.isRefreshing)
                 }
             }

@@ -617,28 +617,43 @@ xcodebuild archive -project arcana-ios.xcodeproj -scheme arcana-ios \
 
 ## 🧪 Testing
 
-### Test Coverage
+### Automated Testing & Coverage
 
-📊 **[View Interactive Test Coverage Report](docs/test-coverage.html)** | 📄 **[Detailed Coverage Report](TEST_COVERAGE_REPORT.md)**
+📊 **[View Interactive Test Coverage Report](docs/test-coverage.html)** | 📄 **[Detailed Coverage Analysis](COVERAGE_ANALYSIS.md)** | 📋 **[Testing Guide](TESTING.md)**
 
-The project has comprehensive test coverage with **100+ test cases** across core layers:
+The project includes **automated test execution and coverage report generation** with a simple Makefile:
 
-#### Coverage Summary
-- **Domain Layer**: ~90% (User, UserValidator, UserService)
-- **Core Layer**: ~80% (AppError, Analytics, ErrorCode)
-- **Test Files**: 9 comprehensive test suites
-- **Test Status**: ✅ All tests passing
+#### Quick Start
 
 ```bash
-# Run all tests
-xcodebuild test -project arcana-ios.xcodeproj -scheme arcana-ios \
-  -destination 'platform=iOS Simulator,name=iPhone 17'
+# Run all tests with coverage and auto-generate HTML report
+make test
 
-# Run tests with coverage
-xcodebuild test -project arcana-ios.xcodeproj -scheme arcana-ios \
-  -destination 'platform=iOS Simulator,name=iPhone 17' \
-  -enableCodeCoverage YES
+# Run only unit tests
+make test-unit
+
+# Run only UI tests
+make test-ui
+
+# Generate coverage report from latest test run
+make coverage
 ```
+
+After running tests, an **interactive HTML coverage report** is automatically generated at `docs/test-coverage.html` with:
+- 🎨 Color-coded coverage visualization
+- 📊 File-by-file breakdown
+- 📈 Overall statistics
+- 🔍 Sortable tables
+
+#### Coverage Summary
+- **Overall**: 26.42% (2,540 / 9,614 lines)
+- **Unit Tests**: 94.84% coverage (arcana-iosTests)
+- **UI Tests**: 100% coverage (arcana-iosUITests)
+- **Domain Layer**: ~90% (User, UserValidator)
+- **ViewModels**: ~90% (MainViewModel, UserListViewModel, UserFormViewModel)
+- **Test Status**: ✅ All tests passing
+
+See [COVERAGE_ANALYSIS.md](COVERAGE_ANALYSIS.md) for detailed recommendations on improving coverage.
 
 ### Test Structure
 

@@ -118,22 +118,6 @@ struct UserDTOTests {
     }
 }
 
-/// Tests for Extensions
-struct ExtensionsTests {
-    @Test("String extension tests if available")
-    func testStringExtensions() {
-        // Placeholder for any string extension tests
-        let testString = "test"
-        #expect(!testString.isEmpty)
-    }
-
-    @Test("Date extension tests if available")
-    func testDateExtensions() {
-        let date = Date()
-        #expect(date <= Date())
-    }
-}
-
 /// Tests for Error Code
 struct ErrorCodeTests {
     @Test("Error codes have unique codes")
@@ -298,7 +282,9 @@ struct EdgeCaseTests {
     @Test("Unicode characters in names")
     func testUnicodeNames() {
         let result = UserValidator.validateName("José", field: "firstName")
-        #expect(result == .success(()))
+        if case .failure = result {
+            Issue.record("Expected success for valid Unicode name")
+        }
     }
 
     @Test("Special characters validation")
@@ -307,7 +293,9 @@ struct EdgeCaseTests {
 
         for name in validNames {
             let result = UserValidator.validateName(name, field: "firstName")
-            #expect(result == .success(()))
+            if case .failure = result {
+                Issue.record("Expected success for valid name: \(name)")
+            }
         }
     }
 

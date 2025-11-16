@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcana iOS - Test Coverage Report</title>
+    <title>Test Coverage Report - arcana-ios</title>
     <style>
         * {
             margin: 0;
@@ -12,259 +12,159 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 20px;
             color: #333;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-        }
-
-        .header {
             background: white;
             border-radius: 12px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
         }
 
-        .header h1 {
-            font-size: 2.5em;
+        header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
             margin-bottom: 10px;
+            font-weight: 700;
         }
 
-        .header p {
-            color: #666;
+        .subtitle {
             font-size: 1.1em;
+            opacity: 0.9;
         }
 
-        .stats-grid {
+        .timestamp {
+            margin-top: 15px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .summary {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
-            margin-bottom: 30px;
+            padding: 30px 40px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
         }
 
-        .stat-card {
+        .summary-card {
             background: white;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
-        }
-
-        .stat-number {
-            font-size: 3em;
-            font-weight: bold;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
-        }
-
-        .stat-label {
-            color: #666;
-            font-size: 1.1em;
+        .summary-card h3 {
+            color: #6c757d;
+            font-size: 0.9em;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 500;
+            margin-bottom: 10px;
+            font-weight: 600;
         }
 
-        .section {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        .summary-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
         }
 
-        .section h2 {
+        .content {
+            padding: 40px;
+        }
+
+        h2 {
             font-size: 1.8em;
-            margin-bottom: 20px;
-            color: #333;
-            border-bottom: 3px solid #667eea;
+            margin: 30px 0 20px 0;
+            color: #495057;
+            border-bottom: 2px solid #667eea;
             padding-bottom: 10px;
         }
 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .file-path {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9em;
+            color: #495057;
+        }
+
         .coverage-bar {
-            background: #e0e0e0;
+            height: 20px;
+            background: #e9ecef;
             border-radius: 10px;
-            height: 30px;
-            margin: 10px 0;
             overflow: hidden;
             position: relative;
         }
 
         .coverage-fill {
             height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            border-radius: 10px;
-            transition: width 1s ease;
             display: flex;
             align-items: center;
-            justify-content: flex-end;
-            padding-right: 10px;
-            color: white;
+            justify-content: center;
+            font-size: 0.75em;
             font-weight: bold;
+            color: white;
+            transition: width 0.3s ease;
         }
 
-        .coverage-fill.low {
-            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
-        }
+        .excellent { background: linear-gradient(90deg, #10b981 0%, #059669 100%); }
+        .good { background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); }
+        .moderate { background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%); }
+        .low { background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%); }
 
-        .coverage-fill.medium {
-            background: linear-gradient(90deg, #ffc837 0%, #ff8008 100%);
-        }
-
-        .coverage-fill.high {
-            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
-        }
-
-        .coverage-fill.excellent {
-            background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
-        }
-
-        .file-list {
-            list-style: none;
-        }
-
-        .file-item {
-            padding: 15px;
-            margin: 10px 0;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-            transition: all 0.3s ease;
-        }
-
-        .file-item:hover {
-            background: #e9ecef;
-            transform: translateX(5px);
-        }
-
-        .file-name {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .file-path {
-            font-size: 0.9em;
-            color: #666;
-            font-family: 'Monaco', 'Courier New', monospace;
-        }
-
-        .badge {
+        .stats {
             display: inline-block;
+            margin-right: 20px;
             padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-            margin-left: 10px;
-        }
-
-        .badge-success {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .badge-warning {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .badge-danger {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .badge-info {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
-
-        .test-suite {
-            margin: 20px 0;
-        }
-
-        .test-suite-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 8px 8px 0 0;
-            font-weight: 600;
-            font-size: 1.1em;
-        }
-
-        .test-suite-body {
-            border: 2px solid #667eea;
-            border-top: none;
-            border-radius: 0 0 8px 8px;
-            padding: 20px;
-        }
-
-        .test-case {
-            padding: 10px;
-            margin: 5px 0;
             background: #f8f9fa;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .test-icon {
-            font-size: 1.2em;
-        }
-
-        .footer {
-            text-align: center;
-            color: white;
-            margin-top: 40px;
-            padding: 20px;
-        }
-
-        .footer a {
-            color: white;
-            text-decoration: underline;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-in {
-            animation: fadeIn 0.6s ease;
+            border-radius: 20px;
+            font-size: 0.9em;
         }
 
         .legend {
             display: flex;
             gap: 20px;
+            margin: 20px 0;
             flex-wrap: wrap;
-            margin-top: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
         }
 
         .legend-item {
@@ -278,333 +178,798 @@
             height: 20px;
             border-radius: 4px;
         }
+
+        footer {
+            background: #f8f9fa;
+            padding: 20px 40px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9em;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .target-header {
+            background: #e9ecef;
+            padding: 15px;
+            margin: 20px 0 10px 0;
+            border-radius: 8px;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header animate-in">
-            <h1>🧪 Arcana iOS Test Coverage Report</h1>
-            <p>Comprehensive testing for Clean Architecture iOS application</p>
-            <p style="margin-top: 10px; font-size: 0.9em;">Generated: <strong>November 16, 2025</strong></p>
+        <header>
+            <h1>📊 Test Coverage Report</h1>
+            <div class="subtitle">arcana-ios Project</div>
+            <div class="timestamp">Generated on November 16, 2025 at 04:02 PM</div>
+        </header>
+
+        <div class="summary">
+            <div class="summary-card">
+                <h3>Overall Coverage</h3>
+                <div class="value">26.42%</div>
+            </div>
+            <div class="summary-card">
+                <h3>Targets</h3>
+                <div class="value">3</div>
+            </div>
+            <div class="summary-card">
+                <h3>Total Lines</h3>
+                <div class="value">9,614</div>
+            </div>
+            <div class="summary-card">
+                <h3>Covered Lines</h3>
+                <div class="value">2,540</div>
+            </div>
         </div>
 
-        <div class="stats-grid animate-in">
-            <div class="stat-card">
-                <div class="stat-number">100+</div>
-                <div class="stat-label">Test Cases</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">9</div>
-                <div class="stat-label">Test Files</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">~85%</div>
-                <div class="stat-label">Core Coverage</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">100%</div>
-                <div class="stat-label">Tests Passing</div>
-            </div>
-        </div>
-
-        <div class="section animate-in">
-            <h2>📊 Coverage by Layer</h2>
-
-            <div style="margin-bottom: 20px;">
-                <h3 style="margin: 15px 0;">Domain Layer <span class="badge badge-success">~90% Coverage</span></h3>
-                <div class="coverage-bar">
-                    <div class="coverage-fill excellent" style="width: 90%;">90%</div>
-                </div>
-                <ul class="file-list">
-                    <li class="file-item">
-                        <div class="file-name">User.swift <span class="badge badge-success">~95%</span></div>
-                        <div class="file-path">arcana-ios/Sources/ArcanaDomain/Model/</div>
-                    </li>
-                    <li class="file-item">
-                        <div class="file-name">UserValidator.swift <span class="badge badge-success">~95%</span></div>
-                        <div class="file-path">arcana-ios/Sources/ArcanaDomain/Validation/</div>
-                    </li>
-                    <li class="file-item">
-                        <div class="file-name">UserServiceImpl.swift <span class="badge badge-success">~90%</span></div>
-                        <div class="file-path">arcana-ios/Sources/ArcanaDomain/Service/</div>
-                    </li>
-                </ul>
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <h3 style="margin: 15px 0;">Core Layer <span class="badge badge-info">~80% Coverage</span></h3>
-                <div class="coverage-bar">
-                    <div class="coverage-fill high" style="width: 80%;">80%</div>
-                </div>
-                <ul class="file-list">
-                    <li class="file-item">
-                        <div class="file-name">AppError.swift <span class="badge badge-info">~85%</span></div>
-                        <div class="file-path">arcana-ios/Sources/ArcanaCore/Common/</div>
-                    </li>
-                    <li class="file-item">
-                        <div class="file-name">AnalyticsEvent.swift <span class="badge badge-info">~80%</span></div>
-                        <div class="file-path">arcana-ios/Sources/ArcanaCore/Analytics/</div>
-                    </li>
-                    <li class="file-item">
-                        <div class="file-name">ErrorCode.swift <span class="badge badge-warning">~70%</span></div>
-                        <div class="file-path">arcana-ios/Sources/ArcanaCore/Common/</div>
-                    </li>
-                </ul>
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <h3 style="margin: 15px 0;">Data Layer <span class="badge badge-warning">~40% Coverage</span></h3>
-                <div class="coverage-bar">
-                    <div class="coverage-fill medium" style="width: 40%;">40%</div>
-                </div>
-                <ul class="file-list">
-                    <li class="file-item">
-                        <div class="file-name">UserRepository.swift (Protocol) <span class="badge badge-success">100%</span></div>
-                        <div class="file-path">arcana-ios/Sources/ArcanaData/Repository/</div>
-                    </li>
-                    <li class="file-item">
-                        <div class="file-name">OfflineFirstUserRepository.swift <span class="badge badge-danger">0%</span></div>
-                        <div class="file-path">arcana-ios/Sources/ArcanaData/Repository/</div>
-                    </li>
-                </ul>
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <h3 style="margin: 15px 0;">Presentation Layer <span class="badge badge-danger">~0% Coverage</span></h3>
-                <div class="coverage-bar">
-                    <div class="coverage-fill low" style="width: 5%;">0%</div>
-                </div>
-                <ul class="file-list">
-                    <li class="file-item">
-                        <div class="file-name">UserListViewModel.swift <span class="badge badge-danger">0%</span></div>
-                        <div class="file-path">arcana-ios/Sources/ArcanaPresentation/Screens/User/</div>
-                    </li>
-                    <li class="file-item">
-                        <div class="file-name">UserFormViewModel.swift <span class="badge badge-danger">0%</span></div>
-                        <div class="file-path">arcana-ios/Sources/ArcanaPresentation/Screens/User/</div>
-                    </li>
-                </ul>
-            </div>
-
+        <div class="content">
             <div class="legend">
                 <div class="legend-item">
-                    <div class="legend-color" style="background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);"></div>
-                    <span>Excellent (85-100%)</span>
+                    <div class="legend-color excellent"></div>
+                    <span>Excellent (≥90%)</span>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-color" style="background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);"></div>
-                    <span>High (70-84%)</span>
+                    <div class="legend-color good"></div>
+                    <span>Good (70-90%)</span>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-color" style="background: linear-gradient(90deg, #ffc837 0%, #ff8008 100%);"></div>
-                    <span>Medium (40-69%)</span>
+                    <div class="legend-color moderate"></div>
+                    <span>Moderate (50-70%)</span>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-color" style="background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);"></div>
-                    <span>Low (&lt;40%)</span>
+                    <div class="legend-color low"></div>
+                    <span>Low (<50%)</span>
                 </div>
             </div>
+
+            <h2>arcana-ios.app</h2>
+            <div class="target-header">
+                <span class="stats">Coverage: 0.35%</span>
+                <span class="stats">Lines: 2,320 / 6,641</span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>File</th>
+                        <th style="width: 300px;">Coverage</th>
+                        <th style="width: 120px; text-align: right;">Lines</th>
+                        <th style="width: 120px; text-align: right;">Covered</th>
+                        <th style="width: 100px; text-align: right;">%</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaCore/Common/AppError.swift">AppError.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">187</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaDomain/Validation/UserValidator.swift">UserValidator.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">133</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaCore/Common/ErrorCode.swift">ErrorCode.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">175</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaPresentation/Screens/User/UserFormViewModel.swift">UserFormViewModel.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">205</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaData/Remote/MockRemoteUserDataSource.swift">MockRemoteUserDataSource.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">208</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaCore/Common/Extensions.swift">Extensions.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">105</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaPresentation/Screens/User/UserFormView.swift">UserFormView.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">671</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaData/Local/Entities/PendingChangeEntity.swift">PendingChangeEntity.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">42</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaPresentation/Components/SyncStatusBanner.swift">SyncStatusBanner.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.022388059701492536%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">134</td>
+                        <td style="text-align: right;">3</td>
+                        <td style="text-align: right; font-weight: bold;">0.02%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaCore/Analytics/PersistentAnalyticsTracker.swift">PersistentAnalyticsTracker.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.15647921760391198%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">409</td>
+                        <td style="text-align: right;">64</td>
+                        <td style="text-align: right; font-weight: bold;">0.16%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaDomain/Service/UserServiceImpl.swift">UserServiceImpl.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.16055045871559634%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">218</td>
+                        <td style="text-align: right;">35</td>
+                        <td style="text-align: right; font-weight: bold;">0.16%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaPresentation/Screens/User/AppRoute.swift">AppRoute.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.16666666666666666%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">60</td>
+                        <td style="text-align: right;">10</td>
+                        <td style="text-align: right; font-weight: bold;">0.17%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaDomain/Model/User.swift">User.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.16901408450704225%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">71</td>
+                        <td style="text-align: right;">12</td>
+                        <td style="text-align: right; font-weight: bold;">0.17%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaCore/DI/AppDependencies.swift">AppDependencies.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.24864864864864866%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">370</td>
+                        <td style="text-align: right;">92</td>
+                        <td style="text-align: right; font-weight: bold;">0.25%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaCore/Analytics/AnalyticsTracker.swift">AnalyticsTracker.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.25%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">12</td>
+                        <td style="text-align: right;">3</td>
+                        <td style="text-align: right; font-weight: bold;">0.25%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaData/Remote/ReqresUserDataSource.swift">ReqresUserDataSource.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.2536764705882353%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">272</td>
+                        <td style="text-align: right;">69</td>
+                        <td style="text-align: right; font-weight: bold;">0.25%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaPresentation/Screens/User/NavGraph.swift">NavGraph.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.25660377358490566%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">265</td>
+                        <td style="text-align: right;">68</td>
+                        <td style="text-align: right; font-weight: bold;">0.26%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaCore/Remote/ApiService.swift">ApiService.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.30994152046783624%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">171</td>
+                        <td style="text-align: right;">53</td>
+                        <td style="text-align: right; font-weight: bold;">0.31%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaData/Local/SwiftDataUserDataSource.swift">SwiftDataUserDataSource.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.319672131147541%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">244</td>
+                        <td style="text-align: right;">78</td>
+                        <td style="text-align: right; font-weight: bold;">0.32%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaData/Repository/OfflineFirstUserRepository.swift">OfflineFirstUserRepository.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.3569937369519833%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">479</td>
+                        <td style="text-align: right;">171</td>
+                        <td style="text-align: right; font-weight: bold;">0.36%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaPresentation/Screens/User/UserListViewModel.swift">UserListViewModel.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.3592592592592593%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">270</td>
+                        <td style="text-align: right;">97</td>
+                        <td style="text-align: right; font-weight: bold;">0.36%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaCore/Analytics/AnalyticsEvent.swift">AnalyticsEvent.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.4230769230769231%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">52</td>
+                        <td style="text-align: right;">22</td>
+                        <td style="text-align: right; font-weight: bold;">0.42%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaData/Local/Entities/AnalyticsEventEntity.swift">AnalyticsEventEntity.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.453125%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">64</td>
+                        <td style="text-align: right;">29</td>
+                        <td style="text-align: right; font-weight: bold;">0.45%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaPresentation/Screens/User/MainViewModel.swift">MainViewModel.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.7701149425287356%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">87</td>
+                        <td style="text-align: right;">67</td>
+                        <td style="text-align: right; font-weight: bold;">0.77%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaPresentation/Components/AvatarView.swift">AvatarView.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.797979797979798%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">99</td>
+                        <td style="text-align: right;">79</td>
+                        <td style="text-align: right; font-weight: bold;">0.80%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaData/Local/Entities/UserEntity.swift">UserEntity.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.8157894736842105%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">38</td>
+                        <td style="text-align: right;">31</td>
+                        <td style="text-align: right; font-weight: bold;">0.82%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaPresentation/Screens/User/UserListView.swift">UserListView.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.816917728852839%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">863</td>
+                        <td style="text-align: right;">705</td>
+                        <td style="text-align: right; font-weight: bold;">0.82%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaPresentation/Screens/User/MainView.swift">MainView.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.8250950570342205%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">526</td>
+                        <td style="text-align: right;">434</td>
+                        <td style="text-align: right; font-weight: bold;">0.83%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaCore/Network/NetworkMonitor.swift">NetworkMonitor.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.8484848484848485%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">66</td>
+                        <td style="text-align: right;">56</td>
+                        <td style="text-align: right; font-weight: bold;">0.85%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaPresentation/Theme/ArcanaTheme.swift">ArcanaTheme.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.8846153846153846%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">26</td>
+                        <td style="text-align: right;">23</td>
+                        <td style="text-align: right; font-weight: bold;">0.88%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/arcana_iosApp.swift">arcana_iosApp.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 1%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">41</td>
+                        <td style="text-align: right;">41</td>
+                        <td style="text-align: right; font-weight: bold;">1.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Sources/ArcanaPresentation/Components/UserCard.swift">UserCard.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 1%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">78</td>
+                        <td style="text-align: right;">78</td>
+                        <td style="text-align: right; font-weight: bold;">1.00%</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <h2>arcana-iosTests.xctest</h2>
+            <div class="target-header">
+                <span class="stats">Coverage: 0.00%</span>
+                <span class="stats">Lines: 0 / 2,711</span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>File</th>
+                        <th style="width: 300px;">Coverage</th>
+                        <th style="width: 120px; text-align: right;">Lines</th>
+                        <th style="width: 120px; text-align: right;">Covered</th>
+                        <th style="width: 100px; text-align: right;">%</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-iosTests/ComprehensiveCoverageTests.swift">ComprehensiveCoverageTests.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">271</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-iosTests/Mocks/MockAnalyticsTracker.swift">MockAnalyticsTracker.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">23</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-iosTests/Core/AppErrorTests.swift">AppErrorTests.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">185</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-iosTests/Domain/UserTests.swift">UserTests.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">215</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-iosTests/Mocks/MockUserRepository.swift">MockUserRepository.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">114</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-iosTests/Presentation/UserListViewModelTests.swift">UserListViewModelTests.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">460</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-iosTests/Presentation/UserFormViewModelTests.swift">UserFormViewModelTests.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">362</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-iosTests/Presentation/MainViewModelTests.swift">MainViewModelTests.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">258</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-iosTests/arcana_iosTests.swift">arcana_iosTests.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">3</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-iosTests/Core/ExtensionsTests.swift">ExtensionsTests.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">219</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-iosTests/Domain/UserValidatorTests.swift">UserValidatorTests.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">250</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-iosTests/Domain/UserServiceImplTests.swift">UserServiceImplTests.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">243</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-iosTests/Core/AnalyticsTests.swift">AnalyticsTests.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">108</td>
+                        <td style="text-align: right;">0</td>
+                        <td style="text-align: right; font-weight: bold;">0.00%</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <h2>arcana-iosUITests.xctest</h2>
+            <div class="target-header">
+                <span class="stats">Coverage: 0.84%</span>
+                <span class="stats">Lines: 220 / 262</span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>File</th>
+                        <th style="width: 300px;">Coverage</th>
+                        <th style="width: 120px; text-align: right;">Lines</th>
+                        <th style="width: 120px; text-align: right;">Covered</th>
+                        <th style="width: 100px; text-align: right;">%</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-iosUITests/arcana_iosUITests.swift">arcana_iosUITests.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.7872340425531915%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">188</td>
+                        <td style="text-align: right;">148</td>
+                        <td style="text-align: right; font-weight: bold;">0.79%</td>
+                    </tr>
+
+                    <tr>
+                        <td class="file-path" title="/Users/jrjohn/Documents/projects/arcana-ios/arcana-iosUITests/arcana_iosUITestsLaunchTests.swift">arcana_iosUITestsLaunchTests.swift</td>
+                        <td>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill low" style="width: 0.972972972972973%;">
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">74</td>
+                        <td style="text-align: right;">72</td>
+                        <td style="text-align: right; font-weight: bold;">0.97%</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
         </div>
 
-        <div class="section animate-in">
-            <h2>🧪 Test Suites</h2>
-
-            <div class="test-suite">
-                <div class="test-suite-header">UserTests.swift</div>
-                <div class="test-suite-body">
-                    <div style="margin-bottom: 15px;">
-                        <strong>Coverage:</strong> Domain Model (User.swift)
-                        <span class="badge badge-success">20+ tests</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>User initialization with all parameters</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>Computed properties (fullName, initials)</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>Equality and Hashable conformance</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>Codable encoding/decoding</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>DTO conversion (to/from)</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="test-suite">
-                <div class="test-suite-header">UserValidatorTests.swift</div>
-                <div class="test-suite-body">
-                    <div style="margin-bottom: 15px;">
-                        <strong>Coverage:</strong> Validation Logic (UserValidator.swift)
-                        <span class="badge badge-success">25+ tests</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>Email validation (valid & invalid formats)</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>Name validation (special characters, length limits)</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>Full user validation</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>Error conversion to AppError</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="test-suite">
-                <div class="test-suite-header">UserServiceImplTests.swift</div>
-                <div class="test-suite-body">
-                    <div style="margin-bottom: 15px;">
-                        <strong>Coverage:</strong> Business Logic (UserServiceImpl.swift)
-                        <span class="badge badge-success">20+ tests</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>Get users (all, paginated, by ID)</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>Create user with validation</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>Update user with validation</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>Delete user with analytics</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>Search and refresh operations</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="test-suite">
-                <div class="test-suite-header">AppErrorTests.swift</div>
-                <div class="test-suite-body">
-                    <div style="margin-bottom: 15px;">
-                        <strong>Coverage:</strong> Error Handling (AppError.swift)
-                        <span class="badge badge-success">25+ tests</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>Error code extraction and messages</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>Retryable logic for all error types</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>URLError conversion</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>HTTP response error mapping</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="test-suite">
-                <div class="test-suite-header">ComprehensiveCoverageTests.swift</div>
-                <div class="test-suite-body">
-                    <div style="margin-bottom: 15px;">
-                        <strong>Coverage:</strong> Edge Cases & Supporting Components
-                        <span class="badge badge-success">30+ tests</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>PaginatedResult struct tests</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>User.DTO encoding/decoding</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>ErrorCode uniqueness and properties</span>
-                    </div>
-                    <div class="test-case">
-                        <span class="test-icon">✅</span>
-                        <span>Edge cases (Unicode, boundaries, empty values)</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="section animate-in">
-            <h2>🎯 Mock Implementations</h2>
-            <ul class="file-list">
-                <li class="file-item">
-                    <div class="file-name">MockAnalyticsTracker.swift</div>
-                    <div class="file-path">Full-featured mock for analytics tracking with event inspection</div>
-                </li>
-                <li class="file-item">
-                    <div class="file-name">MockUserRepository.swift</div>
-                    <div class="file-path">In-memory repository with CRUD operations, pagination, and error injection</div>
-                </li>
-            </ul>
-        </div>
-
-        <div class="section animate-in">
-            <h2>📈 Next Steps to 100% Coverage</h2>
-            <ul class="file-list">
-                <li class="file-item">
-                    <div class="file-name">Priority 1: Presentation Layer (ViewModels)</div>
-                    <div class="file-path">UserListViewModel, UserFormViewModel, MainViewModel</div>
-                </li>
-                <li class="file-item">
-                    <div class="file-name">Priority 2: Data Layer</div>
-                    <div class="file-path">OfflineFirstUserRepository, SwiftDataUserDataSource, ReqresUserDataSource</div>
-                </li>
-                <li class="file-item">
-                    <div class="file-name">Priority 3: Core Infrastructure</div>
-                    <div class="file-path">ApiService, NetworkMonitor, PersistentAnalyticsTracker</div>
-                </li>
-                <li class="file-item">
-                    <div class="file-name">Priority 4: SwiftData Entities</div>
-                    <div class="file-path">UserEntity, AnalyticsEventEntity, PendingChangeEntity</div>
-                </li>
-            </ul>
-        </div>
-
-        <div class="footer">
-            <p>Built with ❤️ using Swift Testing Framework & XCTest</p>
-            <p style="margin-top: 10px;">
-                <a href="https://github.com/jrjohn/arcana-ios">View on GitHub</a> |
-                <a href="../TEST_COVERAGE_REPORT.md">Detailed Report</a>
-            </p>
-        </div>
+        <footer>
+            Generated with ❤️ by arcana-ios coverage tool
+        </footer>
     </div>
-
-    <script>
-        // Animate coverage bars on load
-        document.addEventListener('DOMContentLoaded', function() {
-            const fills = document.querySelectorAll('.coverage-fill');
-            fills.forEach(fill => {
-                const width = fill.style.width;
-                fill.style.width = '0%';
-                setTimeout(() => {
-                    fill.style.width = width;
-                }, 100);
-            });
-        });
-    </script>
 </body>
 </html>

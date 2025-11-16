@@ -26,7 +26,9 @@ struct UserValidatorTests {
 
         for email in validEmails {
             let result = UserValidator.validateEmail(email)
-            #expect(result == .success(()))
+            if case .failure = result {
+                Issue.record("Expected success for valid email: \(email)")
+            }
         }
     }
 
@@ -92,7 +94,9 @@ struct UserValidatorTests {
 
         for (name, field) in validNames {
             let result = UserValidator.validateName(name, field: field)
-            #expect(result == .success(()))
+            if case .failure = result {
+                Issue.record("Expected success for valid name: \(name)")
+            }
         }
     }
 
@@ -165,7 +169,9 @@ struct UserValidatorTests {
         )
 
         let result = UserValidator.validateUser(user)
-        #expect(result == .success(()))
+        if case .failure = result {
+            Issue.record("Expected success for valid user")
+        }
     }
 
     @Test("User with invalid email fails validation")
@@ -222,7 +228,9 @@ struct UserValidatorTests {
         )
 
         let result = UserValidator.validateForCreate(validUser)
-        #expect(result == .success(()))
+        if case .failure = result {
+            Issue.record("Expected success for create validation")
+        }
     }
 
     @Test("Validate for update delegates to validateUser")
@@ -234,7 +242,9 @@ struct UserValidatorTests {
         )
 
         let result = UserValidator.validateForUpdate(validUser)
-        #expect(result == .success(()))
+        if case .failure = result {
+            Issue.record("Expected success for update validation")
+        }
     }
 
     // MARK: - Field Validation Result Tests

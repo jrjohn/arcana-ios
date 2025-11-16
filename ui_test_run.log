@@ -1,0 +1,291 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme arcana-ios -destination "platform=iOS Simulator,name=iPhone 17" "-only-testing:arcana-iosUITests" -derivedDataPath DerivedData
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  swift-concurrency-extras: https://github.com/pointfreeco/swift-concurrency-extras @ 1.3.2
+  xctest-dynamic-overlay: https://github.com/pointfreeco/xctest-dynamic-overlay @ 1.7.0
+  swift-syntax: https://github.com/swiftlang/swift-syntax @ 602.0.0
+  swift-clocks: https://github.com/pointfreeco/swift-clocks @ 1.0.6
+  Alamofire: https://github.com/Alamofire/Alamofire @ 5.10.2
+  LRUCache: https://github.com/nicklockwood/LRUCache @ 1.2.0
+  swift-dependencies: https://github.com/pointfreeco/swift-dependencies @ 1.10.0
+  combine-schedulers: https://github.com/pointfreeco/combine-schedulers @ 1.1.0
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (21 targets)
+    Target 'arcana-iosUITests' in project 'arcana-ios'
+        ➜ Explicit dependency on target 'arcana-ios' in project 'arcana-ios'
+    Target 'arcana-iosTests' in project 'arcana-ios'
+        ➜ Explicit dependency on target 'arcana-ios' in project 'arcana-ios'
+    Target 'arcana-ios' in project 'arcana-ios'
+        ➜ Explicit dependency on target 'Alamofire' in project 'Alamofire'
+        ➜ Explicit dependency on target 'LRUCache' in project 'LRUCache'
+        ➜ Explicit dependency on target 'Dependencies' in project 'swift-dependencies'
+    Target 'Dependencies' in project 'swift-dependencies'
+        ➜ Explicit dependency on target 'Dependencies' in project 'swift-dependencies'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'CombineSchedulers' in project 'combine-schedulers'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+    Target 'Dependencies' in project 'swift-dependencies'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'CombineSchedulers' in project 'combine-schedulers'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+    Target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReportingPackageSupport' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReportingPackageSupport' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'CombineSchedulers' in project 'combine-schedulers'
+        ➜ Explicit dependency on target 'CombineSchedulers' in project 'combine-schedulers'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'CombineSchedulers' in project 'combine-schedulers'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'IssueReporting' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReportingPackageSupport' in project 'xctest-dynamic-overlay'
+    Target 'IssueReporting' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReportingPackageSupport' in project 'xctest-dynamic-overlay'
+    Target 'IssueReportingPackageSupport' in project 'xctest-dynamic-overlay' (no dependencies)
+    Target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+    Target 'ConcurrencyExtras' in project 'swift-concurrency-extras' (no dependencies)
+    Target 'LRUCache' in project 'LRUCache'
+        ➜ Explicit dependency on target 'LRUCache' in project 'LRUCache'
+    Target 'LRUCache' in project 'LRUCache' (no dependencies)
+    Target 'Alamofire' in project 'Alamofire'
+        ➜ Explicit dependency on target 'Alamofire' in project 'Alamofire'
+        ➜ Explicit dependency on target 'Alamofire_Alamofire' in project 'Alamofire'
+    Target 'Alamofire' in project 'Alamofire'
+        ➜ Explicit dependency on target 'Alamofire_Alamofire' in project 'Alamofire'
+    Target 'Alamofire_Alamofire' in project 'Alamofire' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.1.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/jrjohn/Documents/projects/arcana-ios/arcana-ios/Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+ReadFileContents /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/share/docc/features.json
+
+Build description signature: 787674203391a1a8e4cb1bbb1963c731
+Build description path: /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/XCBuildData/787674203391a1a8e4cb1bbb1963c731.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.1.sdk /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/SDKStatCaches.noindex/iphonesimulator26.1-23B77-90cf18a4295e390e64c810bc6bd7acbc.sdkstatcache
+    cd /Users/jrjohn/Documents/projects/arcana-ios/arcana-ios.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.1.sdk -o /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/SDKStatCaches.noindex/iphonesimulator26.1-23B77-90cf18a4295e390e64c810bc6bd7acbc.sdkstatcache
+
+ProcessInfoPlistFile /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/Alamofire_Alamofire.bundle/Info.plist /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/Alamofire.build/Debug-iphonesimulator/Alamofire_Alamofire.build/empty-Alamofire_Alamofire.plist (in target 'Alamofire_Alamofire' from project 'Alamofire')
+    cd /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/SourcePackages/checkouts/Alamofire
+    builtin-infoPlistUtility /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/Alamofire.build/Debug-iphonesimulator/Alamofire_Alamofire.build/empty-Alamofire_Alamofire.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphonesimulator -o /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/Alamofire_Alamofire.bundle/Info.plist
+
+ProcessInfoPlistFile /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/Info.plist /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-ios.build/empty-arcana-ios.plist (in target 'arcana-ios' from project 'arcana-ios')
+    cd /Users/jrjohn/Documents/projects/arcana-ios
+    builtin-infoPlistUtility /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-ios.build/empty-arcana-ios.plist -producttype com.apple.product-type.application -genpkginfo /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-ios.build/assetcatalog_generated_info.plist -scanforprivacyfile /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/Alamofire_Alamofire.bundle -o /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/Info.plist
+
+CopySwiftLibs /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app (in target 'arcana-ios' from project 'arcana-ios')
+    cd /Users/jrjohn/Documents/projects/arcana-ios
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/arcana-ios.debug.dylib --scan-folder /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/Frameworks --scan-folder /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/PlugIns --scan-folder /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/SystemExtensions --scan-folder /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-ios.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ProcessInfoPlistFile /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/PlugIns/arcana-iosTests.xctest/Info.plist /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosTests.build/empty-arcana-iosTests.plist (in target 'arcana-iosTests' from project 'arcana-ios')
+    cd /Users/jrjohn/Documents/projects/arcana-ios
+    builtin-infoPlistUtility /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosTests.build/empty-arcana-iosTests.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -format binary -platform iphonesimulator -scanforprivacyfile /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/PlugIns/arcana-iosTests.xctest/Alamofire_Alamofire.bundle -o /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/PlugIns/arcana-iosTests.xctest/Info.plist
+
+SwiftDriver arcana-iosUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'arcana-iosUITests' from project 'arcana-ios')
+    cd /Users/jrjohn/Documents/projects/arcana-ios
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name arcana_iosUITests -Onone -enforce-exclusivity\=checked @/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana-iosUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.1.sdk -target arm64-apple-ios26.1-simulator -g -module-cache-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.1.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/SDKStatCaches.noindex/iphonesimulator26.1-23B77-90cf18a4295e390e64c810bc6bd7acbc.sdkstatcache -output-file-map /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana-iosUITests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana_iosUITests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana-iosUITests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/arcana-iosUITests-generated-files.hmap -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/arcana-iosUITests-own-target-headers.hmap -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/arcana-iosUITests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-ios-7882a473295fd9570327afa0acd27843-VFS-iphonesimulator/all-product-headers.yaml -Xcc -iquote -Xcc /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/arcana-iosUITests-project-headers.hmap -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/DerivedSources-normal/arm64 -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/DerivedSources/arm64 -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana_iosUITests-Swift.h -working-directory /Users/jrjohn/Documents/projects/arcana-ios -experimental-emit-module-separately -disable-cmo
+
+CopySwiftLibs /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/PlugIns/arcana-iosTests.xctest (in target 'arcana-iosTests' from project 'arcana-ios')
+    cd /Users/jrjohn/Documents/projects/arcana-ios
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/PlugIns/arcana-iosTests.xctest/arcana-iosTests --scan-folder /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/PlugIns/arcana-iosTests.xctest/Frameworks --scan-folder /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/PlugIns/arcana-iosTests.xctest/PlugIns --scan-folder /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/PlugIns/arcana-iosTests.xctest/SystemExtensions --scan-folder /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/PlugIns/arcana-iosTests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-ios.app/PlugIns/arcana-iosTests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+SwiftCompile normal arm64 Compiling\ arcana_iosUITests.swift /Users/jrjohn/Documents/projects/arcana-ios/arcana-iosUITests/arcana_iosUITests.swift (in target 'arcana-iosUITests' from project 'arcana-ios')
+
+SwiftCompile normal arm64 /Users/jrjohn/Documents/projects/arcana-ios/arcana-iosUITests/arcana_iosUITests.swift (in target 'arcana-iosUITests' from project 'arcana-ios')
+    cd /Users/jrjohn/Documents/projects/arcana-ios
+    
+/Users/jrjohn/Documents/projects/arcana-ios/arcana-iosUITests/arcana_iosUITests.swift:127:13: warning: initialization of immutable value 'offlineBanner' was never used; consider replacing with assignment to '_' or removing it
+        let offlineBanner = app.staticTexts.containing(NSPredicate(format: "label CONTAINS[c] 'offline'")).firstMatch
+        ~~~~^~~~~~~~~~~~~
+        _
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ arcana_iosUITests (in target 'arcana-iosUITests' from project 'arcana-ios')
+
+EmitSwiftModule normal arm64 (in target 'arcana-iosUITests' from project 'arcana-ios')
+    cd /Users/jrjohn/Documents/projects/arcana-ios
+    
+
+SwiftCompile normal arm64 Compiling\ arcana_iosUITestsLaunchTests.swift /Users/jrjohn/Documents/projects/arcana-ios/arcana-iosUITests/arcana_iosUITestsLaunchTests.swift (in target 'arcana-iosUITests' from project 'arcana-ios')
+
+SwiftCompile normal arm64 /Users/jrjohn/Documents/projects/arcana-ios/arcana-iosUITests/arcana_iosUITestsLaunchTests.swift (in target 'arcana-iosUITests' from project 'arcana-ios')
+    cd /Users/jrjohn/Documents/projects/arcana-ios
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling arcana_iosUITestsLaunchTests.swift (in target 'arcana-iosUITests' from project 'arcana-ios')
+
+SwiftDriverJobDiscovery normal arm64 Compiling arcana_iosUITests.swift (in target 'arcana-iosUITests' from project 'arcana-ios')
+
+SwiftDriver\ Compilation arcana-iosUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'arcana-iosUITests' from project 'arcana-ios')
+    cd /Users/jrjohn/Documents/projects/arcana-ios
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name arcana_iosUITests -Onone -enforce-exclusivity\=checked @/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana-iosUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.1.sdk -target arm64-apple-ios26.1-simulator -g -module-cache-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.1.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/SDKStatCaches.noindex/iphonesimulator26.1-23B77-90cf18a4295e390e64c810bc6bd7acbc.sdkstatcache -output-file-map /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana-iosUITests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana_iosUITests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana-iosUITests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/arcana-iosUITests-generated-files.hmap -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/arcana-iosUITests-own-target-headers.hmap -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/arcana-iosUITests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-ios-7882a473295fd9570327afa0acd27843-VFS-iphonesimulator/all-product-headers.yaml -Xcc -iquote -Xcc /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/arcana-iosUITests-project-headers.hmap -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/DerivedSources-normal/arm64 -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/DerivedSources/arm64 -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana_iosUITests-Swift.h -working-directory /Users/jrjohn/Documents/projects/arcana-ios -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for arcana_iosUITests (in target 'arcana-iosUITests' from project 'arcana-ios')
+
+SwiftDriver\ Compilation\ Requirements arcana-iosUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'arcana-iosUITests' from project 'arcana-ios')
+    cd /Users/jrjohn/Documents/projects/arcana-ios
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name arcana_iosUITests -Onone -enforce-exclusivity\=checked @/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana-iosUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.1.sdk -target arm64-apple-ios26.1-simulator -g -module-cache-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.1.sdk/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/SDKStatCaches.noindex/iphonesimulator26.1-23B77-90cf18a4295e390e64c810bc6bd7acbc.sdkstatcache -output-file-map /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana-iosUITests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana_iosUITests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana-iosUITests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/arcana-iosUITests-generated-files.hmap -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/arcana-iosUITests-own-target-headers.hmap -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/arcana-iosUITests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-ios-7882a473295fd9570327afa0acd27843-VFS-iphonesimulator/all-product-headers.yaml -Xcc -iquote -Xcc /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/arcana-iosUITests-project-headers.hmap -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/DerivedSources-normal/arm64 -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/DerivedSources/arm64 -Xcc -I/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana_iosUITests-Swift.h -working-directory /Users/jrjohn/Documents/projects/arcana-ios -experimental-emit-module-separately -disable-cmo
+
+Copy /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana_iosUITests.swiftmodule/arm64-apple-ios-simulator.swiftmodule /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana_iosUITests.swiftmodule (in target 'arcana-iosUITests' from project 'arcana-ios')
+    cd /Users/jrjohn/Documents/projects/arcana-ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana_iosUITests.swiftmodule /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana_iosUITests.swiftmodule/arm64-apple-ios-simulator.swiftmodule
+
+Copy /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana_iosUITests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana_iosUITests.swiftsourceinfo (in target 'arcana-iosUITests' from project 'arcana-ios')
+    cd /Users/jrjohn/Documents/projects/arcana-ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana_iosUITests.swiftsourceinfo /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana_iosUITests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+Copy /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana_iosUITests.swiftmodule/arm64-apple-ios-simulator.abi.json /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana_iosUITests.abi.json (in target 'arcana-iosUITests' from project 'arcana-ios')
+    cd /Users/jrjohn/Documents/projects/arcana-ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana_iosUITests.abi.json /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana_iosUITests.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+Ld /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-iosUITests-Runner.app/PlugIns/arcana-iosUITests.xctest/arcana-iosUITests normal (in target 'arcana-iosUITests' from project 'arcana-ios')
+    cd /Users/jrjohn/Documents/projects/arcana-ios
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios26.1-simulator -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.1.sdk -O0 -L/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator -L/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.1.sdk/Developer/Library/Frameworks -filelist /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana-iosUITests.LinkFileList -Xlinker -rpath -Xlinker @loader_path/Frameworks -dead_strip -Xlinker -object_path_lto -Xlinker /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana-iosUITests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -debug_variant -Xlinker -dependency_info -Xlinker /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana-iosUITests_dependency_info.dat -fobjc-link-runtime -fprofile-instr-generate -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana_iosUITests.swiftmodule @/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana_iosUITests-linker-args.resp -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/arcana-iosUITests.xctest-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/arcana-iosUITests.xctest-Simulated.xcent.der -Xlinker -no_adhoc_codesign -o /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-iosUITests-Runner.app/PlugIns/arcana-iosUITests.xctest/arcana-iosUITests
+
+ExtractAppIntentsMetadata (in target 'arcana-iosUITests' from project 'arcana-ios')
+    cd /Users/jrjohn/Documents/projects/arcana-ios
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name arcana_iosUITests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.1.sdk --xcode-version 17B100 --platform-family iOS --deployment-target 26.1 --bundle-identifier com.somnics.webview.arcana-iosUITests --output /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-iosUITests-Runner.app/PlugIns/arcana-iosUITests.xctest --target-triple arm64-apple-ios26.1-simulator --binary-file /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-iosUITests-Runner.app/PlugIns/arcana-iosUITests.xctest/arcana-iosUITests --dependency-file /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana-iosUITests_dependency_info.dat --stringsdata-file /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana-iosUITests.SwiftFileList --metadata-file-list /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/arcana-iosUITests.DependencyMetadataFileList --static-metadata-file-list /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/arcana-iosUITests.DependencyStaticMetadataFileList --swift-const-vals-list /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/Objects-normal/arm64/arcana-iosUITests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2025-11-16 15:21:34.353 appintentsmetadataprocessor[11014:1847773] Starting appintentsmetadataprocessor export
+2025-11-16 15:21:34.354 appintentsmetadataprocessor[11014:1847773] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+
+ProcessInfoPlistFile /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-iosUITests-Runner.app/PlugIns/arcana-iosUITests.xctest/Info.plist /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/empty-arcana-iosUITests.plist (in target 'arcana-iosUITests' from project 'arcana-ios')
+    cd /Users/jrjohn/Documents/projects/arcana-ios
+    builtin-infoPlistUtility /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/empty-arcana-iosUITests.plist -producttype com.apple.product-type.bundle.ui-testing -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/ProductTypeInfoPlistAdditions.plist -o /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-iosUITests-Runner.app/PlugIns/arcana-iosUITests.xctest/Info.plist
+
+CopySwiftLibs /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-iosUITests-Runner.app/PlugIns/arcana-iosUITests.xctest (in target 'arcana-iosUITests' from project 'arcana-ios')
+    cd /Users/jrjohn/Documents/projects/arcana-ios
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-iosUITests-Runner.app/PlugIns/arcana-iosUITests.xctest/arcana-iosUITests --scan-folder /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-iosUITests-Runner.app/PlugIns/arcana-iosUITests.xctest/Frameworks --scan-folder /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-iosUITests-Runner.app/PlugIns/arcana-iosUITests.xctest/PlugIns --scan-folder /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-iosUITests-Runner.app/PlugIns/arcana-iosUITests.xctest/SystemExtensions --scan-folder /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-iosUITests-Runner.app/PlugIns/arcana-iosUITests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-iosUITests-Runner.app/PlugIns/arcana-iosUITests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Intermediates.noindex/arcana-ios.build/Debug-iphonesimulator/arcana-iosUITests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+CodeSign /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-iosUITests-Runner.app/PlugIns/arcana-iosUITests.xctest (in target 'arcana-iosUITests' from project 'arcana-ios')
+    cd /Users/jrjohn/Documents/projects/arcana-ios
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-iosUITests-Runner.app/PlugIns/arcana-iosUITests.xctest
+
+CodeSign /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-iosUITests-Runner.app (in target 'arcana-iosUITests' from project 'arcana-ios')
+    cd /Users/jrjohn/Documents/projects/arcana-ios
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-iosUITests-Runner.app
+/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/arcana-iosUITests-Runner.app: replacing existing signature
+
+2025-11-16 15:24:55.559 xcodebuild[10956:1847510]  iOSSimulator: 55CA3CFE-E10B-43CB-866F-6EDC2E0D815A: Failed to launch app with identifier: com.somnics.webview.arcana-iosUITests.xctrunner and options: {
+    "activate_suspended" = 1;
+    arguments =     (
+    );
+    environment =     {
+        "APP_DISTRIBUTOR_ID_OVERRIDE" = "com.apple.AppStore";
+        "CA_ASSERT_MAIN_THREAD_TRANSACTIONS" = 0;
+        "CA_DEBUG_TRANSACTIONS" = 0;
+        "DYLD_FRAMEWORK_PATH" = "/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator:/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator/PackageFrameworks:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks";
+        "DYLD_INSERT_LIBRARIES" = "/usr/lib/libRPAC.dylib:/Library/Developer/CoreSimulator/Volumes/iOS_23B86/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.1.simruntime/Contents/Resources/RuntimeRoot/usr/lib/libMainThreadChecker.dylib:/usr/lib/libRPAC.dylib";
+        "DYLD_LIBRARY_PATH" = "/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib";
+        "LLVM_PROFILE_FILE" = "/var/folders/7p/x1lf2bq108s2lm1hc7qfsxkw0000gn/T/com.somnics.webview.arcana-iosUITests.xctrunner/51DE3333-7C82-41B7-97FE-DED66D01A963-10956-00000100428E319D/FDCE9638-3ED0-43E7-9816-0315B080FA8F-%p%c.profraw";
+        NSApplicationQuitWithoutSuddenTermination = YES;
+        NSUnbufferedIO = YES;
+        "OS_ACTIVITY_DT_MODE" = YES;
+        "PERFC_ENABLE_EXTENDED_DIAGNOSTIC_FORMAT" = 1;
+        "PERFC_ENABLE_PROFILE_MODE" = 1;
+        "PERFC_RESET_INSERT_LIBRARIES" = 1;
+        "PERFC_SUPPRESS_SYSTEM_REPORTS" = 1;
+        "RUN_DESTINATION_DEVICE_NAME" = "Clone 2 of iPhone 17";
+        "RUN_DESTINATION_DEVICE_PLATFORM_IDENTIFIER" = "com.apple.platform.iphonesimulator";
+        "RUN_DESTINATION_DEVICE_UDID" = "55CA3CFE-E10B-43CB-866F-6EDC2E0D815A";
+        "SQLITE_ENABLE_THREAD_ASSERTIONS" = 1;
+        TERM = dumb;
+        "XCODE_SCHEME_NAME" = "arcana-ios";
+        "XCODE_TEST_PLAN_NAME" = "arcana-ios";
+        XCTestBundleInjectPath = "/usr/lib/libRPAC.dylib:/Library/Developer/CoreSimulator/Volumes/iOS_23B86/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.1.simruntime/Contents/Resources/RuntimeRoot/usr/lib/libMainThreadChecker.dylib:/usr/lib/libRPAC.dylib";
+        XCTestBundlePath = "PlugIns/arcana-iosUITests.xctest";
+        XCTestConfigurationFilePath = "";
+        XCTestSessionIdentifier = "0AA4BA12-721E-4EEB-A759-9AB3A18D3735";
+        "__XCODE_BUILT_PRODUCTS_DIR_PATHS" = "/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator";
+        "__XPC_DYLD_FRAMEWORK_PATH" = "/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator";
+        "__XPC_DYLD_LIBRARY_PATH" = "/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Build/Products/Debug-iphonesimulator";
+        "__XPC_LLVM_PROFILE_FILE" = "/var/folders/7p/x1lf2bq108s2lm1hc7qfsxkw0000gn/T/com.somnics.webview.arcana-iosUITests.xctrunner/51DE3333-7C82-41B7-97FE-DED66D01A963-10956-00000100428E319D/FDCE9638-3ED0-43E7-9816-0315B080FA8F-%p%c.profraw";
+    };
+    stderr = "/dev/ttys006";
+    stdout = "/dev/ttys006";
+    "terminate_running_process" = 1;
+    "wait_for_debugger" = 1;
+} (error = Error Domain=FBSOpenApplicationServiceErrorDomain Code=1 "Simulator device failed to launch com.somnics.webview.arcana-iosUITests.xctrunner." UserInfo={NSLocalizedDescription=Simulator device failed to launch com.somnics.webview.arcana-iosUITests.xctrunner., NSUnderlyingError=0xa51fde4c0 {Error Domain=FBSOpenApplicationServiceErrorDomain Code=1 "The request to open "com.somnics.webview.arcana-iosUITests.xctrunner" failed." UserInfo={BSErrorCodeDescription=RequestDenied, NSLocalizedDescription=The request to open "com.somnics.webview.arcana-iosUITests.xctrunner" failed., NSUnderlyingError=0xa51fdf150 {Error Domain=FBProcessExit Code=64 "The process failed to launch." UserInfo={NSUnderlyingError=0xa51fde340 {Error Domain=RBSRequestErrorDomain Code=5 "Launch failed." UserInfo=0xa57209540 (not displayed)}, BSErrorCodeDescription=launch-failed, NSLocalizedFailureReason=The process failed to launch.}}, FBSOpenApplicationRequestID=0xe21d, NSLocalizedFailureReason=The request was denied by service delegate (SBMainWorkspace).}}, NSLocalizedFailureReason=The request was denied by service delegate (SBMainWorkspace)., FBSOpenApplicationRequestID=0xe21d, SimCallingSelector=launchApplicationWithID:options:pid:error:, BSErrorCodeDescription=RequestDenied})
+2025-11-16 15:25:47.570 xcodebuild[10956:1847451] [MT] IDETestOperationsObserverDebug: 253.108 elapsed -- Testing started completed.
+2025-11-16 15:25:47.570 xcodebuild[10956:1847451] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2025-11-16 15:25:47.570 xcodebuild[10956:1847451] [MT] IDETestOperationsObserverDebug: 253.108 sec, +253.108 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/jrjohn/Documents/projects/arcana-ios/DerivedData/Logs/Test/Test-arcana-ios-2025.11.16_15-21-32-+0800.xcresult
+
+** TEST FAILED **
+
+Testing started
+Test suite 'arcana_iosUITests' started on 'Clone 1 of iPhone 17 - arcana-iosUITests-Runner (11413)'
+Test case 'arcana_iosUITests.testAddUserButtonExists()' passed on 'Clone 1 of iPhone 17 - arcana-iosUITests-Runner (11413)' (12.872 seconds)
+Test case 'arcana_iosUITests.testAppDoesNotCrashOnLaunch()' passed on 'Clone 1 of iPhone 17 - arcana-iosUITests-Runner (11413)' (4.195 seconds)
+Test case 'arcana_iosUITests.testBackNavigation()' passed on 'Clone 1 of iPhone 17 - arcana-iosUITests-Runner (11413)' (11.543 seconds)
+Test case 'arcana_iosUITests.testLaunchPerformance()' passed on 'Clone 1 of iPhone 17 - arcana-iosUITests-Runner (11413)' (32.179 seconds)
+Test case 'arcana_iosUITests.testMainScreenDisplaysCorrectly()' passed on 'Clone 1 of iPhone 17 - arcana-iosUITests-Runner (11413)' (9.744 seconds)
+Test case 'arcana_iosUITests.testNavigateToUserList()' passed on 'Clone 1 of iPhone 17 - arcana-iosUITests-Runner (11413)' (8.744 seconds)
+Test suite 'arcana_iosUITestsLaunchTests' started on 'Clone 3 of iPhone 17 - arcana-iosUITests-Runner (12331)'
+Test case 'arcana_iosUITests.testOfflineModeBanner()' passed on 'Clone 1 of iPhone 17 - arcana-iosUITests-Runner (11413)' (9.624 seconds)
+Test case 'arcana_iosUITests.testPullToRefresh()' passed on 'Clone 1 of iPhone 17 - arcana-iosUITests-Runner (11413)' (8.621 seconds)
+Test case 'arcana_iosUITestsLaunchTests.testLaunch()' passed on 'Clone 3 of iPhone 17 - arcana-iosUITests-Runner (12331)' (9.779 seconds)
+Test case 'arcana_iosUITestsLaunchTests.testLaunch()' passed on 'Clone 3 of iPhone 17 - arcana-iosUITests-Runner (12331)' (7.186 seconds)
+Test case 'arcana_iosUITests.testSearchFunctionality()' passed on 'Clone 1 of iPhone 17 - arcana-iosUITests-Runner (11413)' (8.381 seconds)
+Test case 'arcana_iosUITestsLaunchTests.testLaunch()' passed on 'Clone 3 of iPhone 17 - arcana-iosUITests-Runner (12331)' (9.202 seconds)
+Test case 'arcana_iosUITests.testUserListScreenLoads()' passed on 'Clone 1 of iPhone 17 - arcana-iosUITests-Runner (11413)' (9.038 seconds)
+Test case 'arcana_iosUITestsLaunchTests.testLaunch()' passed on 'Clone 3 of iPhone 17 - arcana-iosUITests-Runner (12331)' (6.084 seconds)
+Test case 'arcana_iosUITestsLaunchTests.testLaunchAndNavigateToUserList()' passed on 'Clone 3 of iPhone 17 - arcana-iosUITests-Runner (12331)' (12.420 seconds)
+Test case 'arcana_iosUITestsLaunchTests.testLaunchAndNavigateToUserList()' failed on 'Clone 3 of iPhone 17 - arcana-iosUITests-Runner (12331)' (9.162 seconds)
+Test case 'arcana_iosUITestsLaunchTests.testLaunchAndNavigateToUserList()' passed on 'Clone 3 of iPhone 17 - arcana-iosUITests-Runner (12331)' (12.166 seconds)
+Test case 'arcana_iosUITestsLaunchTests.testLaunchAndNavigateToUserList()' failed on 'Clone 3 of iPhone 17 - arcana-iosUITests-Runner (12331)' (8.700 seconds)
+Test case 'arcana_iosUITestsLaunchTests.testLaunchWithInteraction()' passed on 'Clone 3 of iPhone 17 - arcana-iosUITests-Runner (12331)' (11.410 seconds)
+Test case 'arcana_iosUITestsLaunchTests.testLaunchWithInteraction()' failed on 'Clone 3 of iPhone 17 - arcana-iosUITests-Runner (12331)' (9.095 seconds)
+Test case 'arcana_iosUITestsLaunchTests.testLaunchWithInteraction()' passed on 'Clone 3 of iPhone 17 - arcana-iosUITests-Runner (12331)' (11.393 seconds)
+Test case 'arcana_iosUITestsLaunchTests.testLaunchWithInteraction()' failed on 'Clone 3 of iPhone 17 - arcana-iosUITests-Runner (12331)' (8.332 seconds)

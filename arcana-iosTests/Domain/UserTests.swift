@@ -86,7 +86,7 @@ struct UserTests {
     // MARK: - Equality Tests
 
     @Test("Users with same ID are equal")
-    func testEqualityS ameId() {
+    func testEqualitySameId() {
         let id = "123"
         let user1 = User(id: id, email: "email1@example.com", firstName: "John", lastName: "Doe")
         let user2 = User(id: id, email: "email2@example.com", firstName: "Jane", lastName: "Smith")

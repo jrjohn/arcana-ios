@@ -1,1 +1,23 @@
 .DS_Store
+/DerivedData
+
+# Test coverage reports
+coverage_report.json
+coverage_report.txt
+coverage_report.html
+*_test_output.log
+test_output.log
+unit_test_output.log
+ui_test_output.log
+test_run.log
+coverage_test_run.log
+final_test_run.log
+test_output_new.log
+coverage_generation.log
+unit_test_coverage.log
+complete_test_coverage.log
+
+# Keep the docs/test-coverage.html for documentation
+!docs/test-coverage.html
+/arcana-ios.xcodeproj/project.xcworkspace/xcuserdata
+/arcana-ios.xcodeproj/project.xcworkspace/xcuserdata

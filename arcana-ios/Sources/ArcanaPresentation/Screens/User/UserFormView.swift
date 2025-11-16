@@ -45,6 +45,7 @@ struct UserFormView: View {
                             placeholder: "Enter first name",
                             keyboardType: .default
                         )
+                        .accessibilityIdentifier("FirstNameField")
 
                         // Last Name
                         FormField(
@@ -57,6 +58,7 @@ struct UserFormView: View {
                             placeholder: "Enter last name",
                             keyboardType: .default
                         )
+                        .accessibilityIdentifier("LastNameField")
 
                         // Email
                         FormField(
@@ -69,6 +71,7 @@ struct UserFormView: View {
                             placeholder: "Enter email address",
                             keyboardType: .emailAddress
                         )
+                        .accessibilityIdentifier("EmailField")
 
                         // Avatar URL (Optional)
                         FormField(
@@ -81,6 +84,7 @@ struct UserFormView: View {
                             placeholder: "https://example.com/avatar.jpg",
                             keyboardType: .URL
                         )
+                        .accessibilityIdentifier("AvatarField")
                     }
                     .padding(.horizontal, ArcanaTheme.Spacing.md)
                     
@@ -93,7 +97,7 @@ struct UserFormView: View {
                                 ProgressView()
                                     .progressViewStyle(CircularProgressViewStyle(tint: .white))
                             }
-                            
+
                             Text(viewModel.submitButtonTitle)
                                 .font(ArcanaTheme.Typography.headline)
                         }
@@ -111,6 +115,8 @@ struct UserFormView: View {
                         .foregroundColor(.white)
                         .cornerRadius(ArcanaTheme.CornerRadius.medium)
                     }
+                    .accessibilityIdentifier("SubmitButton")
+                    .accessibilityLabel(viewModel.submitButtonTitle)
                     .disabled(!viewModel.state.isSaveEnabled || viewModel.state.isLoading)
                     .padding(.horizontal, ArcanaTheme.Spacing.md)
                     .padding(.top, ArcanaTheme.Spacing.md)
@@ -125,6 +131,7 @@ struct UserFormView: View {
                 Button("Cancel") {
                     dismiss()
                 }
+                .accessibilityIdentifier("CancelButton")
             }
         }
         .alert("Error", isPresented: $showingError, presenting: errorToShow) { error in

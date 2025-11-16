@@ -11,7 +11,7 @@ import Foundation
 struct UserValidator {
     
     // MARK: - Validation Errors
-    enum ValidationError: Error {
+    enum ValidationError: Error, Equatable {
         case invalidEmail(String)
         case invalidName(String)
         case fieldTooLong(String, maxLength: Int)
