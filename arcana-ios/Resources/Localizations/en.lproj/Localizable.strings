@@ -1,0 +1,80 @@
+/*
+  Localizable.strings - English
+  arcana-ios
+
+  English localization strings
+*/
+
+// MARK: - Common
+"common.ok" = "OK";
+"common.cancel" = "Cancel";
+"common.save" = "Save";
+"common.delete" = "Delete";
+"common.edit" = "Edit";
+"common.add" = "Add";
+"common.create" = "Create";
+"common.update" = "Update";
+"common.refresh" = "Refresh";
+"common.loading" = "Loading...";
+"common.error" = "Error";
+"common.retry" = "Retry";
+"common.close" = "Close";
+"common.done" = "Done";
+"common.back" = "Back";
+
+// MARK: - Main Screen
+"main.title" = "Arcana";
+"main.subtitle" = "Mystical User Management";
+"main.manage_users" = "Manage Users";
+"main.welcome_message" = "Welcome to Arcana - Your mystical gateway to user management";
+
+// MARK: - User List
+"user_list.title" = "Users";
+"user_list.search_placeholder" = "Search users...";
+"user_list.empty_state" = "No Users Found";
+"user_list.empty_state_message" = "Add your first user to get started";
+"user_list.offline_mode" = "Offline Mode";
+"user_list.sync_pending" = "%d changes pending";
+"user_list.sync_now" = "Sync Now";
+"user_list.delete_confirm_title" = "Delete User";
+"user_list.delete_confirm_message" = "Are you sure you want to delete %@? This action cannot be undone.";
+"user_list.total_users" = "%d users loaded";
+"user_list.page" = "Page %d of %d";
+
+// MARK: - User Form
+"user_form.create_title" = "Create User";
+"user_form.edit_title" = "Edit User";
+"user_form.create_button" = "Create";
+"user_form.save_button" = "Save";
+
+"user_form.first_name_label" = "First Name";
+"user_form.first_name_placeholder" = "Enter first name";
+
+"user_form.last_name_label" = "Last Name";
+"user_form.last_name_placeholder" = "Enter last name";
+
+"user_form.email_label" = "Email";
+"user_form.email_placeholder" = "Enter email address";
+
+"user_form.avatar_label" = "Avatar URL (Optional)";
+"user_form.avatar_placeholder" = "https://example.com/avatar.jpg";
+
+// MARK: - Validation Errors
+"validation.first_name_required" = "First name is required";
+"validation.last_name_required" = "Last name is required";
+"validation.email_required" = "Email is required";
+"validation.email_invalid" = "Please enter a valid email address";
+
+// MARK: - Network Errors
+"network_error.no_connection" = "No internet connection";
+"network_error.timeout" = "Request timed out";
+"network_error.server_error" = "Server error occurred";
+"network_error.not_found" = "Resource not found";
+"network_error.unauthorized" = "Unauthorized access";
+"network_error.unknown" = "An unknown error occurred";
+
+// MARK: - Analytics Events
+"analytics.user_created" = "User created successfully";
+"analytics.user_updated" = "User updated successfully";
+"analytics.user_deleted" = "User deleted successfully";
+"analytics.screen_viewed" = "Screen viewed";

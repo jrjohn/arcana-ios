@@ -1,0 +1,80 @@
+/*
+  Localizable.strings - Simplified Chinese
+  arcana-ios
+
+  简体中文本地化字符串
+*/
+
+// MARK: - Common
+"common.ok" = "确定";
+"common.cancel" = "取消";
+"common.save" = "保存";
+"common.delete" = "删除";
+"common.edit" = "编辑";
+"common.add" = "添加";
+"common.create" = "创建";
+"common.update" = "更新";
+"common.refresh" = "刷新";
+"common.loading" = "加载中...";
+"common.error" = "错误";
+"common.retry" = "重试";
+"common.close" = "关闭";
+"common.done" = "完成";
+"common.back" = "返回";
+
+// MARK: - Main Screen
+"main.title" = "Arcana";
+"main.subtitle" = "神秘用户管理";
+"main.manage_users" = "管理用户";
+"main.welcome_message" = "欢迎来到 Arcana - 您的神秘用户管理门户";
+
+// MARK: - User List
+"user_list.title" = "用户";
+"user_list.search_placeholder" = "搜索用户...";
+"user_list.empty_state" = "未找到用户";
+"user_list.empty_state_message" = "添加您的第一个用户以开始";
+"user_list.offline_mode" = "离线模式";
+"user_list.sync_pending" = "%d 个更改待同步";
+"user_list.sync_now" = "立即同步";
+"user_list.delete_confirm_title" = "删除用户";
+"user_list.delete_confirm_message" = "您确定要删除 %@ 吗？此操作无法撤消。";
+"user_list.total_users" = "已加载 %d 个用户";
+"user_list.page" = "第 %d 页，共 %d 页";
+
+// MARK: - User Form
+"user_form.create_title" = "创建用户";
+"user_form.edit_title" = "编辑用户";
+"user_form.create_button" = "创建";
+"user_form.save_button" = "保存";
+
+"user_form.first_name_label" = "名字";
+"user_form.first_name_placeholder" = "输入名字";
+
+"user_form.last_name_label" = "姓氏";
+"user_form.last_name_placeholder" = "输入姓氏";
+
+"user_form.email_label" = "电子邮件";
+"user_form.email_placeholder" = "输入电子邮件地址";
+
+"user_form.avatar_label" = "头像网址（可选）";
+"user_form.avatar_placeholder" = "https://example.com/avatar.jpg";
+
+// MARK: - Validation Errors
+"validation.first_name_required" = "名字为必填项";
+"validation.last_name_required" = "姓氏为必填项";
+"validation.email_required" = "电子邮件为必填项";
+"validation.email_invalid" = "请输入有效的电子邮件地址";
+
+// MARK: - Network Errors
+"network_error.no_connection" = "无网络连接";
+"network_error.timeout" = "请求超时";
+"network_error.server_error" = "服务器发生错误";
+"network_error.not_found" = "未找到资源";
+"network_error.unauthorized" = "未经授权的访问";
+"network_error.unknown" = "发生未知错误";
+
+// MARK: - Analytics Events
+"analytics.user_created" = "用户创建成功";
+"analytics.user_updated" = "用户更新成功";
+"analytics.user_deleted" = "用户删除成功";
+"analytics.screen_viewed" = "屏幕已查看";
