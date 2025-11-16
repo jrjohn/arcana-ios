@@ -56,8 +56,8 @@ struct SyncStatusBanner: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .background(bannerColor)
-            .animation(.easeInOut(duration: 0.3), value: networkMonitor.isConnected)
-            .animation(.easeInOut(duration: 0.3), value: pendingChangesCount)
+            .animation(.easeInOut(duration: AppConstants.UI.animationDuration), value: networkMonitor.isConnected)
+            .animation(.easeInOut(duration: AppConstants.UI.animationDuration), value: pendingChangesCount)
         }
     }
 

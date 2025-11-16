@@ -13,22 +13,24 @@ import Alamofire
 final class ApiService {
     
     // MARK: - Properties
-    
+
     private let baseURL: String
     private let session: Session
-    
+    private let config: AppConfiguration
+
     // MARK: - Initialization
-    
-    init(baseURL: String = "https://reqres.in/api") {
-        self.baseURL = baseURL
-        
+
+    init(baseURL: String? = nil, config: AppConfiguration = .shared) {
+        self.config = config
+        self.baseURL = baseURL ?? config.apiBaseURL
+
         // Configure session with interceptors and retry policy
         let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = 30
-        configuration.timeoutIntervalForResource = 30
-        
-        let interceptor = ApiInterceptor()
-        
+        configuration.timeoutIntervalForRequest = config.apiTimeout
+        configuration.timeoutIntervalForResource = config.apiTimeout
+
+        let interceptor = ApiInterceptor(config: config)
+
         self.session = Session(
             configuration: configuration,
             interceptor: interceptor
@@ -39,11 +41,11 @@ final class ApiService {
     
     /// Get users list with pagination
     /// GET /api/users?page={page}
-    func getUsers(page: Int = 1, perPage: Int = 6) async throws -> UsersListResponse {
-        let endpoint = "\(baseURL)/users"
+    func getUsers(page: Int = 1, perPage: Int? = nil) async throws -> UsersListResponse {
+        let endpoint = "\(baseURL)\(config.usersEndpoint)"
         let parameters: [String: Any] = [
             "page": page,
-            "per_page": perPage
+            "per_page": perPage ?? config.defaultPageSize
         ]
         
         return try await session.request(
@@ -163,28 +165,35 @@ final class ApiService {
 
 /// Request/Response interceptor for logging and error handling
 private final class ApiInterceptor: RequestInterceptor, @unchecked Sendable {
-    
+
     private let apiKey = "reqres-free-v1"
-    
+    private let config: AppConfiguration
+
+    init(config: AppConfiguration = .shared) {
+        self.config = config
+    }
+
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         var urlRequest = urlRequest
-        
+
         // Add common headers
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
-        
+
         // Add API key header as required by reqres.in
         urlRequest.setValue(apiKey, forHTTPHeaderField: "x-api-key")
-        
+
         completion(.success(urlRequest))
     }
-    
+
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
-        guard request.retryCount < 3 else {
+        let maxRetries = config.apiMaxRetries
+
+        guard request.retryCount < maxRetries else {
             completion(.doNotRetry)
             return
         }
-        
+
         // Retry on network errors
         if let afError = error.asAFError, afError.isSessionTaskError {
             completion(.retryWithDelay(1.0))

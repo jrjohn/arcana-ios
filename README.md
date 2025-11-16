@@ -62,6 +62,8 @@
 - 💾 **Persistent Storage** - SwiftData framework
 - 🌐 **RESTful API** - Alamofire + async/await
 - 🏗️ **MVVM Pattern** - Clean ViewModel architecture with Input/Output/Effect pattern
+- 🌍 **Internationalization** - Multi-language support (English, Chinese)
+- ⚙️ **Configuration Management** - Environment-specific configs with .plist files
 - 📝 **Comprehensive Documentation** - Auto-generated API docs and architecture diagrams
 
 ---
@@ -524,6 +526,10 @@ open docs/diagrams/
 - ✅ [Input Validation](docs/USER_FORM_VALIDATION.md) - Form validation implementation
 - 🎨 [Mermaid Diagrams](docs/architecture/) - Source diagrams
 - 📊 [Pagination Guide](docs/PAGINATION.md) - Lazy loading implementation
+- ⚙️ [Configuration Guide](CONFIGURATION_GUIDE.md) - Environment-specific configuration management
+- 🌍 [Internationalization Guide](I18N_GUIDE.md) - Multi-language support
+- 📝 [Configuration Migration](CONFIGURATION_MIGRATION.md) - Hardcoded values migration report
+- ♿ [Accessibility Identifiers](ACCESSIBILITY_IDENTIFIERS.md) - UI testing accessibility guide
 
 ---
 

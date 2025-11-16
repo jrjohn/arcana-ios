@@ -53,7 +53,7 @@ final class UserListViewModel {
     private(set) var currentPage: Int = 1
     private(set) var totalPages: Int = 1
     private(set) var hasMorePages: Bool = false
-    private let perPage: Int = 10
+    private let perPage: Int = AppConstants.Pagination.defaultPageSize
 
     // MARK: - Effect Handler
     var onEffect: ((Effect) -> Void)?

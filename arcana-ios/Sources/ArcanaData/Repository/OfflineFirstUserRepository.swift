@@ -474,7 +474,7 @@ final class OfflineFirstUserRepository: UserRepository {
                 ])
 
                 // Remove from queue if max retries exceeded
-                if entity.retryCount >= 3 {
+                if entity.retryCount >= AppConstants.API.maxRetries {
                     modelContext.delete(entity)
                     analyticsTracker.trackEvent(.syncFailed, params: [
                         "operation": change.operation.rawValue,

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- API Configuration -->
+	<key>API</key>
+	<dict>
+		<key>BaseURL</key>
+		<string>https://reqres.in/api</string>
+		<key>Timeout</key>
+		<integer>30</integer>
+		<key>MaxRetries</key>
+		<integer>3</integer>
+	</dict>
+
+	<!-- Endpoints -->
+	<key>Endpoints</key>
+	<dict>
+		<key>Users</key>
+		<string>/users</string>
+		<key>User</key>
+		<string>/users/%@</string>
+		<key>CreateUser</key>
+		<string>/users</string>
+		<key>UpdateUser</key>
+		<string>/users/%@</string>
+		<key>DeleteUser</key>
+		<string>/users/%@</string>
+	</dict>
+
+	<!-- Pagination -->
+	<key>Pagination</key>
+	<dict>
+		<key>DefaultPageSize</key>
+		<integer>6</integer>
+		<key>MaxPageSize</key>
+		<integer>12</integer>
+	</dict>
+
+	<!-- Cache Configuration -->
+	<key>Cache</key>
+	<dict>
+		<key>MaxSize</key>
+		<integer>100</integer>
+		<key>TTL</key>
+		<integer>300</integer>
+		<key>Enabled</key>
+		<true/>
+	</dict>
+
+	<!-- Analytics -->
+	<key>Analytics</key>
+	<dict>
+		<key>Enabled</key>
+		<true/>
+		<key>DebugMode</key>
+		<true/>
+		<key>TrackScreenViews</key>
+		<true/>
+		<key>TrackUserActions</key>
+		<true/>
+	</dict>
+
+	<!-- Feature Flags -->
+	<key>Features</key>
+	<dict>
+		<key>OfflineMode</key>
+		<true/>
+		<key>AutoSync</key>
+		<true/>
+		<key>PullToRefresh</key>
+		<true/>
+		<key>SearchEnabled</key>
+		<true/>
+		<key>DeleteEnabled</key>
+		<true/>
+		<key>EditEnabled</key>
+		<true/>
+	</dict>
+
+	<!-- UI Configuration -->
+	<key>UI</key>
+	<dict>
+		<key>AnimationDuration</key>
+		<real>0.3</real>
+		<key>DebounceDelay</key>
+		<real>0.3</real>
+		<key>ToastDuration</key>
+		<real>2.0</real>
+		<key>LoadingIndicatorDelay</key>
+		<real>0.5</real>
+	</dict>
+
+	<!-- App Information -->
+	<key>App</key>
+	<dict>
+		<key>Name</key>
+		<string>Arcana</string>
+		<key>Version</key>
+		<string>1.0.0</string>
+		<key>BuildNumber</key>
+		<string>1</string>
+		<key>Environment</key>
+		<string>Development</string>
+	</dict>
+</dict>
+</plist>

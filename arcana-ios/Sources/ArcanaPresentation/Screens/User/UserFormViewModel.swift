@@ -145,7 +145,7 @@ final class UserFormViewModel: ObservableObject {
     private func setupBindings() {
         // Update save button state whenever fields change
         $state
-            .debounce(for: .milliseconds(100), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(AppConstants.UI.debounceDelay), scheduler: DispatchQueue.main)
             .map { state in
                 !state.firstName.isEmpty &&
                 !state.lastName.isEmpty &&
