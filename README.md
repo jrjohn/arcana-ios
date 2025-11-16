@@ -202,47 +202,67 @@ final class ViewModel {
 
 Comprehensive architecture diagrams are available below:
 
-#### Architecture Diagrams
-
-**1. Overall Architecture**
+#### 1. Overall Architecture
 
 ![Overall Architecture](docs/diagrams/01-overall-architecture.png)
 
-**2. Clean Architecture Layers**
+*[View Mermaid Source](docs/architecture/01-overall-architecture.mmd)*
+
+---
+
+#### 2. Clean Architecture Layers
 
 ![Clean Architecture Layers](docs/diagrams/02-clean-architecture-layers.png)
 
-**3. Pagination System**
+*[View Mermaid Source](docs/architecture/02-clean-architecture-layers.mmd)*
+
+---
+
+#### 3. Pagination System
 
 ![Pagination System](docs/diagrams/03-pagination-system.png)
 
-**4. Data Flow**
+*[View Mermaid Source](docs/architecture/03-pagination-system.mmd)*
+
+---
+
+#### 4. Data Flow
 
 ![Data Flow](docs/diagrams/04-data-flow.png)
 
-**5. Offline-First Sync**
+*[View Mermaid Source](docs/architecture/04-data-flow.mmd)*
+
+---
+
+#### 5. Offline-First Sync
 
 ![Offline-First Sync](docs/diagrams/05-offline-first-sync.png)
 
-**6. Dependency Graph**
+*[View Mermaid Source](docs/architecture/05-offline-first-sync.mmd)*
+
+---
+
+#### 6. Dependency Graph
 
 ![Dependency Graph](docs/diagrams/06-dependency-graph.png)
 
-#### Source Files (Mermaid)
-View and edit online at [Mermaid Live](https://mermaid.live):
-1. [Overall Architecture](docs/architecture/01-overall-architecture.mmd)
-2. [Clean Architecture Layers](docs/architecture/02-clean-architecture-layers.mmd)
-3. [Pagination System](docs/architecture/03-pagination-system.mmd)
-4. [Data Flow](docs/architecture/04-data-flow.mmd)
-5. [Offline-First Sync](docs/architecture/05-offline-first-sync.mmd)
-6. [Dependency Graph](docs/architecture/06-dependency-graph.mmd)
+*[View Mermaid Source](docs/architecture/06-dependency-graph.mmd)*
 
-#### Generate Diagrams
+---
+
+#### 🔧 Regenerate Diagrams
+
+To regenerate PNG diagrams from Mermaid source files:
+
 ```bash
-# Generate PNG diagrams from Mermaid source files
-npm run generate-diagrams
+# Install mermaid-cli (if not already installed)
+npm install -g @mermaid-js/mermaid-cli
 
-# Output: docs/diagrams/*.png
+# Generate all diagrams
+for file in docs/architecture/*.mmd; do
+  filename=$(basename "$file" .mmd)
+  mmdc -i "$file" -o "docs/diagrams/${filename}.png" -b transparent -w 1200
+done
 ```
 
 #### Detailed Documentation
