@@ -1,0 +1,50 @@
+graph TB
+    subgraph "Presentation Layer"
+        Views["SwiftUI Views<br/>(UserListView, UserFormView)"]
+        ViewModels["ViewModels<br/>@Observable + Input/Output/Effect"]
+        Components["Reusable Components<br/>(AvatarView, SearchBar)"]
+        Theme["ArcanaTheme<br/>(Colors, Typography, Spacing)"]
+    end
+
+    subgraph "Domain Layer"
+        Services["Services<br/>(UserService)"]
+        Models["Domain Models<br/>(User, PaginatedResult)"]
+        Validation["Validators<br/>(UserValidator)"]
+    end
+
+    subgraph "Data Layer"
+        Repository["Repository<br/>(OfflineFirstUserRepository)"]
+        LocalDS["Local DataSource<br/>(SwiftDataUserDataSource)"]
+        RemoteDS["Remote DataSource<br/>(ReqresUserDataSource)"]
+        Cache["LRU Cache<br/>(User caching)"]
+    end
+
+    subgraph "Infrastructure"
+        SwiftData["SwiftData<br/>(UserEntity, AnalyticsEventEntity)"]
+        API["API Service<br/>(Alamofire + async/await)"]
+        Network["Network Monitor<br/>(NWPathMonitor)"]
+        Analytics["Analytics Tracker<br/>(Event tracking)"]
+    end
+
+    Views --> ViewModels
+    ViewModels --> Services
+    Services --> Models
+    Services --> Validation
+    Services --> Repository
+
+    Repository --> LocalDS
+    Repository --> RemoteDS
+    Repository --> Cache
+
+    LocalDS --> SwiftData
+    RemoteDS --> API
+
+    ViewModels --> Analytics
+    Repository --> Network
+
+    style Views fill:#e1bee7
+    style ViewModels fill:#ce93d8
+    style Services fill:#90caf9
+    style Repository fill:#81c784
+    style API fill:#fff59d
+    style SwiftData fill:#ffcc80

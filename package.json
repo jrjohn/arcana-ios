@@ -1,0 +1,26 @@
+{
+  "name": "arcana-ios-docs",
+  "version": "1.0.0",
+  "description": "Documentation generation tools for Arcana iOS",
+  "scripts": {
+    "generate-diagrams": "mmdc -i docs/architecture/*.mmd -o docs/diagrams -e png -b transparent",
+    "generate-diagrams-pdf": "mmdc -i docs/architecture/*.mmd -o docs/diagrams -e pdf",
+    "watch-diagrams": "nodemon --watch docs/architecture --ext mmd --exec 'npm run generate-diagrams'",
+    "list-diagrams": "ls -la docs/architecture/*.mmd docs/diagrams/*.png 2>/dev/null || echo 'No diagrams found'",
+    "setup": "npm install"
+  },
+  "devDependencies": {
+    "@mermaid-js/mermaid-cli": "^10.6.1",
+    "nodemon": "^3.0.2"
+  },
+  "keywords": [
+    "ios",
+    "swift",
+    "swiftui",
+    "documentation",
+    "mermaid",
+    "diagrams"
+  ],
+  "author": "Arcana Project",
+  "license": "MIT"
+}

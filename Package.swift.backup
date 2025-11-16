@@ -1,0 +1,88 @@
+// swift-tools-version: 5.9
+// The swift-tools-version declares the minimum version of Swift required to build this package.
+
+import PackageDescription
+
+let package = Package(
+    name: "Arcana",
+    platforms: [
+        .iOS(.v16),
+        .macOS(.v13)
+    ],
+    products: [
+        // Main app product
+        .library(
+            name: "ArcanaCore",
+            targets: ["ArcanaCore"]
+        ),
+        .library(
+            name: "ArcanaDomain",
+            targets: ["ArcanaDomain"]
+        ),
+        .library(
+            name: "ArcanaData",
+            targets: ["ArcanaData"]
+        ),
+        .library(
+            name: "ArcanaPresentation",
+            targets: ["ArcanaPresentation"]
+        ),
+    ],
+    dependencies: [
+        // External dependencies can be added here
+        // .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
+    ],
+    targets: [
+        // MARK: - Core Layer
+        .target(
+            name: "ArcanaCore",
+            dependencies: [],
+            path: "arcana-ios/Sources/ArcanaCore"
+        ),
+
+        // MARK: - Domain Layer
+        .target(
+            name: "ArcanaDomain",
+            dependencies: ["ArcanaCore"],
+            path: "arcana-ios/Sources/ArcanaDomain"
+        ),
+
+        // MARK: - Data Layer
+        .target(
+            name: "ArcanaData",
+            dependencies: [
+                "ArcanaCore",
+                "ArcanaDomain"
+            ],
+            path: "arcana-ios/Sources/ArcanaData"
+        ),
+
+        // MARK: - Presentation Layer
+        .target(
+            name: "ArcanaPresentation",
+            dependencies: [
+                "ArcanaCore",
+                "ArcanaDomain",
+                "ArcanaData"
+            ],
+            path: "arcana-ios/Sources/ArcanaPresentation"
+        ),
+
+        // MARK: - Tests
+        .testTarget(
+            name: "ArcanaDomainTests",
+            dependencies: ["ArcanaDomain"],
+            path: "arcana-ios/Tests/ArcanaDomainTests"
+        ),
+        .testTarget(
+            name: "ArcanaPresentationTests",
+            dependencies: ["ArcanaPresentation"],
+            path: "arcana-ios/Tests/ArcanaPresentationTests"
+        ),
+        .testTarget(
+            name: "ArcanaDataTests",
+            dependencies: ["ArcanaData"],
+            path: "arcana-ios/Tests/ArcanaDataTests"
+        ),
+    ]
+)

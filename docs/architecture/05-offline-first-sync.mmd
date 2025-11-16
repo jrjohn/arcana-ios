@@ -1,0 +1,64 @@
+sequenceDiagram
+    participant U as User
+    participant VM as ViewModel
+    participant R as Repository
+    participant L as Local DB
+    participant Q as Sync Queue
+    participant N as NetworkMonitor
+    participant API as Remote API
+
+    Note over U: Offline Mode
+
+    U->>VM: Create User
+    VM->>R: createUser(user)
+    R->>L: Save Locally (Optimistic)
+    activate L
+    L-->>R: Success
+    deactivate L
+
+    R->>API: POST /users
+    activate API
+    API--xR: Network Error
+    deactivate API
+
+    R->>Q: Queue PendingChange
+    activate Q
+    Note over Q: {operation: "create"<br/>user: {...}<br/>retryCount: 0}
+    deactivate Q
+
+    R-->>VM: Return User (from local)
+    VM-->>U: Show Success (Offline)
+
+    Note over N: Network Restored
+
+    N->>N: Detect Connection
+    N->>R: Trigger processOfflineChanges()
+    activate R
+
+    R->>Q: Fetch Pending Changes
+    activate Q
+    Q-->>R: List<PendingChange>
+    deactivate Q
+
+    loop For each pending change
+        R->>API: Sync Operation
+        activate API
+        API-->>R: Success/Failure
+        deactivate API
+
+        alt Success
+            R->>Q: Delete Change
+            R->>L: Update with Server Response
+        else Failure
+            R->>Q: Increment Retry Count
+            alt Retry Count >= 3
+                R->>Q: Delete Change (Max Retries)
+                Note over R: Log Failed Sync
+            end
+        end
+    end
+
+    R-->>N: Sync Complete
+    deactivate R
+
+    Note over U: All Changes Synced

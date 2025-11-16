@@ -1,0 +1,44 @@
+sequenceDiagram
+    participant V as UserListView
+    participant VM as UserListViewModel
+    participant S as UserService
+    participant R as Repository
+    participant API as ReqresAPI
+
+    Note over V: User scrolls to<br/>last item
+
+    V->>VM: send(.loadNextPage)
+    activate VM
+
+    alt hasMorePages && !isLoadingMore
+        VM->>VM: isLoadingMore = true
+        VM->>S: getUsers(page: 2, perPage: 10)
+        activate S
+
+        S->>R: getUsers(page: 2, perPage: 10)
+        activate R
+
+        R->>API: GET /users?page=2&per_page=10
+        activate API
+        API-->>R: PaginatedResult
+        deactivate API
+
+        R->>R: Cache new users
+        R->>R: Save to SwiftData
+        R-->>S: PaginatedResult<User>
+        deactivate R
+
+        S->>S: Track analytics
+        S-->>VM: PaginatedResult
+        deactivate S
+
+        VM->>VM: users.append(result.items)
+        VM->>VM: currentPage = 2
+        VM->>VM: hasMorePages = result.hasMore
+        VM->>VM: isLoadingMore = false
+    end
+
+    VM-->>V: State updated
+    deactivate VM
+
+    Note over V: SwiftUI re-renders<br/>with new users

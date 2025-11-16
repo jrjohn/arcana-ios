@@ -1,0 +1,46 @@
+graph LR
+    subgraph "Presentation<br/>(ArcanaPresentation)"
+        P1["UserListView"]
+        P2["UserListViewModel"]
+        P3["UserFormView"]
+        P4["Components"]
+    end
+
+    subgraph "Domain<br/>(ArcanaDomain)"
+        D1["UserService"]
+        D2["User Model"]
+        D3["UserValidator"]
+        D4["Business Rules"]
+    end
+
+    subgraph "Data<br/>(ArcanaData)"
+        DA1["UserRepository"]
+        DA2["LocalDataSource"]
+        DA3["RemoteDataSource"]
+        DA4["UserEntity"]
+    end
+
+    subgraph "Core<br/>(ArcanaCore)"
+        C1["Dependency Injection"]
+        C2["ApiService"]
+        C3["NetworkMonitor"]
+        C4["AnalyticsTracker"]
+    end
+
+    P2 -->|"@Dependency"| D1
+    D1 -->|Protocol| DA1
+    DA1 --> DA2
+    DA1 --> DA3
+    DA2 --> DA4
+
+    P2 --> C4
+    DA1 --> C3
+    DA3 --> C2
+
+    style P1 fill:#e1bee7
+    style P2 fill:#ce93d8
+    style D1 fill:#90caf9
+    style D2 fill:#64b5f6
+    style DA1 fill:#81c784
+    style DA2 fill:#66bb6a
+    style C2 fill:#fff59d

@@ -1,0 +1,16 @@
+# Generated documentation
+api/**
+!api/.gitkeep
+
+# Generated diagrams
+diagrams/**
+!diagrams/.gitkeep
+
+# Node modules (if npm is run in docs directory)
+node_modules/
+
+# Build outputs
+.build/
+
+# macOS
+.DS_Store

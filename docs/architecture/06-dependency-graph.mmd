@@ -1,0 +1,52 @@
+graph TD
+    App[ArcanaApp]
+
+    App --> MC[ModelContainer]
+    App --> Deps[AppDependencies.setup]
+
+    Deps --> AS[AnalyticsTracker]
+    Deps --> LD[LocalDataSource]
+    Deps --> RD[RemoteDataSource]
+    Deps --> Repo[UserRepository]
+    Deps --> Service[UserService]
+
+    MC --> AS
+    MC --> LD
+    MC --> Repo
+
+    AS --> PersistentTracker[PersistentAnalyticsTracker]
+    PersistentTracker --> SwiftData1[SwiftData<br/>AnalyticsEventEntity]
+
+    LD --> LocalImpl[SwiftDataUserDataSource]
+    LocalImpl --> SwiftData2[SwiftData<br/>UserEntity]
+
+    RD --> RealAPI{useRealAPI?}
+    RealAPI -->|Yes| Reqres[ReqresUserDataSource]
+    RealAPI -->|No| Mock[MockRemoteUserDataSource]
+
+    Reqres --> ApiService[ApiService<br/>Alamofire]
+    Mock --> MockData[In-Memory Mock Data]
+
+    Repo --> OfflineRepo[OfflineFirstUserRepository]
+    OfflineRepo --> LD
+    OfflineRepo --> RD
+    OfflineRepo --> AS
+    OfflineRepo --> Cache[LRU Cache]
+    OfflineRepo --> NetworkMon[NetworkMonitor]
+    OfflineRepo --> SwiftData3[SwiftData<br/>PendingChangeEntity]
+
+    Service --> ServiceImpl[UserServiceImpl]
+    ServiceImpl --> Repo
+    ServiceImpl --> AS
+    ServiceImpl --> Validator[UserValidator]
+
+    NetworkMon --> NWPath[NWPathMonitor<br/>Connectivity]
+
+    style App fill:#e1bee7
+    style Deps fill:#ce93d8
+    style Service fill:#90caf9
+    style Repo fill:#81c784
+    style ApiService fill:#fff59d
+    style SwiftData1 fill:#ffcc80
+    style SwiftData2 fill:#ffcc80
+    style SwiftData3 fill:#ffcc80

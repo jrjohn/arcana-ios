@@ -1,0 +1,121 @@
+// swift-tools-version: 5.9
+// The swift-tools-version declares the minimum version of Swift required to build this package.
+
+import PackageDescription
+
+let package = Package(
+    name: "ArcanaIOS",
+    platforms: [
+        .iOS(.v16),
+        .macOS(.v13)
+    ],
+    products: [
+        // Main app library
+        .library(
+            name: "ArcanaCore",
+            targets: ["ArcanaCore"]
+        ),
+        .library(
+            name: "ArcanaData",
+            targets: ["ArcanaData"]
+        ),
+        .library(
+            name: "ArcanaDomain",
+            targets: ["ArcanaDomain"]
+        ),
+        .library(
+            name: "ArcanaPresentation",
+            targets: ["ArcanaPresentation"]
+        ),
+    ],
+    dependencies: [
+        // Swift Dependencies - Modern dependency injection
+        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.1.0"),
+    ],
+    targets: [
+        // MARK: - Core Module
+        .target(
+            name: "ArcanaCore",
+            dependencies: [
+                .product(name: "Dependencies", package: "swift-dependencies"),
+            ],
+            path: "../arcana-ios/Sources/ArcanaCore",
+            swiftSettings: [
+                .enableExperimentalFeature("StrictConcurrency")
+            ]
+        ),
+
+        // MARK: - Domain Module
+        .target(
+            name: "ArcanaDomain",
+            dependencies: [
+                "ArcanaCore"
+            ],
+            path: "../arcana-ios/Sources/ArcanaDomain",
+            swiftSettings: [
+                .enableExperimentalFeature("StrictConcurrency")
+            ]
+        ),
+
+        // MARK: - Data Module
+        .target(
+            name: "ArcanaData",
+            dependencies: [
+                "ArcanaCore",
+                "ArcanaDomain"
+            ],
+            path: "../arcana-ios/Sources/ArcanaData",
+            swiftSettings: [
+                .enableExperimentalFeature("StrictConcurrency")
+            ]
+        ),
+
+        // MARK: - Presentation Module
+        .target(
+            name: "ArcanaPresentation",
+            dependencies: [
+                "ArcanaCore",
+                "ArcanaDomain",
+                "ArcanaData"
+            ],
+            path: "../arcana-ios/Sources/ArcanaPresentation",
+            swiftSettings: [
+                .enableExperimentalFeature("StrictConcurrency")
+            ]
+        ),
+
+        // MARK: - Tests
+        .testTarget(
+            name: "ArcanaCoreTests",
+            dependencies: ["ArcanaCore"],
+            path: "../arcana-ios/Tests/ArcanaCoreTests"
+        ),
+        .testTarget(
+            name: "ArcanaDomainTests",
+            dependencies: [
+                "ArcanaCore",
+                "ArcanaDomain"
+            ],
+            path: "../arcana-ios/Tests/ArcanaDomainTests"
+        ),
+        .testTarget(
+            name: "ArcanaDataTests",
+            dependencies: [
+                "ArcanaCore",
+                "ArcanaDomain",
+                "ArcanaData"
+            ],
+            path: "../arcana-ios/Tests/ArcanaDataTests"
+        ),
+        .testTarget(
+            name: "ArcanaPresentationTests",
+            dependencies: [
+                "ArcanaCore",
+                "ArcanaDomain",
+                "ArcanaData",
+                "ArcanaPresentation"
+            ],
+            path: "../arcana-ios/Tests/ArcanaPresentationTests"
+        ),
+    ]
+)

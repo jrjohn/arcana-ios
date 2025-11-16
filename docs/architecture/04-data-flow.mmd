@@ -1,0 +1,46 @@
+graph TD
+    Start([User Action]) --> VM[ViewModel.send Input]
+
+    VM --> Service[UserService]
+    Service --> Validate{Validate Input}
+
+    Validate -->|Invalid| Error1[Return ValidationError]
+    Validate -->|Valid| Repo[UserRepository]
+
+    Repo --> Cache{Check Cache}
+    Cache -->|Hit| ReturnCache[Return Cached Data]
+    Cache -->|Miss| Local{Check Local DB}
+
+    Local -->|Found| ReturnLocal[Return Local Data<br/>+ Background Sync]
+    Local -->|Not Found| Remote[Fetch from Remote API]
+
+    Remote --> Network{Network Available?}
+    Network -->|Yes| API[API Request]
+    Network -->|No| Offline[Return Offline Error]
+
+    API --> Success{Success?}
+    Success -->|Yes| SaveLocal[Save to Local DB]
+    Success -->|No| Error2[Return API Error]
+
+    SaveLocal --> UpdateCache[Update Cache]
+    UpdateCache --> Return[Return Data]
+
+    ReturnCache --> VMUpdate[Update ViewModel State]
+    ReturnLocal --> VMUpdate
+    Return --> VMUpdate
+    Error1 --> VMUpdate
+    Error2 --> VMUpdate
+    Offline --> Queue[Queue for Sync]
+    Queue --> VMUpdate
+
+    VMUpdate --> UI[SwiftUI Re-render]
+
+    style Start fill:#90caf9
+    style VM fill:#ce93d8
+    style Service fill:#90caf9
+    style Repo fill:#81c784
+    style API fill:#fff59d
+    style UI fill:#e1bee7
+    style Error1 fill:#ef5350
+    style Error2 fill:#ef5350
+    style Offline fill:#ff9800
