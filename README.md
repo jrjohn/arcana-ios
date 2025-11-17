@@ -61,6 +61,7 @@
 - 🎯 **Type-Safe Navigation** - SwiftUI NavigationStack
 - 💾 **Persistent Storage** - SwiftData framework
 - 🌐 **RESTful API** - Alamofire + async/await
+- 🔍 **Network Logging** - Configurable request/response logging with JSON formatting
 - 🏗️ **MVVM Pattern** - Clean ViewModel architecture with Input/Output/Effect pattern
 - 🌍 **Internationalization** - Multi-language support (English, Chinese)
 - ⚙️ **Configuration Management** - Environment-specific configs with .plist files
@@ -412,6 +413,7 @@ struct UserFormView: View {
 | Category | Technology | Purpose |
 |----------|-----------|---------|
 | **Network Monitoring** | NWPathMonitor | Connectivity detection |
+| **Network Logging** | Alamofire EventMonitor | Request/response logging |
 | **Navigation** | NavigationStack | Type-safe navigation |
 | **Analytics** | SwiftData | Event tracking |
 | **Package Manager** | SPM | Dependency management |
@@ -474,25 +476,66 @@ struct UserFormView: View {
 
 ### Configuration
 
-The app uses `reqres.in` API for demo purposes. Configuration is in `ApiService.swift`:
+The app uses environment-specific configuration files for all settings including API, logging, analytics, and feature flags.
 
-```swift
-final class ApiService {
-    private let baseURL: String
+#### Environment Configuration Files
 
-    init(baseURL: String = "https://reqres.in/api") {
-        self.baseURL = baseURL
+- **Config.plist** - Base configuration (shared settings)
+- **Config-Development.plist** - Development environment (verbose logging enabled)
+- **Config-Staging.plist** - Staging environment (info-level logging)
+- **Config-Production.plist** - Production environment (logging disabled)
 
-        let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = 30
+#### Network Logging
 
-        self.session = Session(
-            configuration: configuration,
-            interceptor: ApiInterceptor()
-        )
-    }
+The app includes a **NetworkLogger** that integrates with Alamofire to log all HTTP requests and responses. Logging can be controlled via configuration:
+
+```xml
+<!-- Config-Development.plist -->
+<key>Logging</key>
+<dict>
+    <key>Enabled</key>
+    <true/>
+    <key>LogHeaders</key>
+    <true/>
+    <key>LogBody</key>
+    <true/>
+    <key>LogLevel</key>
+    <string>verbose</string>
+</dict>
+```
+
+**Features:**
+- Logs request URL, method, headers, and JSON body
+- Logs response status, headers, body, and duration
+- Pretty-prints JSON for readability
+- Automatically redacts sensitive headers (Authorization, API keys, cookies)
+- Supports multiple log levels: verbose, info, error, none
+- Environment-specific settings (enabled in dev, disabled in production)
+- Uses OSLog for system integration
+
+**Example Output:**
+```
+🚀 REQUEST
+├─ URL: https://reqres.in/api/users?page=1
+├─ Method: GET
+├─ Headers:
+│  ├─ Content-Type: application/json
+│  ├─ x-api-key: ***REDACTED***
+└─ Body: None
+
+📥 RESPONSE ✅
+├─ URL: https://reqres.in/api/users?page=1
+├─ Status Code: 200 ✅
+├─ Duration: 0.342s
+└─ Body:
+{
+  "page": 1,
+  "per_page": 6,
+  "data": [...]
 }
 ```
+
+See `arcana-ios/Sources/ArcanaCore/Network/NetworkLogger.swift` for implementation details.
 
 ---
 
