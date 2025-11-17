@@ -1,8 +1,8 @@
-# Arcana iOS
+# Arcana iOS ⭐⭐⭐⭐⭐
 
 > A modern iOS application demonstrating **Clean Architecture**, **Offline-First** design, and **Analytics Tracking** with SwiftUI.
 
-## 🏆 Architecture Rating: 9.5/10 ⭐⭐⭐⭐⭐
+## 🏆 Architecture Rating: 9.5/10
 
 **Status: Production Ready** ✅
 
