@@ -1,6 +1,6 @@
 # Arcana iOS
 
-[![Architecture Rating](https://img.shields.io/badge/Architecture%20Rating-⭐%209.5%2F10-brightgreen.svg)](ARCHITECTURE_EVALUATION_V3.md)
+[![Architecture Rating](https://img.shields.io/badge/Architecture%20Rating-⭐⭐⭐⭐⭐%209.5%2F10-brightgreen.svg)](ARCHITECTURE_EVALUATION_V3.md)
 [![Grade](https://img.shields.io/badge/Grade-A+-yellow.svg)](ARCHITECTURE_EVALUATION_V3.md)
 [![Production Ready](https://img.shields.io/badge/Production%20Ready-✅-success.svg)](ARCHITECTURE_EVALUATION_V3.md)
 [![Swift](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
