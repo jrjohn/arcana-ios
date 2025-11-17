@@ -34,7 +34,11 @@ struct UserListView: View {
                     networkMonitor: networkMonitor,
                     pendingChangesCount: viewModel.pendingChangesCount,
                     onSyncTapped: {
-                        viewModel.send(.syncOfflineChanges)
+                        Task {
+                            if let effect = await viewModel.send(.syncOfflineChanges) {
+                                handleEffect(effect)
+                            }
+                        }
                     }
                 )
 
@@ -80,7 +84,11 @@ struct UserListView: View {
 
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
-                        viewModel.send(.refresh)
+                        Task {
+                            if let effect = await viewModel.send(.refresh) {
+                                handleEffect(effect)
+                            }
+                        }
                     }) {
                         Image(systemName: "arrow.clockwise")
                             .foregroundStyle(ArcanaTheme.Colors.primaryPurple)
@@ -95,14 +103,22 @@ struct UserListView: View {
                         viewModel: UserFormViewModel(mode: .create)
                     ) { createdUser in
                         showingAddUser = false
-                        viewModel.send(.refresh)
+                        Task {
+                            if let effect = await viewModel.send(.refresh) {
+                                handleEffect(effect)
+                            }
+                        }
                     }
                 }
             }
             .alert("Delete User", isPresented: $showingDeleteAlert, presenting: userToDelete) { user in
                 Button("Cancel", role: .cancel) { }
                 Button("Delete", role: .destructive) {
-                    viewModel.send(.deleteUser(user))
+                    Task {
+                        if let effect = await viewModel.send(.deleteUser(user)) {
+                            handleEffect(effect)
+                        }
+                    }
                 }
             } message: { user in
                 Text("Are you sure you want to delete \(user.fullName)?")
@@ -111,18 +127,22 @@ struct UserListView: View {
                 Button("OK", role: .cancel) { }
                 if viewModel.canRetry {
                     Button("Retry") {
-                        viewModel.send(.retryLastOperation)
+                        Task {
+                            if let effect = await viewModel.send(.retryLastOperation) {
+                                handleEffect(effect)
+                            }
+                        }
                     }
                 }
             } message: { error in
                 Text(error.localizedDescription)
             }
             .onAppear {
-                // Set up effect handler
-                viewModel.onEffect = { effect in
-                    handleEffect(effect)
+                Task {
+                    if let effect = await viewModel.send(.loadInitial) {
+                        handleEffect(effect)
+                    }
                 }
-                viewModel.send(.loadInitial)
 
                 // Update pending changes count periodically
                 Task {
@@ -180,7 +200,11 @@ struct UserListView: View {
                 UserCard(user: user)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        viewModel.send(.selectUser(user))
+                        Task {
+                            if let effect = await viewModel.send(.selectUser(user)) {
+                                handleEffect(effect)
+                            }
+                        }
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                         Button(role: .destructive) {
@@ -195,7 +219,11 @@ struct UserListView: View {
                     .onAppear {
                         // Trigger pagination when reaching the last item
                         if user.id == viewModel.displayedUsers.last?.id {
-                            viewModel.send(.loadNextPage)
+                            Task {
+                                if let effect = await viewModel.send(.loadNextPage) {
+                                    handleEffect(effect)
+                                }
+                            }
                         }
                     }
             }
@@ -214,8 +242,10 @@ struct UserListView: View {
         }
         .listStyle(.plain)
         .refreshable {
-            await MainActor.run {
-                viewModel.send(.refresh)
+            if let effect = await viewModel.send(.refresh) {
+                await MainActor.run {
+                    handleEffect(effect)
+                }
             }
         }
         .overlay {
@@ -249,7 +279,11 @@ struct UserListView: View {
                 title: "Refresh",
                 color: ArcanaTheme.Colors.accentBlue
             ) {
-                viewModel.send(.refresh)
+                Task {
+                    if let effect = await viewModel.send(.refresh) {
+                        handleEffect(effect)
+                    }
+                }
             }
             .disabled(viewModel.isRefreshing)
             
@@ -316,7 +350,9 @@ struct UserListView: View {
         }
 
         let count = repository.getPendingChangesCount()
-        viewModel.send(.updatePendingChangesCount(count))
+        Task {
+            _ = await viewModel.send(.updatePendingChangesCount(count))
+        }
     }
 }
 

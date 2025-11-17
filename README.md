@@ -604,6 +604,7 @@ open docs/diagrams/
 - 🏗️ [Architecture Compliance](ARCHITECTURE_COMPLIANCE.md) - 67 automated rules (Clean Architecture, Swift.org API Design, Google Swift Style)
 - 📝 [Configuration Migration](CONFIGURATION_MIGRATION.md) - Hardcoded values migration report
 - ♿ [Accessibility Identifiers](ACCESSIBILITY_IDENTIFIERS.md) - UI testing accessibility guide
+- 🎯 [Architecture Evaluation](ARCHITECTURE_EVALUATION.md) - Comprehensive pros/cons analysis of the architecture
 
 ---
 

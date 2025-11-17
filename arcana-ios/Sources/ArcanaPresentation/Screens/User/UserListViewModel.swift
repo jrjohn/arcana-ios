@@ -55,9 +55,6 @@ final class UserListViewModel {
     private(set) var hasMorePages: Bool = false
     private let perPage: Int = AppConstants.Pagination.defaultPageSize
 
-    // MARK: - Effect Handler
-    var onEffect: ((Effect) -> Void)?
-
     // MARK: - Dependencies (injected via swift-dependencies)
     @ObservationIgnored
     @Dependency(\.userService) var userService
@@ -80,35 +77,38 @@ final class UserListViewModel {
     }
 
     // MARK: - Public Methods
-    func send(_ input: Input) {
-        Task {
-            switch input {
-            case .loadInitial:
-                await loadUsers()
-            case .loadNextPage:
-                await loadNextPage()
-            case .refresh:
-                await refreshUsers()
-            case .selectUser(let user):
-                selectUser(user)
-            case .deleteUser(let user):
-                await deleteUser(user)
-            case .search(let query):
-                searchQuery = query
-                await searchUsers(query: query)
-            case .retryLastOperation:
-                await retryLastOperation()
-            case .syncOfflineChanges:
-                await syncOfflineChanges()
-            case .updatePendingChangesCount(let count):
-                pendingChangesCount = count
-            }
+
+    /// Send an input action and receive optional effect
+    /// - Parameter input: The user action to process
+    /// - Returns: Optional effect that the view should handle
+    func send(_ input: Input) async -> Effect? {
+        switch input {
+        case .loadInitial:
+            return await loadUsers()
+        case .loadNextPage:
+            return await loadNextPage()
+        case .refresh:
+            return await refreshUsers()
+        case .selectUser(let user):
+            return selectUser(user)
+        case .deleteUser(let user):
+            return await deleteUser(user)
+        case .search(let query):
+            searchQuery = query
+            return await searchUsers(query: query)
+        case .retryLastOperation:
+            return await retryLastOperation()
+        case .syncOfflineChanges:
+            return await syncOfflineChanges()
+        case .updatePendingChangesCount(let count):
+            pendingChangesCount = count
+            return nil
         }
     }
 
     // MARK: - Private Methods
 
-    private func loadUsers() async {
+    private func loadUsers() async -> Effect? {
         isLoading = true
         errorMessage = nil
         currentPage = 1
@@ -131,13 +131,15 @@ final class UserListViewModel {
                 "page": currentPage,
                 "total_pages": totalPages
             ])
+
+            return nil
         } catch {
-            handleError(AppError.from(error), operation: .loadInitial)
+            return handleError(AppError.from(error), operation: .loadInitial)
         }
     }
 
-    private func loadNextPage() async {
-        guard !isLoadingMore && hasMorePages else { return }
+    private func loadNextPage() async -> Effect? {
+        guard !isLoadingMore && hasMorePages else { return nil }
 
         isLoadingMore = true
         errorMessage = nil
@@ -162,12 +164,14 @@ final class UserListViewModel {
                 "page": currentPage,
                 "total_pages": totalPages
             ])
+
+            return nil
         } catch {
-            handleError(AppError.from(error), operation: .loadNextPage)
+            return handleError(AppError.from(error), operation: .loadNextPage)
         }
     }
 
-    private func refreshUsers() async {
+    private func refreshUsers() async -> Effect? {
         isRefreshing = true
         errorMessage = nil
         currentPage = 1
@@ -183,33 +187,34 @@ final class UserListViewModel {
             hasMorePages = result.hasMore
             updateFilteredUsers()
 
-            onEffect?(.showSuccess("Users refreshed successfully"))
-
             analyticsTracker.trackEvent(.listRefreshed, params: [
                 "count": result.items.count,
                 "page": currentPage,
                 "total_pages": totalPages
             ])
+
+            return .showSuccess("Users refreshed successfully")
         } catch {
-            handleError(AppError.from(error), operation: .refresh)
+            return handleError(AppError.from(error), operation: .refresh)
         }
     }
 
-    private func selectUser(_ user: User) {
+    private func selectUser(_ user: User) -> Effect? {
         analyticsTracker.trackEvent(.userSelected, params: [
             "userId": user.id,
             "email": user.email
         ])
 
-        // Use NavGraph if available, otherwise use effect handler
+        // Use NavGraph if available, otherwise return navigation effect
         if let navGraph = navGraph {
             navGraph.navigateToUserDetail(user)
+            return nil
         } else {
-            onEffect?(.navigateToDetail(user))
+            return .navigateToDetail(user)
         }
     }
 
-    private func deleteUser(_ user: User) async {
+    private func deleteUser(_ user: User) async -> Effect? {
         isLoading = true
         errorMessage = nil
 
@@ -222,20 +227,20 @@ final class UserListViewModel {
             users.removeAll { $0.id == user.id }
             updateFilteredUsers()
 
-            onEffect?(.showSuccess("User deleted successfully"))
-
             analyticsTracker.trackEvent(.userDeleteSuccess, params: [
                 "userId": user.id
             ])
+
+            return .showSuccess("User deleted successfully")
         } catch {
-            handleError(AppError.from(error), operation: .deleteUser(user))
+            return handleError(AppError.from(error), operation: .deleteUser(user))
         }
     }
 
-    private func searchUsers(query: String) async {
+    private func searchUsers(query: String) async -> Effect? {
         if query.isEmpty {
             updateFilteredUsers()
-            return
+            return nil
         }
 
         isLoading = true
@@ -249,10 +254,12 @@ final class UserListViewModel {
                 "query": query,
                 "results": results.count
             ])
+
+            return nil
         } catch {
             // For search errors, just show all users
             updateFilteredUsers()
-            handleError(AppError.from(error), operation: .search(query))
+            return handleError(AppError.from(error), operation: .search(query))
         }
     }
 
@@ -269,33 +276,33 @@ final class UserListViewModel {
         }
     }
 
-    private func retryLastOperation() async {
-        guard let operation = lastFailedOperation else { return }
+    private func retryLastOperation() async -> Effect? {
+        guard let operation = lastFailedOperation else { return nil }
         lastFailedOperation = nil
-        send(operation)
+        return await send(operation)
     }
 
-    private func handleError(_ error: AppError, operation: Input) {
+    private func handleError(_ error: AppError, operation: Input) -> Effect {
         lastFailedOperation = operation
         errorMessage = error.message
-        onEffect?(.showError(error))
         analyticsTracker.trackAppError(error, context: [
             "screen": "user_list",
             "operation": String(describing: operation)
         ])
+        return .showError(error)
     }
 
-    private func syncOfflineChanges() async {
+    private func syncOfflineChanges() async -> Effect? {
         guard let repository = userRepository as? OfflineFirstUserRepository else {
-            return
+            return nil
         }
 
         await repository.processOfflineChanges()
 
         // Refresh the user list after sync
-        await refreshUsers()
+        _ = await refreshUsers()
 
-        onEffect?(.showSuccess("Sync completed successfully"))
+        return .showSuccess("Sync completed successfully")
     }
 }
 
