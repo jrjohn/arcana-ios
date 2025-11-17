@@ -2,7 +2,7 @@
 //  UserServiceImplTests.swift
 //  arcana-iosTests
 //
-//  Created by Claude Code
+//  Created by John on 2025/11/15
 //
 
 import Testing

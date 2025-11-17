@@ -2,7 +2,7 @@
 //  ComprehensiveCoverageTests.swift
 //  arcana-iosTests
 //
-//  Created by Claude Code
+//  Created by John on 2025/11/15
 //
 //  This file provides comprehensive test coverage for all remaining untested components
 //

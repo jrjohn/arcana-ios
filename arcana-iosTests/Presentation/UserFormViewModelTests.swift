@@ -2,7 +2,7 @@
 //  UserFormViewModelTests.swift
 //  arcana-iosTests
 //
-//  Created by Claude Code for 100% coverage
+//  Created by John on 2025/11/15
 //
 
 import Testing
