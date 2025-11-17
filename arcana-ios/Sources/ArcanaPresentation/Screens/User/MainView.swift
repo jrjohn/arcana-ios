@@ -75,7 +75,9 @@ struct MainView: View {
                     
                     // Manage Users button
                     Button(action: {
-                        viewModel.send(.navigateToUserList)
+                        Task {
+                            _ = await viewModel.input(.navigateToUserList)
+                        }
                     }) {
                         HStack(spacing: 12) {
                             Image(systemName: "person.2.fill")
@@ -114,7 +116,9 @@ struct MainView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
-                    viewModel.send(.navigateToSettings)
+                    Task {
+                        _ = await viewModel.input(.navigateToSettings)
+                    }
                 }) {
                     Image(systemName: "gear")
                         .foregroundStyle(Color.white.opacity(0.8))
@@ -122,7 +126,9 @@ struct MainView: View {
             }
         }
         .onAppear {
-            viewModel.send(.loadData)
+            Task {
+                _ = await viewModel.input(.loadData)
+            }
         }
     }
     
@@ -134,12 +140,12 @@ struct MainView: View {
                 .font(ArcanaTheme.Typography.callout)
                 .foregroundColor(.white.opacity(0.8))
             
-            if viewModel.isLoading {
+            if viewModel.output.isLoading {
                 ProgressView()
                     .tint(.white)
                     .scaleEffect(1.5)
             } else {
-                Text("\(viewModel.userCount)")
+                Text("\(viewModel.output.userCount)")
                     .font(.system(size: 72, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -151,8 +157,8 @@ struct MainView: View {
                             endPoint: .bottom
                         )
                     )
-                
-                Text("Loaded: \(viewModel.userCount) users")
+
+                Text("Loaded: \(viewModel.output.userCount) users")
                     .font(ArcanaTheme.Typography.caption)
                     .foregroundColor(.white.opacity(0.6))
             }
@@ -181,15 +187,17 @@ struct MainView: View {
                 .font(ArcanaTheme.Typography.headline)
                 .foregroundColor(.white)
             
-            if let errorMessage = viewModel.errorMessage {
+            if let errorMessage = viewModel.output.errorMessage {
                 Text(errorMessage)
                     .font(ArcanaTheme.Typography.caption)
                     .foregroundColor(.white.opacity(0.7))
                     .multilineTextAlignment(.center)
             }
-            
+
             Button(action: {
-                viewModel.send(.retry)
+                Task {
+                    _ = await viewModel.input(.retry)
+                }
             }) {
                 Text("Retry")
                     .font(ArcanaTheme.Typography.callout)

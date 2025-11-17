@@ -251,27 +251,255 @@ enum NavGraphView {
 
 // MARK: - Placeholder Views
 
-/// Placeholder for UserDetailView - implement this later
+/// User Detail View - Shows complete user information with avatar
 private struct UserDetailView: View {
     let user: User
     let navGraph: NavGraph
-    
+
     var body: some View {
-        VStack(spacing: 20) {
-            Text(user.fullName)
-                .font(ArcanaTheme.Typography.title)
-            
-            Text(user.email)
-                .font(ArcanaTheme.Typography.body)
-                .foregroundColor(.secondary)
-            
-            Button("Edit") {
-                navGraph.presentEditUserForm(user)
+        ZStack {
+            // Background
+            ArcanaTheme.Colors.backgroundLight
+                .ignoresSafeArea()
+
+            ScrollView {
+                VStack(spacing: ArcanaTheme.Spacing.xl) {
+                    // Avatar Section
+                    avatarSection
+
+                    // User Information Card
+                    userInfoCard
+
+                    // Additional Information Card
+                    additionalInfoCard
+
+                    // Action Buttons
+                    actionButtons
+                }
+                .padding(.vertical, ArcanaTheme.Spacing.lg)
             }
-            .buttonStyle(.borderedProminent)
         }
         .navigationTitle("User Details")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    // MARK: - Subviews
+
+    private var avatarSection: some View {
+        VStack(spacing: ArcanaTheme.Spacing.md) {
+            // Large avatar
+            AvatarView(user: user, size: 120)
+                .shadow(color: ArcanaTheme.Colors.primaryPurple.opacity(0.3), radius: 10, x: 0, y: 5)
+
+            // Full name
+            Text(user.fullName)
+                .font(ArcanaTheme.Typography.title)
+                .fontWeight(.bold)
+                .foregroundColor(ArcanaTheme.Colors.textPrimary)
+
+            // ID Badge
+            Text("ID: \(user.id)")
+                .font(ArcanaTheme.Typography.caption)
+                .foregroundColor(.secondary)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(
+                    Capsule()
+                        .fill(Color(.systemGray6))
+                )
+        }
+        .padding(.top, ArcanaTheme.Spacing.md)
+    }
+
+    private var userInfoCard: some View {
+        VStack(spacing: 0) {
+            // Section Header
+            HStack {
+                Image(systemName: "person.fill")
+                    .foregroundStyle(ArcanaTheme.Colors.primaryPurple)
+                Text("Personal Information")
+                    .font(ArcanaTheme.Typography.headline)
+                    .fontWeight(.semibold)
+                Spacer()
+            }
+            .padding()
+            .background(Color(.systemGray6))
+
+            // Information Rows
+            VStack(spacing: 0) {
+                InfoRow(
+                    icon: "envelope.fill",
+                    label: "Email",
+                    value: user.email,
+                    iconColor: ArcanaTheme.Colors.accentBlue
+                )
+
+                Divider()
+                    .padding(.leading, 56)
+
+                InfoRow(
+                    icon: "person.text.rectangle.fill",
+                    label: "First Name",
+                    value: user.firstName,
+                    iconColor: ArcanaTheme.Colors.accentGreen
+                )
+
+                Divider()
+                    .padding(.leading, 56)
+
+                InfoRow(
+                    icon: "person.text.rectangle.fill",
+                    label: "Last Name",
+                    value: user.lastName,
+                    iconColor: ArcanaTheme.Colors.accentGold
+                )
+            }
+            .background(Color(.systemBackground))
+        }
+        .clipShape(RoundedRectangle(cornerRadius: ArcanaTheme.CornerRadius.medium))
+        .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+        .padding(.horizontal, ArcanaTheme.Spacing.md)
+    }
+
+    private var additionalInfoCard: some View {
+        VStack(spacing: 0) {
+            // Section Header
+            HStack {
+                Image(systemName: "info.circle.fill")
+                    .foregroundStyle(ArcanaTheme.Colors.primaryPurple)
+                Text("Additional Information")
+                    .font(ArcanaTheme.Typography.headline)
+                    .fontWeight(.semibold)
+                Spacer()
+            }
+            .padding()
+            .background(Color(.systemGray6))
+
+            // Information Rows
+            VStack(spacing: 0) {
+                InfoRow(
+                    icon: "photo.fill",
+                    label: "Avatar URL",
+                    value: user.avatar.isEmpty ? "No avatar" : user.avatar,
+                    iconColor: ArcanaTheme.Colors.primaryPurple
+                )
+
+                Divider()
+                    .padding(.leading, 56)
+
+                InfoRow(
+                    icon: "calendar.badge.plus",
+                    label: "Created",
+                    value: formatDate(user.createdAt),
+                    iconColor: ArcanaTheme.Colors.accentGreen
+                )
+
+                Divider()
+                    .padding(.leading, 56)
+
+                InfoRow(
+                    icon: "calendar.badge.clock",
+                    label: "Updated",
+                    value: formatDate(user.updatedAt),
+                    iconColor: ArcanaTheme.Colors.accentBlue
+                )
+            }
+            .background(Color(.systemBackground))
+        }
+        .clipShape(RoundedRectangle(cornerRadius: ArcanaTheme.CornerRadius.medium))
+        .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+        .padding(.horizontal, ArcanaTheme.Spacing.md)
+    }
+
+    private var actionButtons: some View {
+        VStack(spacing: ArcanaTheme.Spacing.md) {
+            // Edit Button
+            Button(action: {
+                navGraph.presentEditUserForm(user)
+            }) {
+                HStack {
+                    Image(systemName: "pencil.circle.fill")
+                        .font(.system(size: 20))
+                    Text("Edit User")
+                        .font(ArcanaTheme.Typography.headline)
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(ArcanaTheme.Colors.primaryGradient)
+                .foregroundColor(.white)
+                .cornerRadius(ArcanaTheme.CornerRadius.medium)
+            }
+            .accessibilityIdentifier("EditUserButton")
+
+            // View Avatar Button (if avatar exists)
+            if !user.avatar.isEmpty, let url = URL(string: user.avatar) {
+                Link(destination: url) {
+                    HStack {
+                        Image(systemName: "photo.circle.fill")
+                            .font(.system(size: 20))
+                        Text("View Full Avatar")
+                            .font(ArcanaTheme.Typography.headline)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(
+                        LinearGradient(
+                            colors: [ArcanaTheme.Colors.accentBlue, ArcanaTheme.Colors.accentBlue.opacity(0.8)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .foregroundColor(.white)
+                    .cornerRadius(ArcanaTheme.CornerRadius.medium)
+                }
+                .accessibilityIdentifier("ViewAvatarButton")
+            }
+        }
+        .padding(.horizontal, ArcanaTheme.Spacing.md)
+        .padding(.bottom, ArcanaTheme.Spacing.lg)
+    }
+
+    // MARK: - Helper Methods
+
+    private func formatDate(_ date: Date?) -> String {
+        guard let date = date else { return "N/A" }
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
+}
+
+// MARK: - Info Row Component
+
+private struct InfoRow: View {
+    let icon: String
+    let label: String
+    let value: String
+    let iconColor: Color
+
+    var body: some View {
+        HStack(alignment: .top, spacing: ArcanaTheme.Spacing.md) {
+            // Icon
+            Image(systemName: icon)
+                .font(.system(size: 20))
+                .foregroundStyle(iconColor)
+                .frame(width: 24)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(label)
+                    .font(ArcanaTheme.Typography.caption)
+                    .foregroundColor(.secondary)
+
+                Text(value)
+                    .font(ArcanaTheme.Typography.body)
+                    .foregroundColor(ArcanaTheme.Colors.textPrimary)
+                    .lineLimit(nil)
+            }
+
+            Spacer()
+        }
+        .padding()
     }
 }
 

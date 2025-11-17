@@ -6,12 +6,13 @@
 //
 
 import Foundation
-import Combine
+import Observation
 import Dependencies
 
-/// ViewModel for User Form (Create/Edit) with Input/Output pattern
+/// ViewModel for User Form (Create/Edit) with Input/Output/Effect pattern
 @MainActor
-final class UserFormViewModel: ObservableObject {
+@Observable
+final class UserFormViewModel {
     
     // MARK: - Mode
     enum Mode {
@@ -45,35 +46,56 @@ final class UserFormViewModel: ObservableObject {
 
     // MARK: - Output
     struct Output {
-        var firstName: String = ""
-        var lastName: String = ""
-        var email: String = ""
-        var avatar: String = ""
+        // User data - modularized as a single object
+        var user: User
+
+        // Validation errors - separate from user data
+        var validationErrors: ValidationErrors
+
+        // UI state - separate from user data
+        var isLoading: Bool = false
+        var isSaveEnabled: Bool = false
+
+        init(user: User = User(email: "", firstName: "", lastName: "", avatar: "")) {
+            self.user = user
+            self.validationErrors = ValidationErrors()
+        }
+    }
+
+    // MARK: - Validation Errors
+    struct ValidationErrors {
         var firstNameError: String?
         var lastNameError: String?
         var emailError: String?
-        var isLoading: Bool = false
-        var isSaveEnabled: Bool = false
+
+        var hasErrors: Bool {
+            firstNameError != nil || lastNameError != nil || emailError != nil
+        }
     }
-    
+
     // MARK: - Effect
     enum Effect {
         case showError(AppError)
         case dismiss(User?)
     }
-    
-    // MARK: - Published State
-    @Published private(set) var state = Output()
-    
-    // MARK: - Effects
-    let effects = PassthroughSubject<Effect, Never>()
+
+    // MARK: - Observable State
+    private(set) var output = Output()
 
     // MARK: - Dependencies
+    @ObservationIgnored
     private let mode: Mode
+
+    @ObservationIgnored
     @Dependency(\.userService) var userService
+
+    @ObservationIgnored
     @Dependency(\.analyticsTracker) var analyticsTracker
+
+    @ObservationIgnored
     private let validator: UserValidator.Type
-    private var cancellables = Set<AnyCancellable>()
+
+    @ObservationIgnored
     private var navGraph: NavGraph?
 
     // MARK: - Initialization
@@ -87,7 +109,6 @@ final class UserFormViewModel: ObservableObject {
         self.navGraph = navGraph
 
         setupInitialState()
-        setupBindings()
     }
     
     // MARK: - Public Properties
@@ -100,30 +121,72 @@ final class UserFormViewModel: ObservableObject {
     }
     
     // MARK: - Public Methods
-    func send(_ input: Input) {
-        Task {
-            switch input {
-            case .updateFirstName(let value):
-                state.firstName = value
-                validateFirstName()
 
-            case .updateLastName(let value):
-                state.lastName = value
-                validateLastName()
+    /// Process an input action and receive optional effect
+    /// - Parameter action: The user action to process
+    /// - Returns: Optional effect that the view should handle
+    func input(_ action: Input) async -> Effect? {
+        switch action {
+        case .updateFirstName(let value):
+            output.user = User(
+                id: output.user.id,
+                email: output.user.email,
+                firstName: value,
+                lastName: output.user.lastName,
+                avatar: output.user.avatar,
+                createdAt: output.user.createdAt,
+                updatedAt: output.user.updatedAt
+            )
+            validateFirstName()
+            updateSaveButtonState()
+            return nil
 
-            case .updateEmail(let value):
-                state.email = value
-                validateEmail()
+        case .updateLastName(let value):
+            output.user = User(
+                id: output.user.id,
+                email: output.user.email,
+                firstName: output.user.firstName,
+                lastName: value,
+                avatar: output.user.avatar,
+                createdAt: output.user.createdAt,
+                updatedAt: output.user.updatedAt
+            )
+            validateLastName()
+            updateSaveButtonState()
+            return nil
 
-            case .updateAvatar(let value):
-                state.avatar = value
+        case .updateEmail(let value):
+            output.user = User(
+                id: output.user.id,
+                email: value,
+                firstName: output.user.firstName,
+                lastName: output.user.lastName,
+                avatar: output.user.avatar,
+                createdAt: output.user.createdAt,
+                updatedAt: output.user.updatedAt
+            )
+            validateEmail()
+            updateSaveButtonState()
+            return nil
 
-            case .submit:
-                await submit()
+        case .updateAvatar(let value):
+            output.user = User(
+                id: output.user.id,
+                email: output.user.email,
+                firstName: output.user.firstName,
+                lastName: output.user.lastName,
+                avatar: value,
+                createdAt: output.user.createdAt,
+                updatedAt: output.user.updatedAt
+            )
+            return nil
 
-            case .validateAll:
-                validateAll()
-            }
+        case .submit:
+            return await submit()
+
+        case .validateAll:
+            validateAll()
+            return nil
         }
     }
     
@@ -131,112 +194,98 @@ final class UserFormViewModel: ObservableObject {
     
     private func setupInitialState() {
         if case .edit(let user) = mode {
-            state.firstName = user.firstName
-            state.lastName = user.lastName
-            state.email = user.email
-            state.avatar = user.avatar
+            output.user = user
         }
 
         analyticsTracker.trackScreen("User Form", params: [
             "mode": mode.title
         ])
+
+        updateSaveButtonState()
     }
-    
-    private func setupBindings() {
-        // Update save button state whenever fields change
-        $state
-            .debounce(for: .seconds(AppConstants.UI.debounceDelay), scheduler: DispatchQueue.main)
-            .map { state in
-                !state.firstName.isEmpty &&
-                !state.lastName.isEmpty &&
-                !state.email.isEmpty &&
-                state.firstNameError == nil &&
-                state.lastNameError == nil &&
-                state.emailError == nil
-            }
-            .sink { [weak self] isEnabled in
-                self?.state.isSaveEnabled = isEnabled
-            }
-            .store(in: &cancellables)
+
+    private func updateSaveButtonState() {
+        output.isSaveEnabled = !output.user.firstName.isEmpty &&
+                               !output.user.lastName.isEmpty &&
+                               !output.user.email.isEmpty &&
+                               !output.validationErrors.hasErrors
     }
-    
+
     private func validateFirstName() {
-        let result = validator.validateNameField(state.firstName, field: "firstName")
-        state.firstNameError = result.isValid ? nil : result.errorMessage
+        let result = validator.validateNameField(output.user.firstName, field: "firstName")
+        output.validationErrors.firstNameError = result.isValid ? nil : result.errorMessage
     }
-    
+
     private func validateLastName() {
-        let result = validator.validateNameField(state.lastName, field: "lastName")
-        state.lastNameError = result.isValid ? nil : result.errorMessage
+        let result = validator.validateNameField(output.user.lastName, field: "lastName")
+        output.validationErrors.lastNameError = result.isValid ? nil : result.errorMessage
     }
-    
+
     private func validateEmail() {
-        let result = validator.validateEmailField(state.email)
-        state.emailError = result.isValid ? nil : result.errorMessage
+        let result = validator.validateEmailField(output.user.email)
+        output.validationErrors.emailError = result.isValid ? nil : result.errorMessage
     }
-    
+
     private func validateAll() {
         validateFirstName()
         validateLastName()
         validateEmail()
+        updateSaveButtonState()
     }
     
-    private func submit() async {
+    private func submit() async -> Effect? {
         validateAll()
-        
-        guard state.isSaveEnabled else { return }
-        
-        state.isLoading = true
-        defer { state.isLoading = false }
-        
+
+        guard output.isSaveEnabled else { return nil }
+
+        output.isLoading = true
+        defer { output.isLoading = false }
+
         do {
-            let user: User
-            
+            let userToSubmit: User
+
             switch mode {
             case .create:
-                user = User(
-                    email: state.email,
-                    firstName: state.firstName,
-                    lastName: state.lastName,
-                    avatar: state.avatar
-                )
+                // Use the user object directly from output
+                userToSubmit = output.user
 
-                let createdUser = try await userService.createUser(user)
+                let createdUser = try await userService.createUser(userToSubmit)
 
                 analyticsTracker.trackEvent(.userCreateSuccess, params: [
                     "userId": createdUser.id,
                     "email": createdUser.email
                 ])
 
-                effects.send(.dismiss(createdUser))
+                return .dismiss(createdUser)
 
             case .edit(let existingUser):
-                user = User(
+                // Merge output.user with existing user's metadata
+                userToSubmit = User(
                     id: existingUser.id,
-                    email: state.email,
-                    firstName: state.firstName,
-                    lastName: state.lastName,
-                    avatar: state.avatar,
+                    email: output.user.email,
+                    firstName: output.user.firstName,
+                    lastName: output.user.lastName,
+                    avatar: output.user.avatar,
                     createdAt: existingUser.createdAt,
                     updatedAt: Date()
                 )
-                
-                let updatedUser = try await userService.updateUser(user)
-                
+
+                let updatedUser = try await userService.updateUser(userToSubmit)
+
                 analyticsTracker.trackEvent(.userUpdateSuccess, params: [
                     "userId": updatedUser.id,
                     "email": updatedUser.email
                 ])
-                
-                effects.send(.dismiss(updatedUser))
+
+                return .dismiss(updatedUser)
             }
         } catch {
             let appError = AppError.from(error)
-            effects.send(.showError(appError))
             analyticsTracker.trackAppError(appError, context: [
                 "screen": "user_form",
                 "mode": mode.title
             ])
+            return .showError(appError)
         }
     }
 }

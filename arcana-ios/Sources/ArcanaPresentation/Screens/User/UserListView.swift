@@ -22,54 +22,21 @@ struct UserListView: View {
         _viewModel = State(wrappedValue: viewModel)
     }
 
+    private var searchQueryBinding: Binding<String> {
+        Binding(
+            get: { viewModel.output.searchQuery },
+            set: { newValue in
+                Task {
+                    _ = await viewModel.input(.search(newValue))
+                }
+            }
+        )
+    }
+
     var body: some View {
         ZStack {
-            // Background gradient
-            ArcanaTheme.Colors.backgroundLight
-                .ignoresSafeArea()
-
-            VStack(spacing: 0) {
-                // Sync status banner
-                SyncStatusBanner(
-                    networkMonitor: networkMonitor,
-                    pendingChangesCount: viewModel.pendingChangesCount,
-                    onSyncTapped: {
-                        Task {
-                            if let effect = await viewModel.send(.syncOfflineChanges) {
-                                handleEffect(effect)
-                            }
-                        }
-                    }
-                )
-
-                // Statistics banner - Total Users & Page Progress
-                if !viewModel.users.isEmpty || viewModel.isLoading {
-                    UserStatisticsBanner(
-                        totalUsersLoaded: viewModel.users.count,
-                        currentPage: viewModel.currentPage,
-                        totalPages: viewModel.totalPages
-                    )
-                    .padding(.horizontal)
-                    .padding(.top, 8)
-                }
-
-                // Search bar
-                SearchBar(text: $viewModel.searchQuery)
-                    .padding(.horizontal)
-                    .padding(.vertical, 8)
-
-                // Content
-                if viewModel.isLoading && viewModel.displayedUsers.isEmpty {
-                    loadingView
-                } else if viewModel.displayedUsers.isEmpty {
-                    emptyStateView
-                } else {
-                    userListView
-                }
-
-                // CRUD Action Buttons
-                crudActionBar
-            }
+            background
+            mainContent
         }
         .navigationTitle("Users")
         .toolbar {
@@ -85,7 +52,7 @@ struct UserListView: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
                         Task {
-                            if let effect = await viewModel.send(.refresh) {
+                            if let effect = await viewModel.input(.refresh) {
                                 handleEffect(effect)
                             }
                         }
@@ -94,7 +61,7 @@ struct UserListView: View {
                             .foregroundStyle(ArcanaTheme.Colors.primaryPurple)
                     }
                     .accessibilityIdentifier("RefreshButton")
-                    .disabled(viewModel.isRefreshing)
+                    .disabled(viewModel.output.isRefreshing)
                 }
             }
             .sheet(isPresented: $showingAddUser) {
@@ -104,7 +71,7 @@ struct UserListView: View {
                     ) { createdUser in
                         showingAddUser = false
                         Task {
-                            if let effect = await viewModel.send(.refresh) {
+                            if let effect = await viewModel.input(.refresh) {
                                 handleEffect(effect)
                             }
                         }
@@ -115,7 +82,7 @@ struct UserListView: View {
                 Button("Cancel", role: .cancel) { }
                 Button("Delete", role: .destructive) {
                     Task {
-                        if let effect = await viewModel.send(.deleteUser(user)) {
+                        if let effect = await viewModel.input(.deleteUser(user)) {
                             handleEffect(effect)
                         }
                     }
@@ -128,7 +95,7 @@ struct UserListView: View {
                 if viewModel.canRetry {
                     Button("Retry") {
                         Task {
-                            if let effect = await viewModel.send(.retryLastOperation) {
+                            if let effect = await viewModel.input(.retryLastOperation) {
                                 handleEffect(effect)
                             }
                         }
@@ -139,7 +106,7 @@ struct UserListView: View {
             }
             .onAppear {
                 Task {
-                    if let effect = await viewModel.send(.loadInitial) {
+                    if let effect = await viewModel.input(.loadInitial) {
                         handleEffect(effect)
                     }
                 }
@@ -155,7 +122,66 @@ struct UserListView: View {
     }
     
     // MARK: - Subviews
-    
+
+    private var background: some View {
+        ArcanaTheme.Colors.backgroundLight
+            .ignoresSafeArea()
+    }
+
+    private var mainContent: some View {
+        VStack(spacing: 0) {
+            syncStatusBanner
+            statisticsBanner
+            searchBar
+            contentView
+            crudActionBar
+        }
+    }
+
+    private var syncStatusBanner: some View {
+        SyncStatusBanner(
+            networkMonitor: networkMonitor,
+            pendingChangesCount: viewModel.output.pendingChangesCount,
+            onSyncTapped: {
+                Task {
+                    if let effect = await viewModel.input(.syncOfflineChanges) {
+                        handleEffect(effect)
+                    }
+                }
+            }
+        )
+    }
+
+    @ViewBuilder
+    private var statisticsBanner: some View {
+        if !viewModel.output.users.isEmpty || viewModel.output.isLoading {
+            UserStatisticsBanner(
+                totalUsersLoaded: viewModel.output.users.count,
+                currentPage: viewModel.output.currentPage,
+                totalPages: viewModel.output.totalPages
+            )
+            .padding(.horizontal)
+            .padding(.top, 8)
+        }
+    }
+
+    private var searchBar: some View {
+        SearchBar(text: searchQueryBinding)
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+    }
+
+    @ViewBuilder
+    private var contentView: some View {
+        if viewModel.output.isLoading && viewModel.displayedUsers.isEmpty {
+            loadingView
+        } else if viewModel.displayedUsers.isEmpty {
+            emptyStateView
+        } else {
+            userListView
+        }
+    }
+
     private var loadingView: some View {
         VStack(spacing: 16) {
             ProgressView()
@@ -201,7 +227,7 @@ struct UserListView: View {
                     .contentShape(Rectangle())
                     .onTapGesture {
                         Task {
-                            if let effect = await viewModel.send(.selectUser(user)) {
+                            if let effect = await viewModel.input(.selectUser(user)) {
                                 handleEffect(effect)
                             }
                         }
@@ -220,7 +246,7 @@ struct UserListView: View {
                         // Trigger pagination when reaching the last item
                         if user.id == viewModel.displayedUsers.last?.id {
                             Task {
-                                if let effect = await viewModel.send(.loadNextPage) {
+                                if let effect = await viewModel.input(.loadNextPage) {
                                     handleEffect(effect)
                                 }
                             }
@@ -229,7 +255,7 @@ struct UserListView: View {
             }
 
             // Loading indicator for pagination
-            if viewModel.isLoadingMore {
+            if viewModel.output.isLoadingMore {
                 HStack {
                     Spacer()
                     ProgressView()
@@ -242,14 +268,14 @@ struct UserListView: View {
         }
         .listStyle(.plain)
         .refreshable {
-            if let effect = await viewModel.send(.refresh) {
+            if let effect = await viewModel.input(.refresh) {
                 await MainActor.run {
                     handleEffect(effect)
                 }
             }
         }
         .overlay {
-            if viewModel.isRefreshing {
+            if viewModel.output.isRefreshing {
                 VStack {
                     ProgressView()
                         .padding()
@@ -280,12 +306,12 @@ struct UserListView: View {
                 color: ArcanaTheme.Colors.accentBlue
             ) {
                 Task {
-                    if let effect = await viewModel.send(.refresh) {
+                    if let effect = await viewModel.input(.refresh) {
                         handleEffect(effect)
                     }
                 }
             }
-            .disabled(viewModel.isRefreshing)
+            .disabled(viewModel.output.isRefreshing)
             
             // Update button (disabled when no selection)
             ActionButton(
@@ -351,7 +377,7 @@ struct UserListView: View {
 
         let count = repository.getPendingChangesCount()
         Task {
-            _ = await viewModel.send(.updatePendingChangesCount(count))
+            _ = await viewModel.input(.updatePendingChangesCount(count))
         }
     }
 }

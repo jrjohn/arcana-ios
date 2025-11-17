@@ -21,11 +21,21 @@ final class MainViewModel {
         case navigateToSettings
         case retry
     }
-    
-    // MARK: - State
-    private(set) var userCount: Int = 0
-    private(set) var isLoading: Bool = false
-    private(set) var errorMessage: String?
+
+    // MARK: - Effect
+    enum Effect {
+        case showError(AppError)
+    }
+
+    // MARK: - Output
+    struct Output {
+        var userCount: Int = 0
+        var isLoading: Bool = false
+        var errorMessage: String?
+    }
+
+    // MARK: - Observable State
+    private(set) var output = Output()
     
     // MARK: - Dependencies
     @ObservationIgnored
@@ -37,13 +47,13 @@ final class MainViewModel {
     private let navGraph: NavGraph
     
     // MARK: - Computed Properties
-    
+
     var hasError: Bool {
-        errorMessage != nil
+        output.errorMessage != nil
     }
-    
+
     var canNavigate: Bool {
-        !isLoading
+        !output.isLoading
     }
     
     // MARK: - Initialization
@@ -52,55 +62,59 @@ final class MainViewModel {
         self.navGraph = navGraph
     }
     
-    // MARK: - Input Handling
-    
-    func send(_ input: Input) {
-        Task {
-            await handle(input)
-        }
-    }
-    
-    private func handle(_ input: Input) async {
-        switch input {
+    // MARK: - Public Methods
+
+    /// Process an input action and receive optional effect
+    /// - Parameter action: The user action to process
+    /// - Returns: Optional effect that the view should handle
+    func input(_ action: Input) async -> Effect? {
+        switch action {
         case .loadData:
-            await loadUserCount()
-            
+            return await loadUserCount()
+
         case .navigateToUserList:
             navigateToUserList()
-            
+            return nil
+
         case .navigateToSettings:
             navigateToSettings()
-            
+            return nil
+
         case .retry:
-            await loadUserCount()
+            return await loadUserCount()
         }
     }
     
-    // MARK: - Business Logic
-    
-    private func loadUserCount() async {
-        isLoading = true
-        errorMessage = nil
-        
+    // MARK: - Private Methods
+
+    private func loadUserCount() async -> Effect? {
+        output.isLoading = true
+        output.errorMessage = nil
+
         // Track screen view
         analyticsTracker.trackScreen("main_screen")
-        
+
         // Simulate loading delay for smooth animation
         try? await Task.sleep(for: .milliseconds(500))
-        
+
+        defer { output.isLoading = false }
+
         do {
             let users = try await userService.getUsers()
-            userCount = users.count
-            
+            output.userCount = users.count
+
             // Track success
             analyticsTracker.trackEvent(
                 .pageLoaded,
-                params: ["user_count": userCount]
+                params: ["user_count": output.userCount]
             )
 
+            return nil
+
         } catch let error as AppError {
-            errorMessage = error.message
+            output.errorMessage = error.message
             analyticsTracker.trackAppError(error, context: ["action": "load_user_count"])
+            return .showError(error)
 
         } catch {
             let appError = AppError.unknownError(
@@ -108,11 +122,10 @@ final class MainViewModel {
                 message: "Failed to load user count",
                 underlyingError: error
             )
-            errorMessage = appError.message
+            output.errorMessage = appError.message
             analyticsTracker.trackError(error, context: ["action": "load_user_count"])
+            return .showError(appError)
         }
-        
-        isLoading = false
     }
     
     private func navigateToUserList() {

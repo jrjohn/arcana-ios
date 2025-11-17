@@ -9,15 +9,15 @@ import SwiftUI
 
 /// User Form View for creating and editing users
 struct UserFormView: View {
-    @StateObject private var viewModel: UserFormViewModel
+    @State private var viewModel: UserFormViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var showingError = false
     @State private var errorToShow: AppError?
-    
+
     let onSave: (User) -> Void
-    
+
     init(viewModel: UserFormViewModel, onSave: @escaping (User) -> Void = { _ in }) {
-        _viewModel = StateObject(wrappedValue: viewModel)
+        _viewModel = State(wrappedValue: viewModel)
         self.onSave = onSave
     }
     
@@ -38,10 +38,14 @@ struct UserFormView: View {
                         FormField(
                             title: "First Name",
                             text: Binding(
-                                get: { viewModel.state.firstName },
-                                set: { viewModel.send(.updateFirstName($0)) }
+                                get: { viewModel.output.user.firstName },
+                                set: { newValue in
+                                    Task {
+                                        _ = await viewModel.input(.updateFirstName(newValue))
+                                    }
+                                }
                             ),
-                            error: viewModel.state.firstNameError,
+                            error: viewModel.output.validationErrors.firstNameError,
                             placeholder: "Enter first name",
                             keyboardType: .default
                         )
@@ -51,10 +55,14 @@ struct UserFormView: View {
                         FormField(
                             title: "Last Name",
                             text: Binding(
-                                get: { viewModel.state.lastName },
-                                set: { viewModel.send(.updateLastName($0)) }
+                                get: { viewModel.output.user.lastName },
+                                set: { newValue in
+                                    Task {
+                                        _ = await viewModel.input(.updateLastName(newValue))
+                                    }
+                                }
                             ),
-                            error: viewModel.state.lastNameError,
+                            error: viewModel.output.validationErrors.lastNameError,
                             placeholder: "Enter last name",
                             keyboardType: .default
                         )
@@ -64,10 +72,14 @@ struct UserFormView: View {
                         FormField(
                             title: "Email",
                             text: Binding(
-                                get: { viewModel.state.email },
-                                set: { viewModel.send(.updateEmail($0)) }
+                                get: { viewModel.output.user.email },
+                                set: { newValue in
+                                    Task {
+                                        _ = await viewModel.input(.updateEmail(newValue))
+                                    }
+                                }
                             ),
-                            error: viewModel.state.emailError,
+                            error: viewModel.output.validationErrors.emailError,
                             placeholder: "Enter email address",
                             keyboardType: .emailAddress
                         )
@@ -77,8 +89,12 @@ struct UserFormView: View {
                         FormField(
                             title: "Avatar URL (Optional)",
                             text: Binding(
-                                get: { viewModel.state.avatar },
-                                set: { viewModel.send(.updateAvatar($0)) }
+                                get: { viewModel.output.user.avatar },
+                                set: { newValue in
+                                    Task {
+                                        _ = await viewModel.input(.updateAvatar(newValue))
+                                    }
+                                }
                             ),
                             error: nil,
                             placeholder: "https://example.com/avatar.jpg",
@@ -90,10 +106,14 @@ struct UserFormView: View {
                     
                     // Submit button
                     Button(action: {
-                        viewModel.send(.submit)
+                        Task {
+                            if let effect = await viewModel.input(.submit) {
+                                handleEffect(effect)
+                            }
+                        }
                     }) {
                         HStack {
-                            if viewModel.state.isLoading {
+                            if viewModel.output.isLoading {
                                 ProgressView()
                                     .progressViewStyle(CircularProgressViewStyle(tint: .white))
                             }
@@ -104,7 +124,7 @@ struct UserFormView: View {
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(
-                            viewModel.state.isSaveEnabled && !viewModel.state.isLoading
+                            viewModel.output.isSaveEnabled && !viewModel.output.isLoading
                                 ? ArcanaTheme.Colors.primaryGradient
                                 : LinearGradient(
                                     colors: [Color.gray.opacity(0.5)],
@@ -117,7 +137,7 @@ struct UserFormView: View {
                     }
                     .accessibilityIdentifier("SubmitButton")
                     .accessibilityLabel(viewModel.submitButtonTitle)
-                    .disabled(!viewModel.state.isSaveEnabled || viewModel.state.isLoading)
+                    .disabled(!viewModel.output.isSaveEnabled || viewModel.output.isLoading)
                     .padding(.horizontal, ArcanaTheme.Spacing.md)
                     .padding(.top, ArcanaTheme.Spacing.md)
                 }
@@ -138,9 +158,6 @@ struct UserFormView: View {
             Button("OK", role: .cancel) { }
         } message: { error in
             Text(error.localizedDescription)
-        }
-        .onReceive(viewModel.effects) { effect in
-            handleEffect(effect)
         }
     }
     
@@ -170,14 +187,14 @@ struct UserFormView: View {
     }
 
     private func createPreviewUser() -> User? {
-        guard !viewModel.state.firstName.isEmpty || !viewModel.state.lastName.isEmpty else {
+        guard !viewModel.output.user.firstName.isEmpty || !viewModel.output.user.lastName.isEmpty else {
             return nil
         }
         return User(
-            email: viewModel.state.email.isEmpty ? "preview@example.com" : viewModel.state.email,
-            firstName: viewModel.state.firstName.isEmpty ? "F" : viewModel.state.firstName,
-            lastName: viewModel.state.lastName.isEmpty ? "L" : viewModel.state.lastName,
-            avatar: viewModel.state.avatar
+            email: viewModel.output.user.email.isEmpty ? "preview@example.com" : viewModel.output.user.email,
+            firstName: viewModel.output.user.firstName.isEmpty ? "F" : viewModel.output.user.firstName,
+            lastName: viewModel.output.user.lastName.isEmpty ? "L" : viewModel.output.user.lastName,
+            avatar: viewModel.output.user.avatar
         )
     }
     
