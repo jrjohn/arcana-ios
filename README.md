@@ -62,7 +62,7 @@
 - 💾 **Persistent Storage** - SwiftData framework
 - 🌐 **RESTful API** - Alamofire + async/await
 - 🔍 **Network Logging** - Configurable request/response logging with JSON formatting
-- 🏗️ **MVVM Pattern** - Clean ViewModel architecture with Input/Output/Effect pattern
+- 🏗️ **MVVM + UDF** - Unidirectional Data Flow with Input/Output/Effect pattern
 - 🌍 **Internationalization** - Multi-language support (English, Chinese)
 - ⚙️ **Configuration Management** - Environment-specific configs with .plist files
 - 🏗️ **Architecture Compliance** - 67 automated rules validating Clean Architecture, Swift.org API Design, and Google Swift Style
@@ -120,13 +120,32 @@ User Action
             Apply Queued Changes → API → Sync
 ```
 
-#### 2. **Input/Output/Effect ViewModel Pattern**
+#### 2. **Unidirectional Data Flow + Effect Management**
+
+This app implements **Unidirectional Data Flow (UDF)** architecture with explicit effect management, ensuring predictable state changes and clear separation of concerns.
+
+**Architectural Principles:**
+```
+UI Events → ViewModel → State Update → UI Render
+   ↓           ↓            ↓            ↓
+(User      (Process)   (Mutate)    (Display)
+ Action)
+
+Side Effects (Navigation, Alerts, Analytics)
+     ↓
+Handled separately from state
+```
+
+**Implementation: Input/Output/Effect Pattern**
+
+We use the **Input/Output/Effect** pattern as our concrete implementation of UDF + Effect Management:
+
 ```swift
 @MainActor
 @Observable
 final class UserListViewModel {
 
-    // Input - Events from UI to ViewModel
+    // Input - Events from UI to ViewModel (Actions)
     enum Input {
         case loadInitial
         case loadNextPage
@@ -135,25 +154,35 @@ final class UserListViewModel {
         case deleteUser(User)
     }
 
-    // Effect - Side effects for UI
-    enum Effect {
-        case showError(AppError)
-        case showSuccess(String)
-        case navigateToDetail(User)
-    }
-
-    // Observable State
+    // Output - Observable State for UI Rendering
     private(set) var users: [User] = []
     private(set) var isLoading: Bool = false
     private(set) var currentPage: Int = 1
     private(set) var totalPages: Int = 1
     private(set) var hasMorePages: Bool = false
 
+    // Effect - Side effects (Navigation, Alerts, etc.)
+    enum Effect {
+        case showError(AppError)
+        case showSuccess(String)
+        case navigateToDetail(User)
+    }
+
     var onEffect: ((Effect) -> Void)?
 
+    // Single entry point for all user actions
     func send(_ input: Input) { /* Handle events */ }
 }
 ```
+
+**Key Benefits:**
+- ✅ **Predictable State Changes** - All state mutations happen in one place
+- ✅ **Testable** - Pure input → state transformations
+- ✅ **Debuggable** - Clear audit trail of user actions
+- ✅ **Separation of Concerns** - State vs Side Effects
+- ✅ **Type-Safe** - Compiler-enforced action types
+
+**Alternative Implementations:** Redux/TCA, MVI, Elm Architecture all implement the same UDF + Effect Management principles with different APIs.
 
 📖 See [ViewModel Pattern Documentation](docs/VIEWMODEL_PATTERN.md) for detailed implementation.
 
