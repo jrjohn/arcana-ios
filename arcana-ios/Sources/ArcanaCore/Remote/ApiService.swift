@@ -31,9 +31,14 @@ final class ApiService {
 
         let interceptor = ApiInterceptor(config: config)
 
+        // Create network logger
+        let loggerConfig = NetworkLoggerConfiguration(from: config)
+        let logger = NetworkLogger(configuration: loggerConfig)
+
         self.session = Session(
             configuration: configuration,
-            interceptor: interceptor
+            interceptor: interceptor,
+            eventMonitors: [logger]
         )
     }
     

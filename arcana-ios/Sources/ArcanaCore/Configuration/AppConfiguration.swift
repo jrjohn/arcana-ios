@@ -178,6 +178,24 @@ final class AppConfiguration {
         getString(for: "App.LogLevel") ?? "Info"
     }
 
+    // MARK: - Logging Configuration
+
+    struct LoggingConfiguration {
+        let enabled: Bool
+        let logHeaders: Bool
+        let logBody: Bool
+        let logLevel: String
+    }
+
+    var logging: LoggingConfiguration {
+        LoggingConfiguration(
+            enabled: getBool(for: "Logging.Enabled") ?? false,
+            logHeaders: getBool(for: "Logging.LogHeaders") ?? false,
+            logBody: getBool(for: "Logging.LogBody") ?? false,
+            logLevel: getString(for: "Logging.LogLevel") ?? "error"
+        )
+    }
+
     // MARK: - Initialization
 
     private init() {
@@ -321,5 +339,13 @@ enum AppConstants {
         static var debounceDelay: TimeInterval { Config.shared.debounceDelay }
         static var toastDuration: TimeInterval { Config.shared.toastDuration }
         static var loadingDelay: TimeInterval { Config.shared.loadingIndicatorDelay }
+    }
+
+    /// Logging configuration
+    enum Logging {
+        static var enabled: Bool { Config.shared.logging.enabled }
+        static var logHeaders: Bool { Config.shared.logging.logHeaders }
+        static var logBody: Bool { Config.shared.logging.logBody }
+        static var logLevel: String { Config.shared.logging.logLevel }
     }
 }

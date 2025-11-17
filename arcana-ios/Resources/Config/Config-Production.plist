@@ -13,6 +13,18 @@
 		<integer>5</integer>
 	</dict>
 
+	<key>Logging</key>
+	<dict>
+		<key>Enabled</key>
+		<false/>
+		<key>LogHeaders</key>
+		<false/>
+		<key>LogBody</key>
+		<false/>
+		<key>LogLevel</key>
+		<string>error</string>
+	</dict>
+
 	<key>Analytics</key>
 	<dict>
 		<key>Enabled</key>

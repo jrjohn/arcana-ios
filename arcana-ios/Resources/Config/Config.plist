@@ -13,6 +13,19 @@
 		<integer>3</integer>
 	</dict>
 
+	<!-- Logging Configuration -->
+	<key>Logging</key>
+	<dict>
+		<key>Enabled</key>
+		<true/>
+		<key>LogHeaders</key>
+		<true/>
+		<key>LogBody</key>
+		<true/>
+		<key>LogLevel</key>
+		<string>verbose</string>
+	</dict>
+
 	<!-- Endpoints -->
 	<key>Endpoints</key>
 	<dict>
