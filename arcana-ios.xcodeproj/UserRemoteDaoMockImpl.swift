@@ -1,5 +1,5 @@
 //
-//  MockRemoteUserDataSource.swift
+//  UserRemoteDaoMockImpl.swift
 //  arcana-ios
 //
 //  Created by John on 2025/11/15.
@@ -7,8 +7,8 @@
 
 import Foundation
 
-/// Mock implementation of RemoteUserDataSource for testing
-final class MockRemoteUserDataSource: RemoteUserDataSource {
+/// Mock implementation of UserRemoteDao for testing
+final class UserRemoteDaoMockImpl: UserRemoteDao {
     
     // MARK: - Properties
     
@@ -32,7 +32,7 @@ final class MockRemoteUserDataSource: RemoteUserDataSource {
         self.users = User.mockUsers
     }
     
-    // MARK: - RemoteUserDataSource Implementation
+    // MARK: - UserRemoteDao Implementation
     
     func getUsers() async throws -> [User] {
         if simulateNetworkDelay {

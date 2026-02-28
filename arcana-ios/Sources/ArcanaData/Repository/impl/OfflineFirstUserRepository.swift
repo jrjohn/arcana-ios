@@ -14,8 +14,8 @@ import Combine
 final class OfflineFirstUserRepository: UserRepository {
 
     // MARK: - Dependencies
-    private let localDataSource: LocalUserDataSource
-    private let remoteDataSource: RemoteUserDataSource
+    private let localDataSource: UserLocalDao
+    private let remoteDataSource: UserRemoteDao
     private let cache: LRUCache<String, User>
     private let analyticsTracker: AnalyticsTracker
     private let modelContext: ModelContext
@@ -28,8 +28,8 @@ final class OfflineFirstUserRepository: UserRepository {
     private var networkCancellable: AnyCancellable?
 
     init(
-        localDataSource: LocalUserDataSource,
-        remoteDataSource: RemoteUserDataSource,
+        localDataSource: UserLocalDao,
+        remoteDataSource: UserRemoteDao,
         analyticsTracker: AnalyticsTracker,
         modelContext: ModelContext
     ) {

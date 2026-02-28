@@ -76,22 +76,22 @@ struct AppDependencies {
         )
         
         // Create local data source
-        let localDataSource = SwiftDataUserDataSource(
+        let localDataSource = UserLocalDaoImpl(
             modelContainer: modelContainer,
             analyticsTracker: analyticsTracker
         )
         
         // Create remote data source
-        let remoteDataSource: RemoteUserDataSource
+        let remoteDataSource: UserRemoteDao
         if useRealAPI {
             // Use real reqres.in API
-            remoteDataSource = ReqresUserDataSource(
+            remoteDataSource = UserRemoteDaoImpl(
                 apiService: ApiService(),
                 analyticsTracker: analyticsTracker
             )
         } else {
             // Use mock for testing/development
-            remoteDataSource = MockRemoteUserDataSource(
+            remoteDataSource = UserRemoteDaoMockImpl(
                 simulateNetworkDelay: true,
                 networkDelay: 0.5,
                 shouldFailRequests: false

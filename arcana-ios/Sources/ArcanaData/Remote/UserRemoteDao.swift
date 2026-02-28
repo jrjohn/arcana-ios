@@ -1,5 +1,5 @@
 //
-//  RemoteUserDataSource.swift
+//  UserRemoteDao.swift
 //  arcana-ios
 //
 //  Created by John on 2025/11/15.
@@ -7,9 +7,9 @@
 
 import Foundation
 
-/// Protocol defining remote data source operations for users
+/// Protocol defining remote DAO operations for users
 /// This is essentially the same as UserRepository for remote operations
-protocol RemoteUserDataSource {
+protocol UserRemoteDao {
     /// Fetch all users from remote source
     func getUsers() async throws -> [User]
 

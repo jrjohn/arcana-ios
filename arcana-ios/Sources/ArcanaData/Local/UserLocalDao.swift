@@ -1,5 +1,5 @@
 //
-//  LocalUserDataSource.swift
+//  UserLocalDao.swift
 //  arcana-ios
 //
 //  Created by John on 2025/11/15.
@@ -8,7 +8,7 @@
 import Foundation
 
 /// Protocol for local data access
-protocol LocalUserDataSource {
+protocol UserLocalDao {
     func getUsers() async throws -> [User]
     func getUser(id: String) async throws -> User
     func createUser(_ user: User) async throws

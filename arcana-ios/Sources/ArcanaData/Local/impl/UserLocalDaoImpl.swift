@@ -1,5 +1,5 @@
 //
-//  SwiftDataUserDataSource.swift
+//  UserLocalDaoImpl.swift
 //  arcana-ios
 //
 //  Created by John on 2025/11/15.
@@ -8,8 +8,8 @@
 import Foundation
 import SwiftData
 
-/// SwiftData implementation of LocalUserDataSource
-final class SwiftDataUserDataSource: LocalUserDataSource {
+/// SwiftData implementation of UserLocalDao
+final class UserLocalDaoImpl: UserLocalDao {
     
     private let modelContainer: ModelContainer
     private let analyticsTracker: AnalyticsTracker
@@ -24,7 +24,7 @@ final class SwiftDataUserDataSource: LocalUserDataSource {
         modelContainer.mainContext
     }
     
-    // MARK: - LocalUserDataSource Implementation
+    // MARK: - UserLocalDao Implementation
     
     func getUsers() async throws -> [User] {
         return try performQuery {

@@ -1,5 +1,5 @@
 //
-//  ReqresUserDataSource.swift
+//  UserRemoteDaoImpl.swift
 //  arcana-ios
 //
 //  Created by John on 2025/11/15.
@@ -7,8 +7,8 @@
 
 import Foundation
 
-/// Remote data source implementation using reqres.in API
-final class ReqresUserDataSource: RemoteUserDataSource {
+/// Remote DAO implementation using reqres.in API
+final class UserRemoteDaoImpl: UserRemoteDao {
     
     // MARK: - Properties
     
@@ -25,7 +25,7 @@ final class ReqresUserDataSource: RemoteUserDataSource {
         self.analyticsTracker = analyticsTracker
     }
     
-    // MARK: - RemoteUserDataSource Implementation
+    // MARK: - UserRemoteDao Implementation
     
     func getUsers() async throws -> [User] {
         analyticsTracker.trackEvent(.apiRequestStarted, params: [
