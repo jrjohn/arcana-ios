@@ -1,19 +1,19 @@
 pipeline {
-    agent { label 'macos' }
+    agent none
     environment {
         PROJECT_NAME = 'arcana-ios'
         VERSION      = '1.0.0'
-        SQ_URL       = 'https://arcana.boo/sonarqube'
+        SQ_URL       = 'http://sonarqube:9000/sonarqube'
         SQ_TOKEN     = 'squ_5ce2319b9d8ca2b1db4e0f5bdf36b34249561f18'
-        PATH         = '/opt/sonar-scanner/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'
     }
     options {
-        timeout(time: 60, unit: 'MINUTES')
+        timeout(time: 90, unit: 'MINUTES')
         disableConcurrentBuilds()
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
     stages {
         stage('Checkout') {
+            agent { label 'macos' }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'github-credentials',
                         usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
@@ -32,10 +32,11 @@ pipeline {
             }
         }
         stage('Build') {
+            agent { label 'macos' }
             steps {
                 sh '''
+                    export PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
                     set -o pipefail
-                    # Resolve SPM packages first (cached in global cache between builds)
                     xcodebuild -resolvePackageDependencies \
                         -project arcana-ios.xcodeproj \
                         -scheme arcana-ios 2>&1 | tail -3 || true
@@ -50,21 +51,20 @@ pipeline {
             }
         }
         stage('Test + Coverage') {
+            agent { label 'macos' }
             steps {
                 sh '''
-                    # Prevent Mac sleep during long build
+                    export PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
                     caffeinate -i &
                     CAFFEINE_PID=$!
 
                     DERIVED=${HOME}/jenkins-agent/DerivedData/arcana-ios
 
-                    # Pre-boot simulator so test launch is fast
                     SIM_ID=$(xcrun simctl list devices available | grep "iPhone 17" | grep -v unavailable | head -1 | grep -oE '[0-9A-F-]{36}' | head -1)
                     if [ -n "$SIM_ID" ]; then
                         xcrun simctl boot "$SIM_ID" 2>/dev/null || true
                     fi
 
-                    # Run tests with a hard 40-min shell timeout so we always get xcresult
                     timeout 2400 xcodebuild \
                         -project arcana-ios.xcodeproj \
                         -scheme arcana-ios \
@@ -79,25 +79,33 @@ pipeline {
 
                     kill $CAFFEINE_PID 2>/dev/null || true
                 '''
+                // Stash coverage + sources for sonar stage on master
+                stash includes: 'coverage-report.xml,arcana-ios/Sources/**,arcana-iosTests/**,sonar-project.properties', name: 'sonar-inputs', allowEmpty: true
             }
         }
         stage('SonarQube Analysis') {
+            // Run on Jenkins built-in node (has Docker + devops_default network = SonarQube access)
+            agent { label 'built-in' }
             steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                    sh '''
-                        /opt/homebrew/bin/sonar-scanner \
-                            -Dsonar.host.url=${SQ_URL} \
-                            -Dsonar.token=${SQ_TOKEN} \
-                            -Dsonar.projectKey=ios-app \
-                            -Dsonar.projectName="iOS App" \
-                            -Dsonar.sources=arcana-ios/Sources \
-                            -Dsonar.tests=arcana-iosTests \
-                            -Dsonar.exclusions="**/DerivedData/**,**/*.xcassets/**,**/build/**" \
-                            -Dsonar.coverage.exclusions="**/Mocks/**,**/*Mock*.swift,**/*Stub*.swift" \
-                            -Dsonar.coverageReportPaths=coverage-report.xml \
-                            -Dsonar.scm.disabled=true
-                    '''
-                }
+                unstash 'sonar-inputs'
+                // Use official sonar-scanner Docker image v6 on devops_default network
+                // This bypasses /api/batch/project bug in Homebrew sonar-scanner 8.0.1
+                sh '''
+                    docker run --rm \
+                        --network devops_default \
+                        -e SONAR_HOST_URL=http://sonarqube:9000/sonarqube \
+                        -e SONAR_TOKEN="${SQ_TOKEN}" \
+                        -v "${WORKSPACE}:/usr/src" \
+                        sonarsource/sonar-scanner-cli:6 \
+                        -Dsonar.projectKey=ios-app \
+                        "-Dsonar.projectName=iOS App" \
+                        -Dsonar.sources=arcana-ios/Sources \
+                        -Dsonar.tests=arcana-iosTests \
+                        "-Dsonar.exclusions=**/DerivedData/**,**/*.xcassets/**,**/build/**" \
+                        "-Dsonar.coverage.exclusions=**/Mocks/**,**/*Mock*.swift,**/*Stub*.swift" \
+                        -Dsonar.coverageReportPaths=coverage-report.xml \
+                        -Dsonar.scm.disabled=true
+                '''
             }
         }
     }
