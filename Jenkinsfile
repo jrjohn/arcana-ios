@@ -52,14 +52,27 @@ pipeline {
         stage('Test + Coverage') {
             steps {
                 sh '''
+                    # Prevent Mac sleep during long build
+                    caffeinate -i -w $$ &
+
                     DERIVED=${HOME}/jenkins-agent/DerivedData/arcana-ios
-                    xcodebuild \
+
+                    # Pre-boot simulator so test launch is fast
+                    SIM_ID=$(xcrun simctl list devices available | grep "iPhone 17" | grep -v unavailable | head -1 | sed "s/.*(\([A-Z0-9-]*\)).*/\\1/")
+                    if [ -n "$SIM_ID" ]; then
+                        xcrun simctl boot "$SIM_ID" 2>/dev/null || true
+                    fi
+
+                    # Run tests with a hard 40-min shell timeout so we always get xcresult
+                    timeout 2400 xcodebuild \
                         -project arcana-ios.xcodeproj \
                         -scheme arcana-ios \
                         -destination 'platform=iOS Simulator,name=iPhone 17' \
                         -enableCodeCoverage YES \
                         -derivedDataPath "${DERIVED}" \
+                        -skipPackagePluginValidation \
                         test 2>&1 | grep -E "Test Suite|passed|failed|error:" | tail -30 || true
+
                     python3 scripts/xcresult_to_sonar_coverage.py "${DERIVED}" coverage-report.xml \
                         || echo "Coverage conversion failed (non-fatal)"
                 '''
