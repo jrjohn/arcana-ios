@@ -65,6 +65,7 @@ pipeline {
                         xcrun simctl boot "$SIM_ID" 2>/dev/null || true
                     fi
 
+                    # Redirect to file — avoids SIGPIPE killing xcodebuild before xcresult is written
                     timeout 2400 xcodebuild \
                         -project arcana-ios.xcodeproj \
                         -scheme arcana-ios \
@@ -72,7 +73,8 @@ pipeline {
                         -enableCodeCoverage YES \
                         -derivedDataPath "${DERIVED}" \
                         -skipPackagePluginValidation \
-                        test 2>&1 | grep -E "Test Suite|passed|failed|error:" | tail -30 || true
+                        test > /tmp/xcode-test.log 2>&1 || true
+                    grep -E "Test Suite|passed|failed|error:|Build FAILED" /tmp/xcode-test.log | tail -30 || true
 
                     python3 scripts/xcresult_to_sonar_coverage.py "${DERIVED}" coverage-report.xml \
                         || echo "Coverage conversion failed (non-fatal)"
@@ -96,7 +98,7 @@ pipeline {
                         -e SONAR_HOST_URL=http://sonarqube:9000/sonarqube \
                         -e SONAR_TOKEN="${SQ_TOKEN}" \
                         -v "${WORKSPACE}:/usr/src" \
-                        sonarsource/sonar-scanner-cli:6 \
+                        sonarsource/sonar-scanner-cli:11 \
                         -Dsonar.projectKey=ios-app \
                         "-Dsonar.projectName=iOS App" \
                         -Dsonar.sources=arcana-ios/Sources \
