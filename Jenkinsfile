@@ -68,8 +68,8 @@ pipeline {
                     # Use explicit result bundle path so python script always gets a fresh xcresult
                     XCRESULT=/tmp/arcana-ios-tests.xcresult
                     rm -rf "${XCRESULT}"
-                    # Redirect to file — avoids SIGPIPE killing xcodebuild before xcresult is written
-                    timeout 2400 xcodebuild \
+                    # Note: macOS has no GNU timeout; use perl alarm instead (40min max)
+                    xcodebuild \
                         -project arcana-ios.xcodeproj \
                         -scheme arcana-ios \
                         -destination 'platform=iOS Simulator,name=iPhone 17' \
