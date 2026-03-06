@@ -38,7 +38,7 @@ struct UserListViewModelTests {
         #expect(viewModel.output.searchQuery == "")
         #expect(viewModel.output.filteredUsers.isEmpty)
         #expect(viewModel.output.currentPage == 1)
-        #expect(viewModel.hasMorePages == false)
+        #expect(viewModel.output.hasMorePages == false)
         #expect(viewModel.output.pendingChangesCount == 0)
     }
 
@@ -90,7 +90,6 @@ struct UserListViewModelTests {
             UserListViewModel()
         }
 
-        viewModel.onEffect = effectCapture.capture
 
         await viewModel.input(.loadInitial)
 
@@ -170,7 +169,6 @@ struct UserListViewModelTests {
             UserListViewModel()
         }
 
-        viewModel.onEffect = effectCapture.capture
 
         await viewModel.input(.refresh)
 
@@ -258,7 +256,6 @@ struct UserListViewModelTests {
             UserListViewModel()
         }
 
-        viewModel.onEffect = effectCapture.capture
 
         await viewModel.input(.loadInitial)
         try? await Task.sleep(for: .milliseconds(200))
@@ -283,10 +280,9 @@ struct UserListViewModelTests {
     // MARK: - Select User Tests
 
     @Test("selectUser triggers navigation effect")
-    func testSelectUser() {
+    func testSelectUser() async {
         let effectCapture = EffectCapture()
         let viewModel = UserListViewModel()
-        viewModel.onEffect = effectCapture.capture
 
         let user = User.mock()
         await viewModel.input(.selectUser(user))
@@ -339,13 +335,13 @@ struct UserListViewModelTests {
     // MARK: - Computed Properties Tests
 
     @Test("displayedUsers returns filtered users")
-    func testDisplayedUsers() {
+    func testDisplayedUsers() async {
         let viewModel = UserListViewModel()
         #expect(viewModel.displayedUsers == viewModel.output.filteredUsers)
     }
 
     @Test("isSearching is true when search query is not empty")
-    func testIsSearching() {
+    func testIsSearching() async {
         let viewModel = UserListViewModel()
         #expect(viewModel.isSearching == false)
 
@@ -354,7 +350,7 @@ struct UserListViewModelTests {
     }
 
     @Test("emptyStateMessage varies based on state")
-    func testEmptyStateMessage() {
+    func testEmptyStateMessage() async {
         let viewModel = UserListViewModel()
 
         // Empty list
@@ -368,7 +364,7 @@ struct UserListViewModelTests {
     }
 
     @Test("pending changes count can be updated")
-    func testUpdatePendingChangesCount() {
+    func testUpdatePendingChangesCount() async {
         let viewModel = UserListViewModel()
         #expect(viewModel.output.pendingChangesCount == 0)
 
