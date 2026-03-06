@@ -52,7 +52,7 @@ pipeline {
                     xcodebuild \
                         -project arcana-ios.xcodeproj \
                         -scheme arcana-ios \
-                        -destination 'platform=iOS Simulator,name=iPhone 16' \
+                        -destination 'platform=iOS Simulator,name=iPhone 17' \
                         -enableCodeCoverage YES \
                         -derivedDataPath "${DERIVED}" \
                         test 2>&1 | grep -E "Test Suite|passed|failed|error:" | tail -30 || true
@@ -65,7 +65,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
                     sh '''
-                        sonar-scanner \
+                        /opt/sonar-scanner/bin/sonar-scanner \
                             -Dsonar.host.url=${SQ_URL} \
                             -Dsonar.token=${SQ_TOKEN} \
                             -Dsonar.projectKey=ios-app \
