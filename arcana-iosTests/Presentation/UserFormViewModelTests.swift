@@ -3,11 +3,11 @@
 //  arcana-iosTests
 //
 //  Created by John on 2025/11/15
+//  Rewritten to use @Observable output pattern (removed Combine @Published dependency)
 //
 
 import Testing
 import Foundation
-import Combine
 import Dependencies
 @testable import arcana_ios
 
@@ -21,12 +21,12 @@ struct UserFormViewModelTests {
     func testInitializationCreateMode() {
         let viewModel = UserFormViewModel(mode: .create)
 
-        #expect(viewModel.state.firstName == "")
-        #expect(viewModel.state.lastName == "")
-        #expect(viewModel.state.email == "")
-        #expect(viewModel.state.avatar == "")
-        #expect(viewModel.state.isLoading == false)
-        #expect(viewModel.state.isSaveEnabled == false)
+        #expect(viewModel.output.user.firstName == "")
+        #expect(viewModel.output.user.lastName == "")
+        #expect(viewModel.output.user.email == "")
+        #expect(viewModel.output.user.avatar == "")
+        #expect(viewModel.output.isLoading == false)
+        #expect(viewModel.output.isSaveEnabled == false)
         #expect(viewModel.formTitle == "Create User")
         #expect(viewModel.submitButtonTitle == "Create")
     }
@@ -43,125 +43,76 @@ struct UserFormViewModelTests {
 
         let viewModel = UserFormViewModel(mode: .edit(user))
 
-        #expect(viewModel.state.firstName == "John")
-        #expect(viewModel.state.lastName == "Doe")
-        #expect(viewModel.state.email == "test@example.com")
-        #expect(viewModel.state.avatar == "https://example.com/avatar.jpg")
+        #expect(viewModel.output.user.firstName == "John")
+        #expect(viewModel.output.user.lastName == "Doe")
+        #expect(viewModel.output.user.email == "test@example.com")
+        #expect(viewModel.output.user.avatar == "https://example.com/avatar.jpg")
         #expect(viewModel.formTitle == "Edit User")
         #expect(viewModel.submitButtonTitle == "Save")
     }
 
     // MARK: - Field Update Tests
 
-    @Test("updateFirstName updates state")
+    @Test("updateFirstName updates output")
     func testUpdateFirstName() async {
         let viewModel = UserFormViewModel(mode: .create)
 
-        // Use continuation to wait for state change
-        await withCheckedContinuation { continuation in
-            var cancellable: AnyCancellable?
-            cancellable = viewModel.$state
-                .dropFirst() // Skip initial value
-                .sink { state in
-                    if state.firstName == "John" {
-                        cancellable?.cancel()
-                        continuation.resume()
-                    }
-                }
+        await viewModel.input(.updateFirstName("John"))
+        try? await Task.sleep(for: .milliseconds(100))
 
-            viewModel.send(.updateFirstName("John"))
-        }
-
-        #expect(viewModel.state.firstName == "John")
+        #expect(viewModel.output.user.firstName == "John")
     }
 
     @Test("updateFirstName validates immediately")
     func testUpdateFirstNameValidation() async {
         let viewModel = UserFormViewModel(mode: .create)
 
-        viewModel.send(.updateFirstName(""))
-
-        // Give time for validation debounce
+        await viewModel.input(.updateFirstName(""))
         try? await Task.sleep(for: .milliseconds(400))
 
-        #expect(viewModel.state.firstName == "")
-        #expect(viewModel.state.firstNameError != nil)
+        #expect(viewModel.output.user.firstName == "")
+        #expect(viewModel.output.validationErrors.firstNameError != nil)
     }
 
-    @Test("updateLastName updates state")
+    @Test("updateLastName updates output")
     func testUpdateLastName() async {
         let viewModel = UserFormViewModel(mode: .create)
 
-        await withCheckedContinuation { continuation in
-            var cancellable: AnyCancellable?
-            cancellable = viewModel.$state
-                .dropFirst()
-                .sink { state in
-                    if state.lastName == "Doe" {
-                        cancellable?.cancel()
-                        continuation.resume()
-                    }
-                }
+        await viewModel.input(.updateLastName("Doe"))
+        try? await Task.sleep(for: .milliseconds(100))
 
-            viewModel.send(.updateLastName("Doe"))
-        }
-
-        #expect(viewModel.state.lastName == "Doe")
+        #expect(viewModel.output.user.lastName == "Doe")
     }
 
-    @Test("updateEmail updates state")
+    @Test("updateEmail updates output")
     func testUpdateEmail() async {
         let viewModel = UserFormViewModel(mode: .create)
 
-        await withCheckedContinuation { continuation in
-            var cancellable: AnyCancellable?
-            cancellable = viewModel.$state
-                .dropFirst()
-                .sink { state in
-                    if state.email == "test@example.com" {
-                        cancellable?.cancel()
-                        continuation.resume()
-                    }
-                }
+        await viewModel.input(.updateEmail("test@example.com"))
+        try? await Task.sleep(for: .milliseconds(100))
 
-            viewModel.send(.updateEmail("test@example.com"))
-        }
-
-        #expect(viewModel.state.email == "test@example.com")
+        #expect(viewModel.output.user.email == "test@example.com")
     }
 
     @Test("updateEmail validates format")
     func testUpdateEmailValidation() async {
         let viewModel = UserFormViewModel(mode: .create)
 
-        viewModel.send(.updateEmail("invalid-email"))
-
-        // Give time for validation debounce
+        await viewModel.input(.updateEmail("invalid-email"))
         try? await Task.sleep(for: .milliseconds(400))
 
-        #expect(viewModel.state.email == "invalid-email")
-        #expect(viewModel.state.emailError != nil)
+        #expect(viewModel.output.user.email == "invalid-email")
+        #expect(viewModel.output.validationErrors.emailError != nil)
     }
 
-    @Test("updateAvatar updates state")
+    @Test("updateAvatar updates output")
     func testUpdateAvatar() async {
         let viewModel = UserFormViewModel(mode: .create)
 
-        await withCheckedContinuation { continuation in
-            var cancellable: AnyCancellable?
-            cancellable = viewModel.$state
-                .dropFirst()
-                .sink { state in
-                    if state.avatar == "https://example.com/avatar.jpg" {
-                        cancellable?.cancel()
-                        continuation.resume()
-                    }
-                }
+        await viewModel.input(.updateAvatar("https://example.com/avatar.jpg"))
+        try? await Task.sleep(for: .milliseconds(100))
 
-            viewModel.send(.updateAvatar("https://example.com/avatar.jpg"))
-        }
-
-        #expect(viewModel.state.avatar == "https://example.com/avatar.jpg")
+        #expect(viewModel.output.user.avatar == "https://example.com/avatar.jpg")
     }
 
     // MARK: - Validation Tests
@@ -170,45 +121,36 @@ struct UserFormViewModelTests {
     func testValidateAll() async {
         let viewModel = UserFormViewModel(mode: .create)
 
-        viewModel.send(.validateAll)
-
-        // Give time for validation
+        await viewModel.input(.validateAll)
         try? await Task.sleep(for: .milliseconds(200))
 
-        // All fields empty, so should have errors
-        #expect(viewModel.state.firstNameError != nil)
-        #expect(viewModel.state.lastNameError != nil)
-        #expect(viewModel.state.emailError != nil)
+        #expect(viewModel.output.validationErrors.firstNameError != nil)
+        #expect(viewModel.output.validationErrors.lastNameError != nil)
+        #expect(viewModel.output.validationErrors.emailError != nil)
     }
 
     @Test("isSaveEnabled is true when all fields valid")
     func testIsSaveEnabled() async {
         let viewModel = UserFormViewModel(mode: .create)
 
-        // Set valid values
-        viewModel.send(.updateFirstName("John"))
-        viewModel.send(.updateLastName("Doe"))
-        viewModel.send(.updateEmail("john.doe@example.com"))
-
-        // Wait for debounce and validation (300ms debounce + buffer)
+        await viewModel.input(.updateFirstName("John"))
+        await viewModel.input(.updateLastName("Doe"))
+        await viewModel.input(.updateEmail("john.doe@example.com"))
         try? await Task.sleep(for: .milliseconds(500))
 
-        #expect(viewModel.state.isSaveEnabled == true)
+        #expect(viewModel.output.isSaveEnabled == true)
     }
 
     @Test("isSaveEnabled is false when fields invalid")
     func testIsSaveEnabledInvalid() async {
         let viewModel = UserFormViewModel(mode: .create)
 
-        // Set invalid email
-        viewModel.send(.updateFirstName("John"))
-        viewModel.send(.updateLastName("Doe"))
-        viewModel.send(.updateEmail("invalid"))
-
-        // Wait for debounce and validation
+        await viewModel.input(.updateFirstName("John"))
+        await viewModel.input(.updateLastName("Doe"))
+        await viewModel.input(.updateEmail("invalid"))
         try? await Task.sleep(for: .milliseconds(500))
 
-        #expect(viewModel.state.isSaveEnabled == false)
+        #expect(viewModel.output.isSaveEnabled == false)
     }
 
     // MARK: - Submit Tests
@@ -225,40 +167,24 @@ struct UserFormViewModelTests {
             UserFormViewModel(mode: .create)
         }
 
-        var effectReceived: UserFormViewModel.Effect?
-
-        // Subscribe to effects
-        let cancellable = viewModel.effects.sink { effect in
-            effectReceived = effect
-        }
-
-        // Set valid data
-        viewModel.send(.updateFirstName("John"))
-        viewModel.send(.updateLastName("Doe"))
-        viewModel.send(.updateEmail("john.doe@example.com"))
-
-        // Wait for validation
+        await viewModel.input(.updateFirstName("John"))
+        await viewModel.input(.updateLastName("Doe"))
+        await viewModel.input(.updateEmail("john.doe@example.com"))
         try? await Task.sleep(for: .milliseconds(500))
 
-        // Submit
-        viewModel.send(.submit)
-
-        // Wait for submission
+        let effect = await viewModel.input(.submit)
         try? await Task.sleep(for: .milliseconds(300))
 
-        #expect(viewModel.state.isLoading == false)
+        #expect(viewModel.output.isLoading == false)
         #expect(mockTracker.trackedEvents.count > 0)
 
-        // Check effect
-        if let effect = effectReceived {
-            if case .dismiss(let user) = effect {
-                #expect(user != nil)
+        if let effect = effect {
+            if case .dismiss = effect {
+                // Expected success
             } else {
                 Issue.record("Expected dismiss effect, got \(effect)")
             }
         }
-
-        cancellable.cancel()
     }
 
     @Test("submit updates user in edit mode")
@@ -280,31 +206,16 @@ struct UserFormViewModelTests {
             UserFormViewModel(mode: .edit(existingUser))
         }
 
-        var effectReceived: UserFormViewModel.Effect?
-
-        // Subscribe to effects
-        let cancellable = viewModel.effects.sink { effect in
-            effectReceived = effect
-        }
-
-        // Update data
-        viewModel.send(.updateFirstName("New"))
-        viewModel.send(.updateLastName("Name"))
-        viewModel.send(.updateEmail("new@example.com"))
-
-        // Wait for validation
+        await viewModel.input(.updateFirstName("New"))
+        await viewModel.input(.updateLastName("Name"))
+        await viewModel.input(.updateEmail("new@example.com"))
         try? await Task.sleep(for: .milliseconds(500))
 
-        // Submit
-        viewModel.send(.submit)
-
-        // Wait for submission
+        _ = await viewModel.input(.submit)
         try? await Task.sleep(for: .milliseconds(300))
 
-        #expect(viewModel.state.isLoading == false)
+        #expect(viewModel.output.isLoading == false)
         #expect(mockTracker.trackedEvents.count > 0)
-
-        cancellable.cancel()
     }
 
     @Test("submit handles errors")
@@ -326,41 +237,25 @@ struct UserFormViewModelTests {
             UserFormViewModel(mode: .create)
         }
 
-        var effectReceived: UserFormViewModel.Effect?
-
-        // Subscribe to effects
-        let cancellable = viewModel.effects.sink { effect in
-            effectReceived = effect
-        }
-
-        // Set valid data
-        viewModel.send(.updateFirstName("John"))
-        viewModel.send(.updateLastName("Doe"))
-        viewModel.send(.updateEmail("john.doe@example.com"))
-
-        // Wait for validation
+        await viewModel.input(.updateFirstName("John"))
+        await viewModel.input(.updateLastName("Doe"))
+        await viewModel.input(.updateEmail("john.doe@example.com"))
         try? await Task.sleep(for: .milliseconds(500))
 
-        // Submit
-        viewModel.send(.submit)
-
-        // Wait for submission
+        let effect = await viewModel.input(.submit)
         try? await Task.sleep(for: .milliseconds(300))
 
-        #expect(viewModel.state.isLoading == false)
+        #expect(viewModel.output.isLoading == false)
 
-        // Should show error effect
-        if let effect = effectReceived {
+        if let effect = effect {
             if case .showError = effect {
-                // Success
+                // Expected error effect
             } else {
                 Issue.record("Expected showError effect, got \(effect)")
             }
         }
 
         #expect(mockTracker.trackedAppErrors.count > 0)
-
-        cancellable.cancel()
     }
 
     @Test("submit does not proceed when form invalid")
@@ -373,24 +268,17 @@ struct UserFormViewModelTests {
             UserFormViewModel(mode: .create)
         }
 
-        // Set invalid data
-        viewModel.send(.updateFirstName(""))
-        viewModel.send(.updateLastName(""))
-        viewModel.send(.updateEmail("invalid"))
-
-        // Wait for validation
+        await viewModel.input(.updateFirstName(""))
+        await viewModel.input(.updateLastName(""))
+        await viewModel.input(.updateEmail("invalid"))
         try? await Task.sleep(for: .milliseconds(500))
 
-        #expect(viewModel.state.isSaveEnabled == false)
+        #expect(viewModel.output.isSaveEnabled == false)
 
-        // Attempt submit
-        viewModel.send(.submit)
-
-        // Wait
+        _ = await viewModel.input(.submit)
         try? await Task.sleep(for: .milliseconds(200))
 
-        // Should still be invalid
-        #expect(viewModel.state.isSaveEnabled == false)
+        #expect(viewModel.output.isSaveEnabled == false)
     }
 
     // MARK: - Mode Tests

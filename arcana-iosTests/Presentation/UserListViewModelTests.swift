@@ -30,16 +30,16 @@ struct UserListViewModelTests {
     func testInitialization() {
         let viewModel = UserListViewModel()
 
-        #expect(viewModel.users.isEmpty)
-        #expect(viewModel.isLoading == false)
-        #expect(viewModel.isLoadingMore == false)
-        #expect(viewModel.isRefreshing == false)
-        #expect(viewModel.errorMessage == nil)
-        #expect(viewModel.searchQuery == "")
-        #expect(viewModel.filteredUsers.isEmpty)
-        #expect(viewModel.currentPage == 1)
+        #expect(viewModel.output.users.isEmpty)
+        #expect(viewModel.output.isLoading == false)
+        #expect(viewModel.output.isLoadingMore == false)
+        #expect(viewModel.output.isRefreshing == false)
+        #expect(viewModel.output.errorMessage == nil)
+        #expect(viewModel.output.searchQuery == "")
+        #expect(viewModel.output.filteredUsers.isEmpty)
+        #expect(viewModel.output.currentPage == 1)
         #expect(viewModel.hasMorePages == false)
-        #expect(viewModel.pendingChangesCount == 0)
+        #expect(viewModel.output.pendingChangesCount == 0)
     }
 
     // MARK: - Load Initial Tests
@@ -58,15 +58,15 @@ struct UserListViewModelTests {
             UserListViewModel()
         }
 
-        viewModel.send(.loadInitial)
+        await viewModel.input(.loadInitial)
 
         // Wait for async operation
         try? await Task.sleep(for: .milliseconds(200))
 
-        #expect(viewModel.users.count == 5)
-        #expect(viewModel.filteredUsers.count == 5)
-        #expect(viewModel.isLoading == false)
-        #expect(viewModel.errorMessage == nil)
+        #expect(viewModel.output.users.count == 5)
+        #expect(viewModel.output.filteredUsers.count == 5)
+        #expect(viewModel.output.isLoading == false)
+        #expect(viewModel.output.errorMessage == nil)
         #expect(mockTracker.trackedScreens.count > 0)
     }
 
@@ -92,13 +92,13 @@ struct UserListViewModelTests {
 
         viewModel.onEffect = effectCapture.capture
 
-        viewModel.send(.loadInitial)
+        await viewModel.input(.loadInitial)
 
         // Wait for async operation
         try? await Task.sleep(for: .milliseconds(200))
 
-        #expect(viewModel.users.isEmpty)
-        #expect(viewModel.errorMessage != nil)
+        #expect(viewModel.output.users.isEmpty)
+        #expect(viewModel.output.errorMessage != nil)
         #expect(effectCapture.effects.count > 0)
     }
 
@@ -119,17 +119,17 @@ struct UserListViewModelTests {
         }
 
         // Load initial page first
-        viewModel.send(.loadInitial)
+        await viewModel.input(.loadInitial)
         try? await Task.sleep(for: .milliseconds(200))
 
-        let initialCount = viewModel.users.count
+        let initialCount = viewModel.output.users.count
 
         // Load next page
-        viewModel.send(.loadNextPage)
+        await viewModel.input(.loadNextPage)
         try? await Task.sleep(for: .milliseconds(200))
 
-        #expect(viewModel.users.count >= initialCount)
-        #expect(viewModel.isLoadingMore == false)
+        #expect(viewModel.output.users.count >= initialCount)
+        #expect(viewModel.output.isLoadingMore == false)
     }
 
     @Test("loadNextPage does nothing when no more pages")
@@ -144,15 +144,15 @@ struct UserListViewModelTests {
             UserListViewModel()
         }
 
-        viewModel.send(.loadInitial)
+        await viewModel.input(.loadInitial)
         try? await Task.sleep(for: .milliseconds(200))
 
-        let initialCount = viewModel.users.count
+        let initialCount = viewModel.output.users.count
 
-        viewModel.send(.loadNextPage)
+        await viewModel.input(.loadNextPage)
         try? await Task.sleep(for: .milliseconds(200))
 
-        #expect(viewModel.users.count == initialCount)
+        #expect(viewModel.output.users.count == initialCount)
     }
 
     // MARK: - Refresh Tests
@@ -172,14 +172,14 @@ struct UserListViewModelTests {
 
         viewModel.onEffect = effectCapture.capture
 
-        viewModel.send(.refresh)
+        await viewModel.input(.refresh)
 
         // Wait for async operation
         try? await Task.sleep(for: .milliseconds(200))
 
-        #expect(viewModel.users.count > 0)
-        #expect(viewModel.isRefreshing == false)
-        #expect(viewModel.currentPage == 1)
+        #expect(viewModel.output.users.count > 0)
+        #expect(viewModel.output.isRefreshing == false)
+        #expect(viewModel.output.currentPage == 1)
 
         // Should show success message
         let hasSuccessEffect = effectCapture.effects.contains { effect in
@@ -206,16 +206,16 @@ struct UserListViewModelTests {
         }
 
         // Load users first
-        viewModel.send(.loadInitial)
+        await viewModel.input(.loadInitial)
         try? await Task.sleep(for: .milliseconds(200))
 
         // Search
-        viewModel.send(.search("John"))
+        await viewModel.input(.search("John"))
 
         // Wait for search
         try? await Task.sleep(for: .milliseconds(200))
 
-        #expect(viewModel.searchQuery == "John")
+        #expect(viewModel.output.searchQuery == "John")
         #expect(viewModel.isSearching == true)
     }
 
@@ -230,16 +230,16 @@ struct UserListViewModelTests {
             UserListViewModel()
         }
 
-        viewModel.send(.loadInitial)
+        await viewModel.input(.loadInitial)
         try? await Task.sleep(for: .milliseconds(200))
 
-        let allUsersCount = viewModel.users.count
+        let allUsersCount = viewModel.output.users.count
 
-        viewModel.send(.search(""))
+        await viewModel.input(.search(""))
         try? await Task.sleep(for: .milliseconds(100))
 
-        #expect(viewModel.searchQuery == "")
-        #expect(viewModel.filteredUsers.count == allUsersCount)
+        #expect(viewModel.output.searchQuery == "")
+        #expect(viewModel.output.filteredUsers.count == allUsersCount)
         #expect(viewModel.isSearching == false)
     }
 
@@ -260,16 +260,16 @@ struct UserListViewModelTests {
 
         viewModel.onEffect = effectCapture.capture
 
-        viewModel.send(.loadInitial)
+        await viewModel.input(.loadInitial)
         try? await Task.sleep(for: .milliseconds(200))
 
-        let initialCount = viewModel.users.count
-        let userToDelete = viewModel.users.first!
+        let initialCount = viewModel.output.users.count
+        let userToDelete = viewModel.output.users.first!
 
-        viewModel.send(.deleteUser(userToDelete))
+        await viewModel.input(.deleteUser(userToDelete))
         try? await Task.sleep(for: .milliseconds(200))
 
-        #expect(viewModel.users.count == initialCount - 1)
+        #expect(viewModel.output.users.count == initialCount - 1)
 
         let hasSuccessEffect = effectCapture.effects.contains { effect in
             if case .showSuccess = effect {
@@ -289,7 +289,7 @@ struct UserListViewModelTests {
         viewModel.onEffect = effectCapture.capture
 
         let user = User.mock()
-        viewModel.send(.selectUser(user))
+        await viewModel.input(.selectUser(user))
 
         #expect(effectCapture.effects.count > 0)
 
@@ -319,21 +319,21 @@ struct UserListViewModelTests {
         }
 
         // Fail initial load
-        viewModel.send(.loadInitial)
+        await viewModel.input(.loadInitial)
         try? await Task.sleep(for: .milliseconds(200))
 
-        #expect(viewModel.errorMessage != nil)
+        #expect(viewModel.output.errorMessage != nil)
         #expect(viewModel.canRetry == true)
 
         // Clear error and retry
         mockService.shouldThrowError = nil
         mockService.usersToReturn = User.mockUsers
 
-        viewModel.send(.retryLastOperation)
+        await viewModel.input(.retryLastOperation)
         try? await Task.sleep(for: .milliseconds(200))
 
         // Should succeed now
-        #expect(viewModel.users.count > 0)
+        #expect(viewModel.output.users.count > 0)
     }
 
     // MARK: - Computed Properties Tests
@@ -341,7 +341,7 @@ struct UserListViewModelTests {
     @Test("displayedUsers returns filtered users")
     func testDisplayedUsers() {
         let viewModel = UserListViewModel()
-        #expect(viewModel.displayedUsers == viewModel.filteredUsers)
+        #expect(viewModel.displayedUsers == viewModel.output.filteredUsers)
     }
 
     @Test("isSearching is true when search query is not empty")
@@ -349,7 +349,7 @@ struct UserListViewModelTests {
         let viewModel = UserListViewModel()
         #expect(viewModel.isSearching == false)
 
-        viewModel.send(.search("test"))
+        await viewModel.input(.search("test"))
         #expect(viewModel.isSearching == true)
     }
 
@@ -362,7 +362,7 @@ struct UserListViewModelTests {
         #expect(emptyMessage.contains("No users"))
 
         // Searching with no results
-        viewModel.send(.search("nonexistent"))
+        await viewModel.input(.search("nonexistent"))
         let searchMessage = viewModel.emptyStateMessage
         #expect(searchMessage.contains("No users found"))
     }
@@ -370,10 +370,10 @@ struct UserListViewModelTests {
     @Test("pending changes count can be updated")
     func testUpdatePendingChangesCount() {
         let viewModel = UserListViewModel()
-        #expect(viewModel.pendingChangesCount == 0)
+        #expect(viewModel.output.pendingChangesCount == 0)
 
-        viewModel.send(.updatePendingChangesCount(5))
-        #expect(viewModel.pendingChangesCount == 5)
+        await viewModel.input(.updatePendingChangesCount(5))
+        #expect(viewModel.output.pendingChangesCount == 5)
     }
 }
 
