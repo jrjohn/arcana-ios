@@ -72,9 +72,9 @@ struct MainViewModelTests {
         let navGraph = NavGraph()
         let viewModel = MainViewModel(navGraph: navGraph)
 
-        #expect(viewModel.userCount == 0)
-        #expect(viewModel.isLoading == false)
-        #expect(viewModel.errorMessage == nil)
+        #expect(viewModel.output.userCount == 0)
+        #expect(viewModel.output.isLoading == false)
+        #expect(viewModel.output.errorMessage == nil)
         #expect(viewModel.hasError == false)
         #expect(viewModel.canNavigate == true)
     }
@@ -96,14 +96,14 @@ struct MainViewModelTests {
             MainViewModel(navGraph: navGraph)
         }
 
-        viewModel.send(.loadData)
+        await viewModel.input(.loadData)
 
         // Wait for async operation
         try? await Task.sleep(for: .milliseconds(600))
 
-        #expect(viewModel.userCount == 5)
-        #expect(viewModel.isLoading == false)
-        #expect(viewModel.errorMessage == nil)
+        #expect(viewModel.output.userCount == 5)
+        #expect(viewModel.output.isLoading == false)
+        #expect(viewModel.output.errorMessage == nil)
         #expect(mockService.getUsersCallCount == 1)
         #expect(mockTracker.trackedScreens.count > 0)
         #expect(mockTracker.trackedEvents.count > 0)
@@ -129,14 +129,14 @@ struct MainViewModelTests {
             MainViewModel(navGraph: navGraph)
         }
 
-        viewModel.send(.loadData)
+        await viewModel.input(.loadData)
 
         // Wait for async operation
         try? await Task.sleep(for: .milliseconds(600))
 
-        #expect(viewModel.userCount == 0)
-        #expect(viewModel.isLoading == false)
-        #expect(viewModel.errorMessage != nil)
+        #expect(viewModel.output.userCount == 0)
+        #expect(viewModel.output.isLoading == false)
+        #expect(viewModel.output.errorMessage != nil)
         #expect(viewModel.hasError == true)
         #expect(mockTracker.trackedAppErrors.count > 0)
     }
@@ -156,12 +156,12 @@ struct MainViewModelTests {
             MainViewModel(navGraph: navGraph)
         }
 
-        viewModel.send(.retry)
+        await viewModel.input(.retry)
 
         // Wait for async operation
         try? await Task.sleep(for: .milliseconds(600))
 
-        #expect(viewModel.userCount == 5)
+        #expect(viewModel.output.userCount == 5)
         #expect(mockService.getUsersCallCount == 1)
     }
 
@@ -180,7 +180,7 @@ struct MainViewModelTests {
             MainViewModel(navGraph: navGraph)
         }
 
-        viewModel.send(.navigateToUserList)
+        await viewModel.input(.navigateToUserList)
 
         // Give time for navigation
         try? await Task.sleep(for: .milliseconds(100))
@@ -206,7 +206,7 @@ struct MainViewModelTests {
             MainViewModel(navGraph: navGraph)
         }
 
-        viewModel.send(.navigateToSettings)
+        await viewModel.input(.navigateToSettings)
 
         // Give time for navigation
         try? await Task.sleep(for: .milliseconds(100))
@@ -235,16 +235,16 @@ struct MainViewModelTests {
         }
 
         // Start loading
-        viewModel.send(.loadData)
+        await viewModel.input(.loadData)
 
         // Check immediately while loading
         try? await Task.sleep(for: .milliseconds(100))
 
         // Attempt navigation while loading
-        viewModel.send(.navigateToUserList)
+        await viewModel.input(.navigateToUserList)
 
         // Even if attempted, it should check canNavigate
-        #expect(viewModel.canNavigate == !viewModel.isLoading)
+        #expect(viewModel.canNavigate == !viewModel.output.isLoading)
     }
 
     // MARK: - Computed Properties Tests
@@ -268,6 +268,7 @@ struct MainViewModelTests {
         #expect(viewModel.canNavigate == true)
 
         // When not loading, can navigate
-        #expect(viewModel.canNavigate == !viewModel.isLoading)
+        #expect(viewModel.canNavigate == !viewModel.output.isLoading)
     }
 }
+
