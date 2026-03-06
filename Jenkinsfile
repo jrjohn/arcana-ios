@@ -74,6 +74,7 @@ pipeline {
                         -derivedDataPath "${DERIVED}" \
                         -skipPackagePluginValidation \
                         test > /tmp/xcode-test.log 2>&1 || true
+                    echo "=== xcodebuild last 20 lines ===" && tail -20 /tmp/xcode-test.log || true
                     grep -E "Test Suite|passed|failed|error:|Build FAILED" /tmp/xcode-test.log | tail -30 || true
 
                     python3 scripts/xcresult_to_sonar_coverage.py "${DERIVED}" coverage-report.xml \
@@ -93,6 +94,8 @@ pipeline {
                 // Use official sonar-scanner Docker image v6 on devops_default network
                 // This bypasses /api/batch/project bug in Homebrew sonar-scanner 8.0.1
                 sh '''
+                    echo "=== Workspace contents ===" && ls -la "${WORKSPACE}/" | head -20 || true
+                    echo "=== Sources dir ===" && ls "${WORKSPACE}/arcana-ios/Sources/" 2>/dev/null || echo "MISSING"
                     docker run --rm \
                         --network devops_default \
                         -e SONAR_HOST_URL=http://sonarqube:9000/sonarqube \
@@ -102,7 +105,6 @@ pipeline {
                         -Dsonar.projectKey=ios-app \
                         "-Dsonar.projectName=iOS App" \
                         -Dsonar.sources=arcana-ios/Sources \
-                        -Dsonar.tests=arcana-iosTests \
                         "-Dsonar.exclusions=**/DerivedData/**,**/*.xcassets/**,**/build/**" \
                         "-Dsonar.coverage.exclusions=**/Mocks/**,**/*Mock*.swift,**/*Stub*.swift" \
                         -Dsonar.coverageReportPaths=coverage-report.xml \
