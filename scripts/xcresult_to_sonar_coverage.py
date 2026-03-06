@@ -14,6 +14,9 @@ import xml.etree.ElementTree as ET
 
 
 def find_xcresult(derived_data_path: str) -> str:
+    # Accept a direct .xcresult path
+    if derived_data_path.endswith(".xcresult") and os.path.exists(derived_data_path):
+        return derived_data_path
     pattern = os.path.join(derived_data_path, "Logs", "Test", "*.xcresult")
     results = glob.glob(pattern)
     if not results:

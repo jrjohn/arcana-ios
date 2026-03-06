@@ -65,6 +65,9 @@ pipeline {
                         xcrun simctl boot "$SIM_ID" 2>/dev/null || true
                     fi
 
+                    # Use explicit result bundle path so python script always gets a fresh xcresult
+                    XCRESULT=/tmp/arcana-ios-tests.xcresult
+                    rm -rf "${XCRESULT}"
                     # Redirect to file — avoids SIGPIPE killing xcodebuild before xcresult is written
                     timeout 2400 xcodebuild \
                         -project arcana-ios.xcodeproj \
@@ -72,12 +75,14 @@ pipeline {
                         -destination 'platform=iOS Simulator,name=iPhone 17' \
                         -enableCodeCoverage YES \
                         -derivedDataPath "${DERIVED}" \
+                        -resultBundlePath "${XCRESULT}" \
                         -skipPackagePluginValidation \
                         test > /tmp/xcode-test.log 2>&1 || true
-                    echo "=== xcodebuild last 20 lines ===" && tail -20 /tmp/xcode-test.log || true
-                    grep -E "Test Suite|passed|failed|error:|Build FAILED" /tmp/xcode-test.log | tail -30 || true
+                    echo "=== xcode-test.log (last 40 lines) ==="
+                    tail -40 /tmp/xcode-test.log 2>/dev/null || echo "(log missing or empty)"
+                    echo "=== ERRORS ONLY ===" && grep -E "error:|Build FAILED" /tmp/xcode-test.log 2>/dev/null | head -20 || true
 
-                    python3 scripts/xcresult_to_sonar_coverage.py "${DERIVED}" coverage-report.xml \
+                    python3 scripts/xcresult_to_sonar_coverage.py "${XCRESULT}" coverage-report.xml \
                         || echo "Coverage conversion failed (non-fatal)"
 
                     kill $CAFFEINE_PID 2>/dev/null || true
