@@ -53,12 +53,13 @@ pipeline {
             steps {
                 sh '''
                     # Prevent Mac sleep during long build
-                    caffeinate -i -w $$ &
+                    caffeinate -i &
+                    CAFFEINE_PID=$!
 
                     DERIVED=${HOME}/jenkins-agent/DerivedData/arcana-ios
 
                     # Pre-boot simulator so test launch is fast
-                    SIM_ID=$(xcrun simctl list devices available | grep "iPhone 17" | grep -v unavailable | head -1 | sed "s/.*(\([A-Z0-9-]*\)).*/\\1/")
+                    SIM_ID=$(xcrun simctl list devices available | grep "iPhone 17" | grep -v unavailable | head -1 | grep -oE '[0-9A-F-]{36}' | head -1)
                     if [ -n "$SIM_ID" ]; then
                         xcrun simctl boot "$SIM_ID" 2>/dev/null || true
                     fi
@@ -75,6 +76,8 @@ pipeline {
 
                     python3 scripts/xcresult_to_sonar_coverage.py "${DERIVED}" coverage-report.xml \
                         || echo "Coverage conversion failed (non-fatal)"
+
+                    kill $CAFFEINE_PID 2>/dev/null || true
                 '''
             }
         }
