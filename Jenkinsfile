@@ -65,7 +65,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
                     sh '''
-                        /opt/sonar-scanner/bin/sonar-scanner \
+                        /opt/homebrew/bin/sonar-scanner \
                             -Dsonar.host.url=${SQ_URL} \
                             -Dsonar.token=${SQ_TOKEN} \
                             -Dsonar.projectKey=ios-app \
