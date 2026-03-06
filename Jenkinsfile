@@ -8,7 +8,7 @@ pipeline {
         PATH         = '/opt/sonar-scanner/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'
     }
     options {
-        timeout(time: 30, unit: 'MINUTES')
+        timeout(time: 60, unit: 'MINUTES')
         disableConcurrentBuilds()
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
@@ -35,6 +35,10 @@ pipeline {
             steps {
                 sh '''
                     set -o pipefail
+                    # Resolve SPM packages first (cached in global cache between builds)
+                    xcodebuild -resolvePackageDependencies \
+                        -project arcana-ios.xcodeproj \
+                        -scheme arcana-ios 2>&1 | tail -3 || true
                     xcodebuild \
                         -project arcana-ios.xcodeproj \
                         -scheme arcana-ios \
@@ -48,7 +52,7 @@ pipeline {
         stage('Test + Coverage') {
             steps {
                 sh '''
-                    DERIVED=$(pwd)/DerivedData
+                    DERIVED=${HOME}/jenkins-agent/DerivedData/arcana-ios
                     xcodebuild \
                         -project arcana-ios.xcodeproj \
                         -scheme arcana-ios \
