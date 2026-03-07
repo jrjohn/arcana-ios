@@ -67,20 +67,40 @@ pipeline {
 
                     # Use explicit result bundle path so python script always gets a fresh xcresult
                     XCRESULT=/tmp/arcana-ios-tests.xcresult
-                    rm -rf "${XCRESULT}"
-                    # Note: macOS has no GNU timeout; use perl alarm instead (40min max)
-                    xcodebuild \
-                        -project arcana-ios.xcodeproj \
-                        -scheme arcana-ios \
-                        -destination 'platform=iOS Simulator,name=iPhone 17' \
-                        -enableCodeCoverage YES \
-                        -derivedDataPath "${DERIVED}" \
-                        -resultBundlePath "${XCRESULT}" \
-                        -skipPackagePluginValidation \
-                        test > /tmp/xcode-test.log 2>&1 || true
+                    LOG=/tmp/xcode-test.log
+                    PID_FILE=/tmp/xcode-test-pid
+
+                    # Launch xcodebuild with nohup so it survives Mac Mini agent disconnects
+                    # If already running from a previous attempt, just resume waiting
+                    if [ -f "${PID_FILE}" ] && kill -0 "$(cat ${PID_FILE})" 2>/dev/null; then
+                        echo "Resuming wait for existing xcodebuild (PID $(cat ${PID_FILE}))..."
+                    else
+                        echo "Starting fresh xcodebuild test..."
+                        rm -rf "${XCRESULT}" "${LOG}"
+                        nohup xcodebuild \
+                            -project arcana-ios.xcodeproj \
+                            -scheme arcana-ios \
+                            -destination 'platform=iOS Simulator,name=iPhone 17' \
+                            -enableCodeCoverage YES \
+                            -derivedDataPath "${DERIVED}" \
+                            -resultBundlePath "${XCRESULT}" \
+                            -skipPackagePluginValidation \
+                            test > "${LOG}" 2>&1 &
+                        echo $! > "${PID_FILE}"
+                    fi
+
+                    # Heartbeat poll loop — emits output every 60s to keep agent alive
+                    XCODE_PID=$(cat "${PID_FILE}")
+                    echo "Waiting for xcodebuild PID ${XCODE_PID}..."
+                    while kill -0 "${XCODE_PID}" 2>/dev/null; do
+                        sleep 60
+                        echo "xcodebuild running... ($(wc -l < ${LOG} 2>/dev/null || echo 0) lines)"
+                    done
+                    echo "xcodebuild done"
+                    rm -f "${PID_FILE}"
                     echo "=== xcode-test.log (last 40 lines) ==="
-                    tail -40 /tmp/xcode-test.log 2>/dev/null || echo "(log missing or empty)"
-                    echo "=== ERRORS ONLY ===" && grep -E "error:|Build FAILED" /tmp/xcode-test.log 2>/dev/null | head -20 || true
+                    tail -40 "${LOG}" 2>/dev/null || echo "(log missing or empty)"
+                    echo "=== ERRORS ONLY ===" && grep -E "error:|Build FAILED" "${LOG}" 2>/dev/null | head -20 || true
 
                     python3 scripts/xcresult_to_sonar_coverage.py "${XCRESULT}" coverage-report.xml \
                         || echo "Coverage conversion failed (non-fatal)"
