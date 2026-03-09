@@ -204,6 +204,9 @@ struct ExtensionsTests {
             try await subject.async()
         }
 
+        // Yield to let the Task subscribe before sending
+        try? await Task.sleep(for: .milliseconds(50))
+
         // Send value
         subject.send(42)
 

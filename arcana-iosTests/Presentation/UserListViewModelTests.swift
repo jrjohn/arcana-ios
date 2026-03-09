@@ -81,7 +81,6 @@ struct UserListViewModelTests {
         )
 
         let mockTracker = MockAnalyticsTracker()
-        let effectCapture = EffectCapture()
 
         let viewModel = await withDependencies {
             $0.userService = mockService
@@ -90,15 +89,18 @@ struct UserListViewModelTests {
             UserListViewModel()
         }
 
-
-        await viewModel.input(.loadInitial)
+        let effect = await viewModel.input(.loadInitial)
 
         // Wait for async operation
         try? await Task.sleep(for: .milliseconds(200))
 
         #expect(viewModel.output.users.isEmpty)
         #expect(viewModel.output.errorMessage != nil)
-        #expect(effectCapture.effects.count > 0)
+        if case .showError = effect {
+            // expected
+        } else {
+            Issue.record("Expected showError effect, got \(String(describing: effect))")
+        }
     }
 
     // MARK: - Pagination Tests
@@ -161,16 +163,13 @@ struct UserListViewModelTests {
         let mockService = MockUserService()
         mockService.usersToReturn = User.mockUsers
 
-        let effectCapture = EffectCapture()
-
         let viewModel = await withDependencies {
             $0.userService = mockService
         } operation: {
             UserListViewModel()
         }
 
-
-        await viewModel.input(.refresh)
+        let effect = await viewModel.input(.refresh)
 
         // Wait for async operation
         try? await Task.sleep(for: .milliseconds(200))
@@ -180,13 +179,11 @@ struct UserListViewModelTests {
         #expect(viewModel.output.currentPage == 1)
 
         // Should show success message
-        let hasSuccessEffect = effectCapture.effects.contains { effect in
-            if case .showSuccess = effect {
-                return true
-            }
-            return false
+        if case .showSuccess = effect {
+            // expected
+        } else {
+            Issue.record("Expected showSuccess effect, got \(String(describing: effect))")
         }
-        #expect(hasSuccessEffect)
     }
 
     // MARK: - Search Tests
@@ -248,51 +245,47 @@ struct UserListViewModelTests {
         let mockService = MockUserService()
         mockService.usersToReturn = User.mockUsers
 
-        let effectCapture = EffectCapture()
-
         let viewModel = await withDependencies {
             $0.userService = mockService
         } operation: {
             UserListViewModel()
         }
 
-
         await viewModel.input(.loadInitial)
         try? await Task.sleep(for: .milliseconds(200))
 
         let initialCount = viewModel.output.users.count
+        guard initialCount > 0 else {
+            Issue.record("No users loaded for delete test")
+            return
+        }
         let userToDelete = viewModel.output.users.first!
 
-        await viewModel.input(.deleteUser(userToDelete))
+        let deleteEffect = await viewModel.input(.deleteUser(userToDelete))
         try? await Task.sleep(for: .milliseconds(200))
 
         #expect(viewModel.output.users.count == initialCount - 1)
 
-        let hasSuccessEffect = effectCapture.effects.contains { effect in
-            if case .showSuccess = effect {
-                return true
-            }
-            return false
+        if case .showSuccess = deleteEffect {
+            // expected
+        } else {
+            Issue.record("Expected showSuccess effect, got \(String(describing: deleteEffect))")
         }
-        #expect(hasSuccessEffect)
     }
 
     // MARK: - Select User Tests
 
     @Test("selectUser triggers navigation effect")
     func testSelectUser() async {
-        let effectCapture = EffectCapture()
         let viewModel = UserListViewModel()
 
         let user = User.mock()
-        await viewModel.input(.selectUser(user))
+        let effect = await viewModel.input(.selectUser(user))
 
-        #expect(effectCapture.effects.count > 0)
-
-        if case .navigateToDetail(let selectedUser) = effectCapture.effects.first {
+        if case .navigateToDetail(let selectedUser) = effect {
             #expect(selectedUser.id == user.id)
         } else {
-            Issue.record("Expected navigateToDetail effect")
+            Issue.record("Expected navigateToDetail effect, got \(String(describing: effect))")
         }
     }
 

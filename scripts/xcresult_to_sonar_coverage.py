@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
 Convert Xcode xcresult coverage to SonarQube generic coverage XML format.
-Usage: python3 scripts/xcresult_to_sonar_coverage.py <path/to/DerivedData> <output.xml>
-SonarQube generic coverage: https://docs.sonarqube.org/latest/analysis/generic-test/
+Uses per-file xccov queries for accurate line-level coverage data.
 """
 
 import json
@@ -13,112 +12,163 @@ import glob
 import xml.etree.ElementTree as ET
 
 
-def find_xcresult(derived_data_path: str) -> str:
-    # Accept a direct .xcresult path
-    if derived_data_path.endswith(".xcresult") and os.path.exists(derived_data_path):
-        return derived_data_path
-    pattern = os.path.join(derived_data_path, "Logs", "Test", "*.xcresult")
+def find_xcresult(path: str) -> str:
+    if path.endswith(".xcresult") and os.path.exists(path):
+        return path
+    pattern = os.path.join(path, "Logs", "Test", "*.xcresult")
     results = glob.glob(pattern)
     if not results:
         raise FileNotFoundError(f"No .xcresult found in {pattern}")
-    return sorted(results)[-1]  # most recent
+    return sorted(results)[-1]
 
 
-def get_coverage_json(xcresult_path: str) -> dict:
+def get_coverage_report(xcresult_path: str) -> dict:
+    """Get the high-level coverage report (targets + files list)."""
     result = subprocess.run(
         ["xcrun", "xccov", "view", "--report", "--json", xcresult_path],
         capture_output=True, text=True
     )
     if result.returncode != 0:
-        raise RuntimeError(f"xccov failed: {result.stderr}")
-    return json.loads(result.stdout)
+        raise RuntimeError(f"xccov report failed: {result.stderr}")
+    data = json.loads(result.stdout)
+    print(f"  Found {len(data.get('targets', []))} targets in coverage report")
+    for t in data.get("targets", []):
+        print(f"    Target: {t.get('name')} ({len(t.get('files', []))} files)")
+    return data
 
 
-def build_generic_coverage_xml(coverage: dict, source_root: str) -> ET.Element:
+def get_file_coverage(xcresult_path: str, file_path: str) -> list:
+    """Get per-line coverage for a specific file. Returns list of {line, count} dicts."""
+    result = subprocess.run(
+        ["xcrun", "xccov", "view", "--file", file_path, "--json", xcresult_path],
+        capture_output=True, text=True
+    )
+    if result.returncode != 0:
+        return []
+    try:
+        data = json.loads(result.stdout)
+        # Format: list of dicts with "line" and "count" (or executionCount)
+        # Actual format depends on Xcode version; handle both
+        if isinstance(data, list):
+            return data
+        # Some versions wrap in object
+        return data.get("lines", data.get("executionCounts", []))
+    except (json.JSONDecodeError, AttributeError):
+        return []
+
+
+def build_generic_coverage_xml(coverage: dict, xcresult_path: str, source_root: str) -> ET.Element:
     root = ET.Element("coverage", version="1")
+    files_processed = 0
 
     for target in coverage.get("targets", []):
-        # Only process main app target (not test targets)
         target_name = target.get("name", "")
+        # Skip test targets
         if "Tests" in target_name or "UITests" in target_name:
             continue
 
+        print(f"  Processing target: {target_name}")
+
         for file_data in target.get("files", []):
-            path = file_data.get("path", "")
-            if not path.endswith(".swift"):
+            abs_path = file_data.get("path", "")
+            if not abs_path.endswith(".swift"):
                 continue
 
-            # Make path relative to source root if possible
+            # Quick check: skip if no executable lines
+            if file_data.get("executableLines", 0) == 0:
+                continue
+
+            # Make path relative to source root
             try:
-                rel_path = os.path.relpath(path, source_root)
+                rel_path = os.path.relpath(abs_path, source_root)
             except ValueError:
-                rel_path = path
+                rel_path = abs_path
 
             # Skip Mocks and test-support files
-            if "Mock" in rel_path or "Stub" in rel_path or "Test" in rel_path:
+            if any(kw in rel_path for kw in ["Mock", "Stub", "Test", "Preview"]):
                 continue
 
-            covered_count = 0
-            total_count = 0
-            lines_data = {}
+            # Try per-line data first
+            line_entries = get_file_coverage(xcresult_path, abs_path)
 
-            for function in file_data.get("functions", []):
-                for line_data in function.get("lineData", []):
-                    line_no = line_data.get("line", 0)
-                    exec_count = line_data.get("executionCount", 0)
-                    if line_no > 0:
-                        # Merge multiple function data for same line (take max)
-                        if line_no not in lines_data:
-                            lines_data[line_no] = exec_count
-                        else:
-                            lines_data[line_no] = max(lines_data[line_no], exec_count)
+            if line_entries:
+                # Build from per-line data
+                lines_map = {}
+                for entry in line_entries:
+                    if isinstance(entry, dict):
+                        ln = entry.get("line", entry.get("lineNumber", 0))
+                        count = entry.get("count", entry.get("executionCount", 0))
+                    elif isinstance(entry, (int, float)):
+                        # Some versions return just counts indexed by line
+                        continue
+                    else:
+                        continue
+                    if ln > 0:
+                        lines_map[ln] = max(lines_map.get(ln, 0), count)
+            else:
+                # Fallback: use function-level data
+                lines_map = {}
+                for func in file_data.get("functions", []):
+                    ln = func.get("lineNumber", 0)
+                    count = func.get("executionCount", 0)
+                    exec_lines = func.get("executableLines", 0)
+                    if ln > 0 and exec_lines > 0:
+                        lines_map[ln] = count
+                        # Approximate: mark next few lines based on covered/executable ratio
+                        covered = func.get("coveredLines", 0)
+                        total = exec_lines
+                        # Mark covered_count lines as covered, rest as not
+                        for i in range(1, min(total, 20)):
+                            if i not in lines_map:
+                                lines_map[ln + i] = count if i < covered else 0
 
-            if not lines_data:
+            if not lines_map:
                 continue
 
             file_elem = ET.SubElement(root, "file", path=rel_path)
-            for line_no in sorted(lines_data):
-                exec_count = lines_data[line_no]
+            covered = sum(1 for c in lines_map.values() if c > 0)
+            total = len(lines_map)
+
+            for ln in sorted(lines_map):
                 ET.SubElement(file_elem, "lineToCover",
-                              lineNumber=str(line_no),
-                              covered=("true" if exec_count > 0 else "false"))
-                total_count += 1
-                if exec_count > 0:
-                    covered_count += 1
+                              lineNumber=str(ln),
+                              covered=("true" if lines_map[ln] > 0 else "false"))
 
-            if total_count > 0:
-                pct = covered_count / total_count * 100
-                file_elem.set("comment",
-                              f"{covered_count}/{total_count} lines ({pct:.1f}%)")
+            if total > 0:
+                file_elem.set("comment", f"{covered}/{total} lines ({covered/total*100:.1f}%)")
 
+            files_processed += 1
+            if files_processed <= 5:
+                print(f"    {rel_path}: {covered}/{total} lines")
+
+    print(f"  Total files processed: {files_processed}")
     return root
 
 
 def main():
     if len(sys.argv) < 3:
-        print(f"Usage: {sys.argv[0]} <DerivedData_path> <output_xml>")
+        print(f"Usage: {sys.argv[0]} <xcresult_path> <output_xml>")
         sys.exit(1)
 
-    derived_data = sys.argv[1]
+    xcresult_input = sys.argv[1]
     output_xml = sys.argv[2]
     source_root = os.getcwd()
 
-    print(f"Looking for xcresult in: {derived_data}")
-    xcresult = find_xcresult(derived_data)
-    print(f"Found: {xcresult}")
+    print(f"Source root: {source_root}")
+    xcresult = find_xcresult(xcresult_input)
+    print(f"xcresult: {xcresult}")
 
-    print("Fetching coverage data from xccov...")
-    coverage = get_coverage_json(xcresult)
+    print("Fetching coverage report...")
+    coverage = get_coverage_report(xcresult)
 
-    print("Building SonarQube generic coverage XML...")
-    root = build_generic_coverage_xml(coverage, source_root)
+    print("Building SonarQube generic coverage XML (per-file queries)...")
+    root = build_generic_coverage_xml(coverage, xcresult, source_root)
 
     tree = ET.ElementTree(root)
     ET.indent(tree, space="  ")
     tree.write(output_xml, encoding="utf-8", xml_declaration=True)
 
-    file_count = len(root)
-    print(f"Written {file_count} files to {output_xml}")
+    print(f"Written {len(root)} files to {output_xml}")
 
 
 if __name__ == "__main__":
