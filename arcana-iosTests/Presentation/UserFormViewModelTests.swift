@@ -18,7 +18,7 @@ struct UserFormViewModelTests {
     // MARK: - Initialization Tests
 
     @Test("UserFormViewModel initializes in create mode with empty fields")
-    func testInitializationCreateMode() {
+    func testInitializationCreateMode() async {
         let viewModel = withDependencies {
             $0.analyticsTracker = MockAnalyticsTracker()
         } operation: {
@@ -36,7 +36,7 @@ struct UserFormViewModelTests {
     }
 
     @Test("UserFormViewModel initializes in edit mode with user data")
-    func testInitializationEditMode() {
+    func testInitializationEditMode() async {
         let user = User(
             id: "123",
             email: "test@example.com",
@@ -328,7 +328,7 @@ struct UserFormViewModelTests {
     // MARK: - Mode Tests
 
     @Test("Mode enum provides correct titles")
-    func testModeProperties() {
+    func testModeProperties() async {
         let createMode: UserFormViewModel.Mode = .create
         #expect(createMode.title == "Create User")
         #expect(createMode.submitButtonTitle == "Create")
