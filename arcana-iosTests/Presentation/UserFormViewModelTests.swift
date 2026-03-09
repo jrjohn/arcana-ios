@@ -19,7 +19,7 @@ struct UserFormViewModelTests {
 
     @Test("UserFormViewModel initializes in create mode with empty fields")
     func testInitializationCreateMode() {
-        let viewModel = await withDependencies {
+        let viewModel = withDependencies {
             $0.analyticsTracker = MockAnalyticsTracker()
         } operation: {
             UserFormViewModel(mode: .create)
@@ -45,7 +45,7 @@ struct UserFormViewModelTests {
             avatar: "https://example.com/avatar.jpg"
         )
 
-        let viewModel = await withDependencies {
+        let viewModel = withDependencies {
             $0.analyticsTracker = MockAnalyticsTracker()
         } operation: {
             UserFormViewModel(mode: .edit(user))
@@ -63,9 +63,11 @@ struct UserFormViewModelTests {
 
     @Test("updateFirstName updates output")
     func testUpdateFirstName() async {
-        let viewModel = await withDependencies {
+        let viewModel = withDependencies {
             $0.analyticsTracker = MockAnalyticsTracker()
-        } operation: { UserFormViewModel(mode: .create) }
+        } operation: {
+            UserFormViewModel(mode: .create)
+        }
 
         await viewModel.input(.updateFirstName("John"))
         try? await Task.sleep(for: .milliseconds(100))
@@ -75,9 +77,11 @@ struct UserFormViewModelTests {
 
     @Test("updateFirstName validates immediately")
     func testUpdateFirstNameValidation() async {
-        let viewModel = await withDependencies {
+        let viewModel = withDependencies {
             $0.analyticsTracker = MockAnalyticsTracker()
-        } operation: { UserFormViewModel(mode: .create) }
+        } operation: {
+            UserFormViewModel(mode: .create)
+        }
 
         await viewModel.input(.updateFirstName(""))
         try? await Task.sleep(for: .milliseconds(400))
@@ -88,9 +92,11 @@ struct UserFormViewModelTests {
 
     @Test("updateLastName updates output")
     func testUpdateLastName() async {
-        let viewModel = await withDependencies {
+        let viewModel = withDependencies {
             $0.analyticsTracker = MockAnalyticsTracker()
-        } operation: { UserFormViewModel(mode: .create) }
+        } operation: {
+            UserFormViewModel(mode: .create)
+        }
 
         await viewModel.input(.updateLastName("Doe"))
         try? await Task.sleep(for: .milliseconds(100))
@@ -100,9 +106,11 @@ struct UserFormViewModelTests {
 
     @Test("updateEmail updates output")
     func testUpdateEmail() async {
-        let viewModel = await withDependencies {
+        let viewModel = withDependencies {
             $0.analyticsTracker = MockAnalyticsTracker()
-        } operation: { UserFormViewModel(mode: .create) }
+        } operation: {
+            UserFormViewModel(mode: .create)
+        }
 
         await viewModel.input(.updateEmail("test@example.com"))
         try? await Task.sleep(for: .milliseconds(100))
@@ -112,9 +120,11 @@ struct UserFormViewModelTests {
 
     @Test("updateEmail validates format")
     func testUpdateEmailValidation() async {
-        let viewModel = await withDependencies {
+        let viewModel = withDependencies {
             $0.analyticsTracker = MockAnalyticsTracker()
-        } operation: { UserFormViewModel(mode: .create) }
+        } operation: {
+            UserFormViewModel(mode: .create)
+        }
 
         await viewModel.input(.updateEmail("invalid-email"))
         try? await Task.sleep(for: .milliseconds(400))
@@ -125,9 +135,11 @@ struct UserFormViewModelTests {
 
     @Test("updateAvatar updates output")
     func testUpdateAvatar() async {
-        let viewModel = await withDependencies {
+        let viewModel = withDependencies {
             $0.analyticsTracker = MockAnalyticsTracker()
-        } operation: { UserFormViewModel(mode: .create) }
+        } operation: {
+            UserFormViewModel(mode: .create)
+        }
 
         await viewModel.input(.updateAvatar("https://example.com/avatar.jpg"))
         try? await Task.sleep(for: .milliseconds(100))
@@ -139,9 +151,11 @@ struct UserFormViewModelTests {
 
     @Test("validateAll validates all fields")
     func testValidateAll() async {
-        let viewModel = await withDependencies {
+        let viewModel = withDependencies {
             $0.analyticsTracker = MockAnalyticsTracker()
-        } operation: { UserFormViewModel(mode: .create) }
+        } operation: {
+            UserFormViewModel(mode: .create)
+        }
 
         await viewModel.input(.validateAll)
         try? await Task.sleep(for: .milliseconds(200))
@@ -153,9 +167,11 @@ struct UserFormViewModelTests {
 
     @Test("isSaveEnabled is true when all fields valid")
     func testIsSaveEnabled() async {
-        let viewModel = await withDependencies {
+        let viewModel = withDependencies {
             $0.analyticsTracker = MockAnalyticsTracker()
-        } operation: { UserFormViewModel(mode: .create) }
+        } operation: {
+            UserFormViewModel(mode: .create)
+        }
 
         await viewModel.input(.updateFirstName("John"))
         await viewModel.input(.updateLastName("Doe"))
@@ -167,9 +183,11 @@ struct UserFormViewModelTests {
 
     @Test("isSaveEnabled is false when fields invalid")
     func testIsSaveEnabledInvalid() async {
-        let viewModel = await withDependencies {
+        let viewModel = withDependencies {
             $0.analyticsTracker = MockAnalyticsTracker()
-        } operation: { UserFormViewModel(mode: .create) }
+        } operation: {
+            UserFormViewModel(mode: .create)
+        }
 
         await viewModel.input(.updateFirstName("John"))
         await viewModel.input(.updateLastName("Doe"))
@@ -186,7 +204,7 @@ struct UserFormViewModelTests {
         let mockService = MockUserService()
         let mockTracker = MockAnalyticsTracker()
 
-        let viewModel = await withDependencies {
+        let viewModel = withDependencies {
             $0.userService = mockService
             $0.analyticsTracker = mockTracker
         } operation: {
@@ -225,7 +243,7 @@ struct UserFormViewModelTests {
         let mockService = MockUserService()
         let mockTracker = MockAnalyticsTracker()
 
-        let viewModel = await withDependencies {
+        let viewModel = withDependencies {
             $0.userService = mockService
             $0.analyticsTracker = mockTracker
         } operation: {
@@ -256,7 +274,7 @@ struct UserFormViewModelTests {
 
         let mockTracker = MockAnalyticsTracker()
 
-        let viewModel = await withDependencies {
+        let viewModel = withDependencies {
             $0.userService = mockService
             $0.analyticsTracker = mockTracker
         } operation: {
@@ -288,7 +306,7 @@ struct UserFormViewModelTests {
     func testSubmitInvalid() async {
         let mockService = MockUserService()
 
-        let viewModel = await withDependencies {
+        let viewModel = withDependencies {
             $0.userService = mockService
         } operation: {
             UserFormViewModel(mode: .create)
