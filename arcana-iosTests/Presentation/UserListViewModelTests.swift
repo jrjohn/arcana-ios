@@ -141,6 +141,7 @@ struct UserListViewModelTests {
 
         let viewModel = await withDependencies {
             $0.userService = mockService
+            $0.analyticsTracker = MockAnalyticsTracker()
         } operation: {
             UserListViewModel()
         }
@@ -165,6 +166,7 @@ struct UserListViewModelTests {
 
         let viewModel = await withDependencies {
             $0.userService = mockService
+            $0.analyticsTracker = MockAnalyticsTracker()
         } operation: {
             UserListViewModel()
         }
@@ -196,6 +198,7 @@ struct UserListViewModelTests {
 
         let viewModel = await withDependencies {
             $0.userService = mockService
+            $0.analyticsTracker = MockAnalyticsTracker()
         } operation: {
             UserListViewModel()
         }
@@ -221,6 +224,7 @@ struct UserListViewModelTests {
 
         let viewModel = await withDependencies {
             $0.userService = mockService
+            $0.analyticsTracker = MockAnalyticsTracker()
         } operation: {
             UserListViewModel()
         }
@@ -247,6 +251,7 @@ struct UserListViewModelTests {
 
         let viewModel = await withDependencies {
             $0.userService = mockService
+            $0.analyticsTracker = MockAnalyticsTracker()
         } operation: {
             UserListViewModel()
         }
@@ -303,6 +308,7 @@ struct UserListViewModelTests {
 
         let viewModel = await withDependencies {
             $0.userService = mockService
+            $0.analyticsTracker = MockAnalyticsTracker()
         } operation: {
             UserListViewModel()
         }

@@ -305,9 +305,11 @@ struct UserFormViewModelTests {
     @Test("submit does not proceed when form invalid")
     func testSubmitInvalid() async {
         let mockService = MockUserService()
+        let mockTracker = MockAnalyticsTracker()
 
         let viewModel = withDependencies {
             $0.userService = mockService
+            $0.analyticsTracker = mockTracker
         } operation: {
             UserFormViewModel(mode: .create)
         }
