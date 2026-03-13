@@ -88,6 +88,30 @@ def build_generic_coverage_xml(coverage: dict, xcresult_path: str, source_root: 
             if any(kw in rel_path for kw in ["Mock", "Stub", "Test", "Preview"]):
                 continue
 
+            # Skip files excluded from coverage metric (Views, DI setup, network impl, etc.)
+            # These match sonar.coverage.exclusions in sonar-project.properties
+            COVERAGE_EXCLUDED_FILES = {
+                # SwiftUI Views & Components (not unit-testable)
+                "MainView.swift", "UserListView.swift", "UserFormView.swift",
+                "UserCard.swift", "AvatarView.swift", "SyncStatusBanner.swift",
+                "ArcanaTheme.swift",
+                # Navigation (SwiftUI-heavy)
+                "NavGraph.swift",
+                # App-level DI setup (requires full app environment)
+                "AppDependencies.swift",
+                # Network infrastructure (requires live server)
+                "NetworkLogger.swift", "ApiService.swift", "NetworkMonitor.swift",
+                # DAO implementations (require SwiftData / network)
+                "UserRemoteDaoImpl.swift", "UserLocalDaoImpl.swift",
+                "UserRemoteDaoMockImpl.swift",
+                # SwiftData analytics (requires ModelContainer)
+                "PersistentAnalyticsTracker.swift",
+            }
+            file_basename = os.path.basename(rel_path)
+            if file_basename in COVERAGE_EXCLUDED_FILES:
+                print(f"    [excluded] {rel_path}")
+                continue
+
             # Try per-line data first
             line_entries = get_file_coverage(xcresult_path, abs_path)
 
