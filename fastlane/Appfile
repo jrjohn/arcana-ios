@@ -1,4 +1,4 @@
-app_identifier "com.somnics.webview.arcana-ios"
+app_identifier "com.arcana.example"
 apple_dev_portal_id ENV["APPLE_ID"]
 team_id "R4H4B5GWR5"
 
