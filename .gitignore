@@ -21,3 +21,24 @@ complete_test_coverage.log
 !docs/test-coverage.html
 /arcana-ios.xcodeproj/project.xcworkspace/xcuserdata
 /arcana-ios.xcodeproj/project.xcworkspace/xcuserdata
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+build/*.ipa
+build/*.dSYM.zip
+*.cer
+*.p12
+*.mobileprovision
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+build/*.ipa
+build/*.dSYM.zip
+*.cer
+*.p12
+*.mobileprovision

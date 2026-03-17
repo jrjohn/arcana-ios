@@ -1,0 +1,84 @@
+default_platform(:ios)
+
+platform :ios do
+
+  # ── Helpers ──────────────────────────────────────────────────────────────
+
+  def asc_api_key
+    app_store_connect_api_key(
+      key_id:        ENV["ASC_KEY_ID"],
+      issuer_id:     ENV["ASC_ISSUER_ID"],
+      key_filepath:  ENV["ASC_KEY_PATH"],
+      duration:      1200,
+      in_house:      false
+    )
+  end
+
+  # ── Lanes ─────────────────────────────────────────────────────────────────
+
+  desc "Run unit tests"
+  lane :test do
+    run_tests(
+      project:     "arcana-ios.xcodeproj",
+      scheme:      "arcana-ios",
+      destination: "platform=iOS Simulator,name=iPhone 17",
+      result_bundle: true
+    )
+  end
+
+  desc "Build release IPA (unsigned export for CI inspection)"
+  lane :build_release do
+    build_app(
+      project:         "arcana-ios.xcodeproj",
+      scheme:          "arcana-ios",
+      configuration:   "Release",
+      export_method:   "app-store",
+      output_name:     "arcana-ios.ipa",
+      output_directory: "./build",
+      xcargs:          "CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=R4H4B5GWR5"
+    )
+  end
+
+  desc "CI lane: test + lint"
+  lane :ci do
+    test
+  end
+
+  desc "Upload to TestFlight"
+  lane :beta do
+    api_key = asc_api_key
+
+    # Build signed IPA
+    build_app(
+      project:           "arcana-ios.xcodeproj",
+      scheme:            "arcana-ios",
+      configuration:     "Release",
+      export_method:     "app-store",
+      output_name:       "arcana-ios.ipa",
+      output_directory:  "./build",
+      xcargs:            "CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=R4H4B5GWR5"
+    )
+
+    # Upload to TestFlight
+    upload_to_testflight(
+      api_key:               api_key,
+      ipa:                   "./build/arcana-ios.ipa",
+      skip_waiting_for_build_processing: true,
+      changelog:             ENV["CHANGELOG"] || "CI build from Jenkins",
+      distribute_external:   false
+    )
+  end
+
+  desc "Promote TestFlight build to App Store submission"
+  lane :release do
+    api_key = asc_api_key
+
+    deliver(
+      api_key:          api_key,
+      submit_for_review: false,
+      automatic_release: false,
+      force:            true
+    )
+  end
+
+end
