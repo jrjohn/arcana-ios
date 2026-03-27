@@ -1,6 +1,8 @@
-app_identifier "com.arcana.example"
-apple_dev_portal_id ENV["APPLE_ID"]
-team_id "R4H4B5GWR5"
+app_identifier("com.arcana.example")
+team_id("R4H4B5GWR5")
 
-# App Store Connect API key (preferred over password auth)
-# Set via Jenkins credentials: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH
+for_platform :ios do
+  for_lane :beta do
+    app_identifier("com.arcana.example")
+  end
+end
