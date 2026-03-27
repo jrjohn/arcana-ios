@@ -62,7 +62,9 @@ platform :ios do
       skip_binary_upload: true,
       skip_screenshots: true,
       force: true,
-      precheck_include_in_app_purchases: false
+      precheck_include_in_app_purchases: false,
+      app_review_attachment_file: "",
+      submission_information: {}
     )
   end
 
