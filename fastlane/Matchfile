@@ -1,0 +1,10 @@
+git_url("ssh://rocky@161.118.206.170/data/devops/fastlane-certificates.git")
+
+storage_mode("git")
+
+type("appstore")
+
+app_identifier(["com.arcana.example"])
+username("") # Not needed with API key auth
+
+team_id("89YYRF88M3")

@@ -26,6 +26,12 @@ platform :ios do
       in_house: false
     )
 
+    match(
+      type: "appstore",
+      api_key: api_key,
+      readonly: is_ci
+    )
+
     increment_build_number(
       build_number: ENV["BUILD_NUMBER"] || Time.now.strftime("%Y%m%d%H%M")
     )
@@ -34,10 +40,14 @@ platform :ios do
       project: "arcana-ios.xcodeproj",
       scheme: "arcana-ios",
       export_method: "app-store",
+      export_options: {
+        provisioningProfiles: {
+          "com.arcana.example" => "match AppStore com.arcana.example"
+        }
+      },
       output_directory: "build",
       output_name: "arcana-ios.ipa",
-      clean: true,
-      xcargs: "-allowProvisioningUpdates"
+      clean: true
     )
 
     upload_to_testflight(
