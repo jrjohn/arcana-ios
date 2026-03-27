@@ -36,6 +36,14 @@ platform :ios do
       build_number: ENV["BUILD_NUMBER"] || Time.now.strftime("%Y%m%d%H%M")
     )
 
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "arcana-ios.xcodeproj",
+      team_id: "89YYRF88M3",
+      profile_name: "match AppStore com.arcana.example",
+      code_sign_identity: "Apple Distribution"
+    )
+
     build_app(
       project: "arcana-ios.xcodeproj",
       scheme: "arcana-ios",
