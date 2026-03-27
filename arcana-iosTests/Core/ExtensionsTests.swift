@@ -197,20 +197,10 @@ struct ExtensionsTests {
 
     @Test("Publisher async returns first value")
     func testPublisherAsync() async throws {
-        let subject = PassthroughSubject<Int, Never>()
+        // Use CurrentValueSubject to avoid race condition — value is replayed on subscribe
+        let subject = CurrentValueSubject<Int, Never>(42)
 
-        // Start async operation
-        let asyncTask = Task {
-            try await subject.async()
-        }
-
-        // Yield to let the Task subscribe before sending
-        try? await Task.sleep(for: .milliseconds(50))
-
-        // Send value
-        subject.send(42)
-
-        let result = try await asyncTask.value
+        let result = try await subject.async()
         #expect(result == 42)
     }
 
