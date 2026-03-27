@@ -1,5 +1,5 @@
 app_identifier("com.arcana.example")
-team_id("R4H4B5GWR5")
+team_id("89YYRF88M3")
 
 for_platform :ios do
   for_lane :beta do
