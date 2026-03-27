@@ -1,0 +1,1 @@
+architecture,swiftui,mvvm,clean-architecture,offline-first,demo,enterprise,swiftdata

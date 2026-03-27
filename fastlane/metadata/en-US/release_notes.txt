@@ -1,0 +1,1 @@
+Initial release with user management, offline-first sync, and clean architecture patterns.

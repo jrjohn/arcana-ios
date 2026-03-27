@@ -1,0 +1,1 @@
+完整的企業級 iOS 架構展示應用程式，採用 Clean Architecture、MVVM Input/Output/Effect 模式、Offline-First 離線優先設計搭配 SwiftData，以及 SwiftUI。功能包含使用者管理的完整 CRUD 操作、網路監控、同步狀態追蹤，以及分析功能。

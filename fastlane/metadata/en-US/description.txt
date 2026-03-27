@@ -1,0 +1,1 @@
+A comprehensive demo showcasing enterprise iOS architecture with Clean Architecture, MVVM Input/Output/Effect pattern, Offline-First design with SwiftData, and SwiftUI. Features include user management with full CRUD operations, network monitoring, sync status tracking, and analytics.
