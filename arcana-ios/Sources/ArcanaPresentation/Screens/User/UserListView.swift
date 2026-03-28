@@ -484,13 +484,3 @@ struct UserStatisticsBanner: View {
     }
 }
 
-// MARK: - Mock Services for Preview (now defined in AppDependencies)
-// Mock services are available via swift-dependencies in AppDependencies
-
-private class _UnusedMockAnalyticsTracker: AnalyticsTracker {
-    var sessionId: String = UUID().uuidString
-    func trackEvent(_ event: AnalyticsEvent, params: [String: Any]) { }
-    func trackScreen(_ screen: String, params: [String: Any]) { }
-    func trackError(_ error: Error, context: [String: Any]) { }
-    func trackAppError(_ appError: AppError, context: [String: Any]) { }
-}
