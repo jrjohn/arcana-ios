@@ -27,7 +27,7 @@ private func makeTestRepository() throws -> (
     let remote = MockUserRemoteDao()
     let analytics = MockAnalyticsTracker()
 
-    let repo = OfflineFirstUserRepository(
+    let repo = OfflineFirstUserRepositoryImpl(
         localDataSource: local,
         remoteDataSource: remote,
         analyticsTracker: analytics,
@@ -281,7 +281,7 @@ struct OfflineFirstCreateUserTests {
         offlineRemote.shouldThrowError = AppError.networkError(
             .E1000_NO_CONNECTION, message: "Offline", isRetryable: true, underlyingError: nil
         )
-        let offlineRepo = OfflineFirstUserRepository(
+        let offlineRepo = OfflineFirstUserRepositoryImpl(
             localDataSource: local,
             remoteDataSource: offlineRemote,
             analyticsTracker: analytics,
@@ -344,7 +344,7 @@ struct OfflineFirstUpdateUserTests {
             .E1000_NO_CONNECTION, message: "Offline", isRetryable: true, underlyingError: nil
         )
         let analytics = MockAnalyticsTracker()
-        let repo = OfflineFirstUserRepository(
+        let repo = OfflineFirstUserRepositoryImpl(
             localDataSource: local,
             remoteDataSource: remote,
             analyticsTracker: analytics,
@@ -389,7 +389,7 @@ struct OfflineFirstDeleteUserTests {
             .E1000_NO_CONNECTION, message: "Offline", isRetryable: true, underlyingError: nil
         )
         let analytics = MockAnalyticsTracker()
-        let repo = OfflineFirstUserRepository(
+        let repo = OfflineFirstUserRepositoryImpl(
             localDataSource: local,
             remoteDataSource: remote,
             analyticsTracker: analytics,

@@ -11,7 +11,7 @@ import SwiftData
 import Combine
 
 /// Offline-first repository implementation with caching and sync
-final class OfflineFirstUserRepository: UserRepository {
+final class OfflineFirstUserRepositoryImpl: UserRepository {
 
     // MARK: - Dependencies
     private let localDataSource: UserLocalDao

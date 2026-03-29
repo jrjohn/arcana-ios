@@ -102,7 +102,7 @@ struct AppDependencies {
         let modelContext = modelContainer.mainContext
 
         // Create repository
-        let repository = OfflineFirstUserRepository(
+        let repository = OfflineFirstUserRepositoryImpl(
             localDataSource: localDataSource,
             remoteDataSource: remoteDataSource,
             analyticsTracker: analyticsTracker,
