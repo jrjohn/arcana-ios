@@ -1,3 +1,16 @@
+// Jenkinsfile — multibranch pipeline for arcana-ios
+// Adapted from the existing single-branch pipeline (the legacy ios-app job ran
+// an older XML-embedded version of this script; the repo's current Jenkinsfile
+// is the more mature one with nohup/heartbeat for Mac mini disconnects + the
+// docker sonar-scanner-cli workaround for the Homebrew scanner /api/batch bug).
+//
+// Key differences from the previous single-branch version:
+//   * `pollSCM` trigger removed                        — Jenkins multibranch + GitHub webhook drive triggers
+//   * Checkout uses dynamic BRANCH_NAME / CHANGE_BRANCH instead of hardcoded `origin/main`
+//   * Deploy to TestFlight + Arch Qube Metrics gated `when { branch 'main' }` — PRs skip TF push
+//   * SonarQube gets pullrequest.* params on PRs       — PR-decoration in Sonar UI
+//   * Preserves `agent none` + per-stage `agent { label 'macos' }` — iOS needs Mac mini for xcodebuild + fastlane
+
 pipeline {
     agent none
     environment {
@@ -7,26 +20,38 @@ pipeline {
         SQ_TOKEN     = 'squ_5ce2319b9d8ca2b1db4e0f5bdf36b34249561f18'
     }
     options {
-        timeout(time: 90, unit: 'MINUTES')
+        timeout(time: 120, unit: 'MINUTES')
         disableConcurrentBuilds()
-        buildDiscarder(logRotator(numToKeepStr: '10'))
+        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '1'))
+        timestamps()
     }
     stages {
         stage('Checkout') {
             agent { label 'macos' }
             steps {
+                script {
+                    echo "Branch: ${env.BRANCH_NAME ?: 'unknown'}"
+                    echo "PR: ${env.CHANGE_ID ?: 'no'} (target: ${env.CHANGE_TARGET ?: 'n/a'})"
+                }
                 withCredentials([usernamePassword(credentialsId: 'github-credentials',
                         usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
                     sh '''
+                        TARGET_REF="${BRANCH_NAME:-main}"
+                        # PR builds: BRANCH_NAME is PR-N, real source ref is CHANGE_BRANCH
+                        if [ -n "${CHANGE_ID:-}" ] && [ -n "${CHANGE_BRANCH:-}" ]; then
+                            TARGET_REF="${CHANGE_BRANCH}"
+                        fi
+                        echo "Checking out ref: ${TARGET_REF}"
                         if [ -d .git ]; then
                             git fetch --tags --force --progress \
                                 https://${GIT_USER}:${GIT_PASS}@github.com/jrjohn/arcana-ios.git \
                                 +refs/heads/*:refs/remotes/origin/*
-                            git checkout -f origin/main
+                            git checkout -f "origin/${TARGET_REF}"
                         else
-                            git clone --branch main \
+                            git clone --branch "${TARGET_REF}" \
                                 https://${GIT_USER}:${GIT_PASS}@github.com/jrjohn/arcana-ios.git .
                         fi
+                        git log -1 --oneline
                     '''
                 }
             }
@@ -116,31 +141,65 @@ pipeline {
             agent { label 'built-in' }
             steps {
                 unstash 'sonar-inputs'
-                // Use official sonar-scanner Docker image v6 on devops_default network
+                // Use official sonar-scanner Docker image v11 on devops_default network
                 // This bypasses /api/batch/project bug in Homebrew sonar-scanner 8.0.1
-                sh '''
-                    echo "=== Workspace contents ===" && ls -la "${WORKSPACE}/" | head -20 || true
-                    echo "=== Sources dir ===" && ls "${WORKSPACE}/arcana-ios/Sources/" 2>/dev/null || echo "MISSING"
-                    docker run --rm \
-                        --network devops_default \
-                        -e SONAR_HOST_URL=http://sonarqube:9000/sonarqube \
-                        -e SONAR_TOKEN="${SQ_TOKEN}" \
-                        -v "${WORKSPACE}:/usr/src" \
-                        sonarsource/sonar-scanner-cli:11 \
-                        -Dsonar.projectKey=ios-app \
-                        "-Dsonar.projectName=iOS App" \
-                        -Dsonar.sources=arcana-ios/Sources \
-                        "-Dsonar.exclusions=**/DerivedData/**,**/*.xcassets/**,**/build/**" \
-                        "-Dsonar.coverage.exclusions=**/Mocks/**,**/*Mock*.swift,**/*Stub*.swift" \
-                        -Dsonar.coverageReportPaths=coverage-report.xml \
-                        -Dsonar.scm.disabled=true
-                '''
+                script {
+                    def prArgs = env.CHANGE_ID ? """ \
+                        -Dsonar.pullrequest.key=${env.CHANGE_ID} \
+                        -Dsonar.pullrequest.branch=${env.BRANCH_NAME} \
+                        -Dsonar.pullrequest.base=${env.CHANGE_TARGET}""" : ''
+                    sh """
+                        echo "=== Workspace contents ===" && ls -la "\${WORKSPACE}/" | head -20 || true
+                        echo "=== Sources dir ===" && ls "\${WORKSPACE}/arcana-ios/Sources/" 2>/dev/null || echo "MISSING"
+                        docker run --rm \\
+                            --network devops_default \\
+                            -e SONAR_HOST_URL=http://sonarqube:9000/sonarqube \\
+                            -e SONAR_TOKEN="\${SQ_TOKEN}" \\
+                            -v "\${WORKSPACE}:/usr/src" \\
+                            sonarsource/sonar-scanner-cli:11 \\
+                            -Dsonar.projectKey=ios-app \\
+                            "-Dsonar.projectName=iOS App" \\
+                            -Dsonar.sources=arcana-ios/Sources \\
+                            "-Dsonar.exclusions=**/DerivedData/**,**/*.xcassets/**,**/build/**" \\
+                            "-Dsonar.coverage.exclusions=**/Mocks/**,**/*Mock*.swift,**/*Stub*.swift" \\
+                            -Dsonar.coverageReportPaths=coverage-report.xml \\
+                            -Dsonar.scm.disabled=true${prArgs}
+                    """
+                }
+            }
+        }
+        stage('Deploy to TestFlight') {
+            // Only push to TestFlight on main — PR builds stop at SonarQube.
+            when { branch 'main' }
+            agent { label 'macos' }
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    withCredentials([
+                        file(credentialsId: 'asc-api-key', variable: 'ASC_KEY_PATH'),
+                        string(credentialsId: 'asc-key-id', variable: 'ASC_KEY_ID'),
+                        string(credentialsId: 'asc-issuer-id', variable: 'ASC_ISSUER_ID'),
+                        string(credentialsId: 'match-password', variable: 'MATCH_PASSWORD')
+                    ]) {
+                        sh '''
+                            export PATH=/opt/homebrew/opt/ruby/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+                            export LC_ALL=en_US.UTF-8
+                            export LANG=en_US.UTF-8
+                            bundle install --quiet
+                            bundle exec fastlane beta
+                        '''
+                    }
+                }
+            }
+            post {
+                success {
+                    archiveArtifacts artifacts: 'build/*.ipa', allowEmptyArchive: true
+                }
             }
         }
     }
     post {
-        success { echo "iOS build OK: ${PROJECT_NAME} v${VERSION}" }
-        failure { echo "iOS build FAILED: ${PROJECT_NAME}" }
+        success { echo "iOS build SUCCESS: ${PROJECT_NAME} v${VERSION} branch=${env.BRANCH_NAME ?: '?'} pr=${env.CHANGE_ID ?: 'no'}" }
+        failure { echo "iOS build FAILED: ${PROJECT_NAME} branch=${env.BRANCH_NAME ?: '?'} pr=${env.CHANGE_ID ?: 'no'}" }
         always  { echo "Build ${BUILD_NUMBER} done" }
     }
 }
