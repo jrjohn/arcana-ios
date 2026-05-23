@@ -157,10 +157,6 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
                     withSonarQubeEnv('SonarQube') {
                         script {
-                            def prArgs = env.CHANGE_ID ? """ \
-                                -Dsonar.pullrequest.key=${env.CHANGE_ID} \
-                                -Dsonar.pullrequest.branch=${env.BRANCH_NAME} \
-                                -Dsonar.pullrequest.base=${env.CHANGE_TARGET}""" : ''
                             // Explicit projectBaseDir so sonar-scanner-cli docker mount root
                             // is unambiguous (default WORKDIR semantics behave differently
                             // across image versions).
@@ -172,7 +168,7 @@ pipeline {
                               -Dsonar.exclusions=**/DerivedData/**,**/*.xcassets/**,**/build/** \
                               -Dsonar.coverage.exclusions=**/Mocks/**,**/*Mock*.swift,**/*Stub*.swift \
                               -Dsonar.coverageReportPaths=coverage-report.xml \
-                              -Dsonar.scm.disabled=true${prArgs}"""
+                              -Dsonar.scm.disabled=true"""
                         }
                     }
                 }
