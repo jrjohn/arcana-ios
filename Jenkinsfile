@@ -139,6 +139,21 @@ pipeline {
             agent { label 'built-in' }
             steps {
                 unstash 'sonar-inputs'
+                sh '''
+                    # Debug: verify what unstash actually delivered (sonar said arcana-ios/Sources
+                    # missing in 2026-05-22 build #2 despite host ls showing it).
+                    echo "=== WORKSPACE = ${WORKSPACE} ==="
+                    echo "=== pwd ==="
+                    pwd
+                    echo "=== top-level workspace ==="
+                    ls -la "${WORKSPACE}/" | head -10
+                    echo "=== arcana-ios/Sources/ on host ==="
+                    ls -la "${WORKSPACE}/arcana-ios/Sources/" 2>&1 | head -5
+                    echo "=== inside sonar-scanner-cli container ==="
+                    docker run --rm -v "${WORKSPACE}:/usr/src" sonarsource/sonar-scanner-cli:11 \
+                        sh -c 'pwd && ls -la /usr/src/arcana-ios/Sources/' 2>&1 | head -10 || true
+                    echo "=== end debug ==="
+                '''
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
                     withSonarQubeEnv('SonarQube') {
                         script {
@@ -146,7 +161,11 @@ pipeline {
                                 -Dsonar.pullrequest.key=${env.CHANGE_ID} \
                                 -Dsonar.pullrequest.branch=${env.BRANCH_NAME} \
                                 -Dsonar.pullrequest.base=${env.CHANGE_TARGET}""" : ''
+                            // Explicit projectBaseDir so sonar-scanner-cli docker mount root
+                            // is unambiguous (default WORKDIR semantics behave differently
+                            // across image versions).
                             sh """sonar-scanner \
+                              -Dsonar.projectBaseDir=\${WORKSPACE} \
                               -Dsonar.projectKey=ios-app \
                               -Dsonar.projectName="iOS App" \
                               -Dsonar.sources=arcana-ios/Sources \
