@@ -293,7 +293,7 @@ final class UserListViewModel {
     }
 
     private func syncOfflineChanges() async -> Effect? {
-        guard let repository = userRepository as? OfflineFirstUserRepository else {
+        guard let repository = userRepository as? OfflineFirstUserRepositoryImpl else {
             return nil
         }
 

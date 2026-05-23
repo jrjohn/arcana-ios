@@ -14,7 +14,7 @@ import SwiftData
 
 @MainActor
 private func makeTestRepository() throws -> (
-    repo: OfflineFirstUserRepository,
+    repo: OfflineFirstUserRepositoryImpl,
     local: MockUserLocalDao,
     remote: MockUserRemoteDao,
     analytics: MockAnalyticsTracker

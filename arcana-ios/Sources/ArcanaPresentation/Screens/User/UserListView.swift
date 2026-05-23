@@ -371,7 +371,7 @@ struct UserListView: View {
         // Access the repository through dependencies
         @Dependency(\.userRepository) var userRepository
 
-        guard let repository = userRepository as? OfflineFirstUserRepository else {
+        guard let repository = userRepository as? OfflineFirstUserRepositoryImpl else {
             return
         }
 
