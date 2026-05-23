@@ -16,8 +16,6 @@ pipeline {
     environment {
         PROJECT_NAME = 'arcana-ios'
         VERSION      = '1.0.0'
-        SQ_URL       = 'http://sonarqube:9000/sonarqube'
-        SQ_TOKEN     = 'squ_5ce2319b9d8ca2b1db4e0f5bdf36b34249561f18'
     }
     options {
         timeout(time: 120, unit: 'MINUTES')
@@ -137,34 +135,27 @@ pipeline {
             }
         }
         stage('SonarQube Analysis') {
-            // Run on Jenkins built-in node (has Docker + devops_default network = SonarQube access)
+            // Run on Jenkins built-in node (has sonar-scanner CLI + devops_default network = SonarQube access)
             agent { label 'built-in' }
             steps {
                 unstash 'sonar-inputs'
-                // Use official sonar-scanner Docker image v11 on devops_default network
-                // This bypasses /api/batch/project bug in Homebrew sonar-scanner 8.0.1
-                script {
-                    def prArgs = env.CHANGE_ID ? """ \
-                        -Dsonar.pullrequest.key=${env.CHANGE_ID} \
-                        -Dsonar.pullrequest.branch=${env.BRANCH_NAME} \
-                        -Dsonar.pullrequest.base=${env.CHANGE_TARGET}""" : ''
-                    sh """
-                        echo "=== Workspace contents ===" && ls -la "\${WORKSPACE}/" | head -20 || true
-                        echo "=== Sources dir ===" && ls "\${WORKSPACE}/arcana-ios/Sources/" 2>/dev/null || echo "MISSING"
-                        docker run --rm \\
-                            --network devops_default \\
-                            -e SONAR_HOST_URL=http://sonarqube:9000/sonarqube \\
-                            -e SONAR_TOKEN="\${SQ_TOKEN}" \\
-                            -v "\${WORKSPACE}:/usr/src" \\
-                            sonarsource/sonar-scanner-cli:11 \\
-                            -Dsonar.projectKey=ios-app \\
-                            "-Dsonar.projectName=iOS App" \\
-                            -Dsonar.sources=arcana-ios/Sources \\
-                            "-Dsonar.exclusions=**/DerivedData/**,**/*.xcassets/**,**/build/**" \\
-                            "-Dsonar.coverage.exclusions=**/Mocks/**,**/*Mock*.swift,**/*Stub*.swift" \\
-                            -Dsonar.coverageReportPaths=coverage-report.xml \\
-                            -Dsonar.scm.disabled=true${prArgs}
-                    """
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    withSonarQubeEnv('SonarQube') {
+                        script {
+                            def prArgs = env.CHANGE_ID ? """ \
+                                -Dsonar.pullrequest.key=${env.CHANGE_ID} \
+                                -Dsonar.pullrequest.branch=${env.BRANCH_NAME} \
+                                -Dsonar.pullrequest.base=${env.CHANGE_TARGET}""" : ''
+                            sh """sonar-scanner \
+                              -Dsonar.projectKey=ios-app \
+                              -Dsonar.projectName="iOS App" \
+                              -Dsonar.sources=arcana-ios/Sources \
+                              -Dsonar.exclusions=**/DerivedData/**,**/*.xcassets/**,**/build/** \
+                              -Dsonar.coverage.exclusions=**/Mocks/**,**/*Mock*.swift,**/*Stub*.swift \
+                              -Dsonar.coverageReportPaths=coverage-report.xml \
+                              -Dsonar.scm.disabled=true${prArgs}"""
+                        }
+                    }
                 }
             }
         }
