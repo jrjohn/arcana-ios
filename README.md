@@ -10,6 +10,13 @@
 [![Architecture](https://img.shields.io/badge/Architecture-Clean-green.svg)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+<!-- agent-managed badges START -->
+<p align="center">
+  <a href="https://arcana.boo/sonarqube/dashboard?id=ios-app"><img src="https://img.shields.io/badge/Quality_Gate-OK-brightgreen?style=for-the-badge" alt="Quality Gate"></a>
+  <a href="https://arcana.boo/jenkins/job/ios-app-mb/job/main/"><img src="https://img.shields.io/badge/Build-passing-brightgreen?style=for-the-badge" alt="Build"></a>
+</p>
+<!-- agent-managed badges END -->
+
 ---
 
 ## 📋 Table of Contents
