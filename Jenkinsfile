@@ -133,6 +133,13 @@ pipeline {
                 // Stash coverage + sources for sonar stage on master
                 stash includes: 'coverage-report.xml,arcana-ios/Sources/**,arcana-iosTests/**,sonar-project.properties', name: 'sonar-inputs', allowEmpty: true
             }
+            post {
+                always {
+                    // Shut down simulators so runtime daemons don't leak + pin the Mac mini
+                    // (load spiked to 66, flapped the agent 2026-06-01). Stage-level so it runs on macos.
+                    sh 'export PATH=/opt/homebrew/bin:$PATH; xcrun simctl shutdown all || true; killall Simulator 2>/dev/null || true'
+                }
+            }
         }
         stage('SonarQube Analysis') {
             // Run on Jenkins built-in node (has sonar-scanner CLI + devops_default network = SonarQube access)
