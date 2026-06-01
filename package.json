@@ -10,7 +10,7 @@
     "setup": "npm install"
   },
   "devDependencies": {
-    "@mermaid-js/mermaid-cli": "^10.6.1",
+    "@mermaid-js/mermaid-cli": "^11.0.0",
     "nodemon": "^3.0.2"
   },
   "keywords": [
