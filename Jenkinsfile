@@ -8,7 +8,7 @@
 //   * `pollSCM` trigger removed                        — Jenkins multibranch + GitHub webhook drive triggers
 //   * Checkout uses dynamic BRANCH_NAME / CHANGE_BRANCH instead of hardcoded `origin/main`
 //   * Deploy to TestFlight + Arch Qube Metrics gated `when { branch 'main' }` — PRs skip TF push
-//   * SonarQube gets pullrequest.* params on PRs       — PR-decoration in Sonar UI
+//   * SonarQube is a real blocking quality gate (plain project key, CE-task poll) — Community Build rejects pullrequest.* params
 //   * Preserves `agent none` + per-stage `agent { label 'macos' }` — iOS needs Mac mini for xcodebuild + fastlane
 
 pipeline {
@@ -142,7 +142,7 @@ pipeline {
             }
         }
         stage('SonarQube Analysis') {
-            // Run on Jenkins built-in node (has sonar-scanner CLI + devops_default network = SonarQube access)
+            // Run on Jenkins built-in node (has sonar-scanner CLI + curl + devops_default network = SonarQube access)
             agent { label 'built-in' }
             steps {
                 unstash 'sonar-inputs'
@@ -161,23 +161,57 @@ pipeline {
                         sh -c 'pwd && ls -la /usr/src/arcana-ios/Sources/' 2>&1 | head -10 || true
                     echo "=== end debug ==="
                 '''
-                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                    withSonarQubeEnv('SonarQube') {
-                        script {
-                            // Explicit projectBaseDir so sonar-scanner-cli docker mount root
-                            // is unambiguous (default WORKDIR semantics behave differently
-                            // across image versions).
-                            sh """sonar-scanner \
-                              -Dsonar.projectBaseDir=\${WORKSPACE} \
-                              -Dsonar.projectKey=ios-app \
-                              -Dsonar.projectName="iOS App" \
-                              -Dsonar.sources=arcana-ios/Sources \
-                              -Dsonar.exclusions=**/DerivedData/**,**/*.xcassets/**,**/build/** \
-                              -Dsonar.coverage.exclusions=**/Mocks/**,**/*Mock*.swift,**/*Stub*.swift \
-                              -Dsonar.coverageReportPaths=coverage-report.xml \
-                              -Dsonar.scm.disabled=true"""
-                        }
+                // Blocking quality gate (hardened 2026-06-19, was a fake catchError
+                // SUCCESS/UNSTABLE wrapper that swallowed the gate). NO sonar.pullrequest.*
+                // params: this is SonarQube Community Build, which rejects them and fails
+                // the scan. waitForQualityGate() needs a server->Jenkins webhook (not
+                // configured), so poll the compute-engine task named in
+                // .scannerwork/report-task.txt then read the gate status; exit 1 if not OK.
+                // The built-in node has curl but no jq, so parse JSON with grep.
+                withSonarQubeEnv('SonarQube') {
+                    script {
+                        // Explicit projectBaseDir so sonar-scanner-cli docker mount root
+                        // is unambiguous (default WORKDIR semantics behave differently
+                        // across image versions).
+                        sh """sonar-scanner \
+                          -Dsonar.projectBaseDir=\${WORKSPACE} \
+                          -Dsonar.projectKey=ios-app \
+                          -Dsonar.projectName="iOS App" \
+                          -Dsonar.sources=arcana-ios/Sources \
+                          -Dsonar.exclusions=**/DerivedData/**,**/*.xcassets/**,**/build/** \
+                          -Dsonar.coverage.exclusions=**/Mocks/**,**/*Mock*.swift,**/*Stub*.swift \
+                          -Dsonar.coverageReportPaths=coverage-report.xml \
+                          -Dsonar.scm.disabled=true"""
                     }
+                    sh '''
+                        set -e
+                        TOKEN="${SONAR_AUTH_TOKEN:-$SONAR_TOKEN}"
+                        RT="${WORKSPACE}/.scannerwork/report-task.txt"
+                        [ -f "$RT" ] || { echo "report-task.txt not found — scanner did not run"; exit 1; }
+                        CE_TASK_ID=$(grep '^ceTaskId=' "$RT" | cut -d= -f2-)
+                        echo "CE task id: $CE_TASK_ID"
+                        ANALYSIS_ID=""
+                        for i in $(seq 1 60); do
+                            RESP=$(curl -s -u "$TOKEN:" "$SONAR_HOST_URL/api/ce/task?id=$CE_TASK_ID")
+                            ST=$(echo "$RESP" | grep -o '"status":"[A-Z_]*"' | head -1 | cut -d'"' -f4)
+                            echo "  CE status: ${ST:-?} (try $i)"
+                            if [ "$ST" = "SUCCESS" ]; then
+                                ANALYSIS_ID=$(echo "$RESP" | grep -o '"analysisId":"[^"]*"' | head -1 | cut -d'"' -f4)
+                                break
+                            elif [ "$ST" = "FAILED" ] || [ "$ST" = "CANCELED" ]; then
+                                echo "CE task ended $ST"; exit 1
+                            fi
+                            sleep 5
+                        done
+                        [ -n "$ANALYSIS_ID" ] || { echo "CE task did not finish in time"; exit 1; }
+                        GATE=$(curl -s -u "$TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?analysisId=$ANALYSIS_ID")
+                        GST=$(echo "$GATE" | grep -o '"status":"[A-Z]*"' | head -1 | cut -d'"' -f4)
+                        echo "Quality gate: ${GST:-UNKNOWN}"
+                        if [ "$GST" != "OK" ]; then
+                            echo "--- gate response ---"; echo "$GATE"
+                            exit 1
+                        fi
+                    '''
                 }
             }
         }
