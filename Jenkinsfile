@@ -63,13 +63,21 @@ pipeline {
                     xcodebuild -resolvePackageDependencies \
                         -project arcana-ios.xcodeproj \
                         -scheme arcana-ios 2>&1 | tail -3 || true
+                    # Real exit code, decoupled from the log-filtering grep below. Grep
+                    # legitimately returns 1 on a clean build since xcodebuild's actual
+                    # success line is "** BUILD SUCCEEDED **", not "Build succeeded" —
+                    # the old "| grep ... || true" chain swallowed genuine build failures too.
+                    BUILD_LOG=/tmp/arcana-ios-build.log
                     xcodebuild \
                         -project arcana-ios.xcodeproj \
                         -scheme arcana-ios \
                         -configuration Release \
                         -destination 'generic/platform=iOS' \
                         CODE_SIGNING_ALLOWED=NO \
-                        build 2>&1 | grep -E "error:|Build succeeded|Build FAILED" | tail -5 || true
+                        build > "${BUILD_LOG}" 2>&1
+                    RC=$?
+                    grep -E "error:|BUILD SUCCEEDED|BUILD FAILED" "${BUILD_LOG}" | tail -5 || true
+                    exit $RC
                 '''
             }
         }
@@ -212,6 +220,46 @@ pipeline {
                             exit 1
                         fi
                     '''
+                }
+            }
+        }
+        stage('Architecture Qube') {
+            // Blocking: arch-qube exits non-zero if the architecture score is below
+            // --threshold 90. DinD-safe: this Jenkins talks to the HOST daemon, so a
+            // `-v $(pwd):/project` bind mount resolves to a stray host path and scans an
+            // empty tree. Instead copy the source IN via a tar stream and the report OUT
+            // with docker cp, both through anonymous volumes (/src, /output) that exist
+            // for the container. Runs on 'built-in' (has docker + devops_default network,
+            // same as the SonarQube stage) — re-unstash since stage agents get fresh workspaces.
+            agent { label 'built-in' }
+            steps {
+                unstash 'sonar-inputs'
+                sh '''
+                    AQ="arcana-arch-qube-ios-${BUILD_NUMBER}"
+                    docker rm -f "$AQ" 2>/dev/null || true
+                    docker create --name "$AQ" --network devops_default \
+                        -v /src -v /output \
+                        arcana.boo/arcana/arch-qube:latest \
+                        scan /src --framework ios --no-ai --ci \
+                        --format json,markdown -o /output --threshold 90 || exit 1
+                    tar --exclude=./.git -C . -cf - . \
+                        | docker cp - "$AQ":/src || exit 1
+                    docker start -a "$AQ"
+                    AQ_RC=$?
+                    mkdir -p arch-qube-reports
+                    docker cp "$AQ":/output/. arch-qube-reports/ 2>/dev/null || true
+                    docker rm -f "$AQ" 2>/dev/null || true
+                    exit $AQ_RC
+                '''
+            }
+        }
+        stage('Arch Qube Metrics') {
+            // Metrics script writes to shared report dir, only run for main.
+            when { branch 'main' }
+            agent { label 'built-in' }
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                    sh "bash /data/projects/_scripts/arch-qube-metrics.sh \$(pwd) arcana-ios || true"
                 }
             }
         }
