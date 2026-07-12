@@ -5,7 +5,7 @@
 [![Architecture Rating](https://img.shields.io/badge/Architecture%20Rating-⭐⭐⭐⭐⭐%209.5%2F10-brightgreen.svg)](ARCHITECTURE_EVALUATION_V3.md)
 [![Grade](https://img.shields.io/badge/Grade-A+-yellow.svg)](ARCHITECTURE_EVALUATION_V3.md)
 [![Production Ready](https://img.shields.io/badge/Production%20Ready-✅-success.svg)](ARCHITECTURE_EVALUATION_V3.md)
-[![Swift](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![Swift](https://img.shields.io/badge/Swift-5.9+-orange.svg)](https://swift.org)
 [![SwiftUI](https://img.shields.io/badge/SwiftUI-Latest-blue.svg)](https://developer.apple.com/xcode/swiftui/)
 [![Architecture](https://img.shields.io/badge/Architecture-Clean-green.svg)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
