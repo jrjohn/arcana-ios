@@ -1,0 +1,28 @@
+name: release-please
+
+# Cut releases automatically on every push to main. release-please reads
+# release-please-config.json + .release-please-manifest.json (repo root), scans
+# the conventional commits since the last release, and opens/updates a release
+# PR bumping the version + CHANGELOG. Merging that PR tags the release.
+#
+# Why this exists: the Jenkins pipeline only builds/tests/scans — it never
+# releases. Previously release-please only ran when invoked by hand, so commits
+# pushed straight to main never produced a new version. This workflow makes any
+# push to main trigger release-please, so releases keep flowing without manual steps.
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
