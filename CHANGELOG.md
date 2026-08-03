@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/jrjohn/arcana-ios/compare/v1.1.0...v1.1.1) (2026-08-03)
+
+
+### Bug Fixes
+
+* **ci:** harden iOS Jenkinsfile — real build gate + add Architecture Qube stage ([d7d62bb](https://github.com/jrjohn/arcana-ios/commit/d7d62bbe4292ce6fb2c1d19936b8f461330995ad))
+
 ## [1.1.0](https://github.com/jrjohn/arcana-ios/compare/v1.0.0...v1.1.0) (2026-06-18)
 
 
