@@ -511,8 +511,8 @@ struct UserFormView: View {
 
 ### Prerequisites
 
-- **Xcode** 16.0 or later
-- **iOS** 18.0+ deployment target
+- **Xcode** 26.1 or later
+- **iOS** 26.1+ deployment target
 - **Swift** 6.0+
 - **CocoaPods** or **Swift Package Manager**
 
