@@ -17,7 +17,7 @@ let package = Package(
     ],
     dependencies: [
         // Swift Dependencies - Modern dependency injection framework
-        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.15.0"),
+        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.17.1"),
     ],
     targets: [
         // Main target
