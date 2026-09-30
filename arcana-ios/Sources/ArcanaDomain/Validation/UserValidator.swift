@@ -86,6 +86,12 @@ struct UserValidator {
         guard emailPredicate.evaluate(with: email) else {
             return .failure(.invalidEmail("email"))
         }
+
+        // Consecutive dots are not allowed anywhere in an address (RFC 5322
+        // dot-atom); the character-class regex above cannot express that.
+        guard !email.contains("..") else {
+            return .failure(.invalidEmail("email"))
+        }
         
         return .success(())
     }

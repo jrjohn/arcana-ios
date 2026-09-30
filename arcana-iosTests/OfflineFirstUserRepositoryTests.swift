@@ -12,6 +12,25 @@ import SwiftData
 
 // MARK: - Test Helpers
 
+/// Containers handed to repositories under test, kept alive for the whole run.
+///
+/// The repository only holds `container.mainContext`, and a `ModelContext` does not keep
+/// its `ModelContainer` alive. The repository's init subscribes to
+/// `NetworkMonitor.shared.$isConnected` and, when connected, calls `processOfflineChanges()`
+/// asynchronously, which fetches through that context. If the container was already
+/// released (e.g. a local in a helper), SwiftData traps (EXC_BREAKPOINT) and takes the whole
+/// test host down, so tests crashed at random points depending on scheduling.
+@MainActor private var liveTestContainers: [ModelContainer] = []
+
+@MainActor
+private func makeTestContainer() throws -> ModelContainer {
+    let schema = Schema([UserEntity.self, AnalyticsEventEntity.self, PendingChangeEntity.self])
+    let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+    let container = try ModelContainer(for: schema, configurations: [config])
+    liveTestContainers.append(container)
+    return container
+}
+
 @MainActor
 private func makeTestRepository() throws -> (
     repo: OfflineFirstUserRepositoryImpl,
@@ -19,9 +38,7 @@ private func makeTestRepository() throws -> (
     remote: MockUserRemoteDao,
     analytics: MockAnalyticsTracker
 ) {
-    let schema = Schema([UserEntity.self, AnalyticsEventEntity.self, PendingChangeEntity.self])
-    let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-    let container = try ModelContainer(for: schema, configurations: [config])
+    let container = try makeTestContainer()
 
     let local = MockUserLocalDao()
     let remote = MockUserRemoteDao()
@@ -274,9 +291,7 @@ struct OfflineFirstCreateUserTests {
         let (_, _, remote, _) = try makeTestRepository()
         _ = remote
         // We set up a fresh repo with offline remote
-        let schema = Schema([UserEntity.self, AnalyticsEventEntity.self, PendingChangeEntity.self])
-        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: schema, configurations: [config])
+        let container = try makeTestContainer()
         let offlineRemote = MockUserRemoteDao()
         offlineRemote.shouldThrowError = AppError.networkError(
             .E1000_NO_CONNECTION, message: "Offline", isRetryable: true, underlyingError: nil
@@ -335,9 +350,7 @@ struct OfflineFirstUpdateUserTests {
 
     @Test("updateUser queues for sync when offline")
     func testUpdateUserOffline() async throws {
-        let schema = Schema([UserEntity.self, AnalyticsEventEntity.self, PendingChangeEntity.self])
-        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: schema, configurations: [config])
+        let container = try makeTestContainer()
         let local = MockUserLocalDao()
         let remote = MockUserRemoteDao()
         remote.shouldThrowError = AppError.networkError(
@@ -380,9 +393,7 @@ struct OfflineFirstDeleteUserTests {
 
     @Test("deleteUser queues for sync when offline")
     func testDeleteUserOffline() async throws {
-        let schema = Schema([UserEntity.self, AnalyticsEventEntity.self, PendingChangeEntity.self])
-        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: schema, configurations: [config])
+        let container = try makeTestContainer()
         let local = MockUserLocalDao()
         let remote = MockUserRemoteDao()
         remote.shouldThrowError = AppError.networkError(

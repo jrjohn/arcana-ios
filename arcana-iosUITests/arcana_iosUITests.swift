@@ -24,6 +24,18 @@ final class arcana_iosUITests: XCTestCase {
         app = nil
     }
 
+    /// "Manage Users" is `.disabled(!viewModel.canNavigate)` while the main screen
+    /// loads the user count (>= 500 ms, longer on a cold first launch). Tapping a
+    /// disabled button is a silent no-op, so wait until it is enabled first.
+    private func tapManageUsers(file: StaticString = #filePath, line: UInt = #line) {
+        let button = app.buttons["Manage Users"]
+        let enabled = expectation(for: NSPredicate(format: "exists == true AND enabled == true"),
+                                  evaluatedWith: button)
+        wait(for: [enabled], timeout: 15)
+        XCTAssertTrue(button.isEnabled, "Manage Users button should become enabled", file: file, line: line)
+        button.tap()
+    }
+
     // MARK: - Main Screen Tests
 
     @MainActor
@@ -78,7 +90,7 @@ final class arcana_iosUITests: XCTestCase {
     @MainActor
     func testPullToRefresh() throws {
         // Navigate to user list
-        app.buttons["Manage Users"].tap()
+        tapManageUsers()
 
         // Wait for list to appear
         sleep(2)
@@ -100,7 +112,7 @@ final class arcana_iosUITests: XCTestCase {
     @MainActor
     func testSearchFunctionality() throws {
         // Navigate to user list
-        app.buttons["Manage Users"].tap()
+        tapManageUsers()
         sleep(2)
 
         // Look for search field
@@ -119,7 +131,7 @@ final class arcana_iosUITests: XCTestCase {
     @MainActor
     func testOfflineModeBanner() throws {
         // Navigate to user list
-        app.buttons["Manage Users"].tap()
+        tapManageUsers()
         sleep(2)
 
         // Check if offline banner exists (it might appear when offline)
@@ -133,7 +145,7 @@ final class arcana_iosUITests: XCTestCase {
     @MainActor
     func testAddUserButtonExists() throws {
         // Navigate to user list
-        app.buttons["Manage Users"].tap()
+        tapManageUsers()
         sleep(2)
 
         // Use accessibility identifier for Add button
@@ -144,7 +156,7 @@ final class arcana_iosUITests: XCTestCase {
     @MainActor
     func testBackNavigation() throws {
         // Navigate to user list
-        app.buttons["Manage Users"].tap()
+        tapManageUsers()
         sleep(1)
 
         // Find and tap back button
@@ -208,7 +220,7 @@ final class arcana_iosUITests: XCTestCase {
     @MainActor
     func testCreateUserFlow() throws {
         // Navigate to user list
-        app.buttons["Manage Users"].tap()
+        tapManageUsers()
         sleep(2)
 
         // Use accessibility identifier for Add button
@@ -257,7 +269,7 @@ final class arcana_iosUITests: XCTestCase {
     @MainActor
     func testEditUserFlow() throws {
         // Navigate to user list
-        app.buttons["Manage Users"].tap()
+        tapManageUsers()
         sleep(3) // Wait for data to load
 
         // Try to find and tap on a user in the list
@@ -307,7 +319,7 @@ final class arcana_iosUITests: XCTestCase {
     @MainActor
     func testUserFormValidation() throws {
         // Navigate to user list
-        app.buttons["Manage Users"].tap()
+        tapManageUsers()
         sleep(2)
 
         // Use accessibility identifier for Add button
@@ -348,7 +360,7 @@ final class arcana_iosUITests: XCTestCase {
     @MainActor
     func testUserFormCancel() throws {
         // Navigate to user list
-        app.buttons["Manage Users"].tap()
+        tapManageUsers()
         sleep(2)
 
         // Use accessibility identifier for Add button

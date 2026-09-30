@@ -97,14 +97,15 @@ enum AnalyticsEvent: String {
             return "Screen"
         } else if eventName.hasPrefix("user_") {
             return "User Action"
+        } else if eventName.hasPrefix("error_") || eventName.contains("error") {
+            // Before "network_": network_error is declared under Error Events
+            return "Error"
         } else if eventName.hasPrefix("network_") {
             return "Network"
         } else if eventName.hasPrefix("sync_") {
             return "Sync"
         } else if eventName.hasPrefix("cache_") {
             return "Cache"
-        } else if eventName.hasPrefix("error_") || eventName.contains("error") {
-            return "Error"
         } else if eventName.hasPrefix("offline_") {
             return "Offline"
         } else if eventName.hasPrefix("app_") || eventName.hasPrefix("session_") {

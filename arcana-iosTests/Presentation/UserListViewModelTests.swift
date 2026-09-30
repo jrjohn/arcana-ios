@@ -282,7 +282,12 @@ struct UserListViewModelTests {
 
     @Test("selectUser triggers navigation effect")
     func testSelectUser() async {
-        let viewModel = UserListViewModel()
+        let viewModel = await withDependencies {
+            $0.userService = MockUserService()
+            $0.analyticsTracker = MockAnalyticsTracker()
+        } operation: {
+            UserListViewModel()
+        }
 
         let user = User.mock()
         let effect = await viewModel.input(.selectUser(user))
@@ -341,7 +346,12 @@ struct UserListViewModelTests {
 
     @Test("isSearching is true when search query is not empty")
     func testIsSearching() async {
-        let viewModel = UserListViewModel()
+        let viewModel = await withDependencies {
+            $0.userService = MockUserService()
+            $0.analyticsTracker = MockAnalyticsTracker()
+        } operation: {
+            UserListViewModel()
+        }
         #expect(viewModel.isSearching == false)
 
         await viewModel.input(.search("test"))
@@ -350,7 +360,12 @@ struct UserListViewModelTests {
 
     @Test("emptyStateMessage varies based on state")
     func testEmptyStateMessage() async {
-        let viewModel = UserListViewModel()
+        let viewModel = await withDependencies {
+            $0.userService = MockUserService()
+            $0.analyticsTracker = MockAnalyticsTracker()
+        } operation: {
+            UserListViewModel()
+        }
 
         // Empty list
         let emptyMessage = viewModel.emptyStateMessage

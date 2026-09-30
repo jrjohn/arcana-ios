@@ -151,7 +151,7 @@ struct ErrorCodeTests {
         #expect(ErrorCode.E1000_NO_CONNECTION.category == "Network")
         #expect(ErrorCode.E2001_INVALID_EMAIL.category == "Validation")
         #expect(ErrorCode.E3001_BAD_REQUEST.category == "Server")
-        #expect(ErrorCode.E4001_UNAUTHORIZED.category == "Auth")
+        #expect(ErrorCode.E4001_UNAUTHORIZED.category == "Authentication")
     }
 
     @Test("Server error codes have retryable flag")
