@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/jrjohn/arcana-ios/compare/v1.1.2...v1.1.3) (2026-09-30)
+
+
+### Bug Fixes
+
+* **deps:** resolve package graph for Xcode 27 (swift-issue-reporting rename) ([#18](https://github.com/jrjohn/arcana-ios/issues/18)) ([1814c4f](https://github.com/jrjohn/arcana-ios/commit/1814c4f1d614a9cbf5259ba91c67ee361f3dbbbc))
+
 ## [1.1.2](https://github.com/jrjohn/arcana-ios/compare/v1.1.1...v1.1.2) (2026-09-30)
 
 
