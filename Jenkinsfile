@@ -175,7 +175,9 @@ pipeline {
                         # Swift Testing can record an issue outside any test (e.g. the app host touching a
                         # live dependency: "Test «unknown» recorded an issue") and xcodebuild still exits 0.
                         # Treat any recorded issue / failed test run as a failure too.
-                        ISSUES=$(grep -cE "recorded an issue|Test run with .* failed" "${LOG}" 2>/dev/null)
+                        # `|| true`: grep -c prints 0 AND exits 1 when nothing matches; Jenkins runs sh with -e,
+                        # so without it a clean run aborted right here (PR-17 #5: TEST SUCCEEDED, stage FAILED).
+                        ISSUES=$(grep -cE "recorded an issue|Test run with .* failed" "${LOG}" 2>/dev/null || true)
                         ISSUES=${ISSUES:-0}
                         echo "recorded test issues: ${ISSUES}"
                         if [ "${TEST_RC}" != "0" ] || [ "${ISSUES}" -gt 0 ]; then
