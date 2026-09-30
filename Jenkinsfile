@@ -258,7 +258,10 @@ pipeline {
                 timeout(time: 20, unit: 'MINUTES') {
                     unstash 'sonar-inputs'
                     sh '''
-                        AQ="arcana-arch-qube-ios-${BUILD_NUMBER}"
+                        # Branch in the name: BUILD_NUMBER restarts at 1 on every PR branch, so PR-14 #1 and
+                        # PR-15 #1 both used arcana-arch-qube-ios-1 and PR-14's `docker rm -f` deleted PR-15's
+                        # container mid-stage ("destination ...:/src must be a directory", 2026-09-30).
+                        AQ="arcana-arch-qube-ios-$(printf '%s' "${BRANCH_NAME}-${BUILD_NUMBER}" | tr -c 'A-Za-z0-9_.-' '-')"
                         docker rm -f "$AQ" 2>/dev/null || true
                         docker create --name "$AQ" --network devops_default \
                             -v /src -v /output \
