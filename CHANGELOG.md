@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.4](https://github.com/jrjohn/arcana-ios/compare/v1.1.3...v1.1.4) (2026-09-30)
+
+
+### Bug Fixes
+
+* **deps:** update dependency nicklockwood/lrucache to from: "1.3.0" ([#21](https://github.com/jrjohn/arcana-ios/issues/21)) ([b6837bc](https://github.com/jrjohn/arcana-ios/commit/b6837bcf3df5a955a9d986855437efef19e79184))
+
 ## [1.1.3](https://github.com/jrjohn/arcana-ios/compare/v1.1.2...v1.1.3) (2026-09-30)
 
 
