@@ -171,7 +171,12 @@ struct MainViewModelTests {
     func testNavigateToUserList() async {
         let mockService = MockUserService()
         let mockTracker = MockAnalyticsTracker()
-        let navGraph = NavGraph()
+        // NavGraph tracks screen views itself, so it must be created with the mock too
+        let navGraph = withDependencies {
+            $0.analyticsTracker = mockTracker
+        } operation: {
+            NavGraph()
+        }
 
         let viewModel = await withDependencies {
             $0.userService = mockService
@@ -197,7 +202,12 @@ struct MainViewModelTests {
     func testNavigateToSettings() async {
         let mockService = MockUserService()
         let mockTracker = MockAnalyticsTracker()
-        let navGraph = NavGraph()
+        // NavGraph tracks screen views itself, so it must be created with the mock too
+        let navGraph = withDependencies {
+            $0.analyticsTracker = mockTracker
+        } operation: {
+            NavGraph()
+        }
 
         let viewModel = await withDependencies {
             $0.userService = mockService
@@ -225,7 +235,12 @@ struct MainViewModelTests {
         mockService.users = User.mockUsers
 
         let mockTracker = MockAnalyticsTracker()
-        let navGraph = NavGraph()
+        // NavGraph tracks screen views itself, so it must be created with the mock too
+        let navGraph = withDependencies {
+            $0.analyticsTracker = mockTracker
+        } operation: {
+            NavGraph()
+        }
 
         let viewModel = await withDependencies {
             $0.userService = mockService

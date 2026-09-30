@@ -28,6 +28,14 @@ final class NavGraph {
     
     /// Alert to show
     var alertToShow: AlertConfig?
+
+    // MARK: - Dependencies
+
+    /// Declared as a property so it captures the dependency context at init time
+    /// (like the ViewModels). A function-local `@Dependency` resolves at call time,
+    /// so `withDependencies { ... } operation: { NavGraph() }` overrides were ignored.
+    @ObservationIgnored
+    @Dependency(\.analyticsTracker) private var analyticsTracker
     
     // MARK: - Navigation Methods
     
@@ -121,8 +129,7 @@ final class NavGraph {
     // MARK: - Analytics
     
     private func trackNavigation(to route: AppRoute) {
-        // Access dependency lazily when needed
-        @Dependency(\.analyticsTracker) var analyticsTracker
+        // Resolved lazily on first use, from the context captured at init
         analyticsTracker.trackScreen(route.analyticsName)
     }
 }

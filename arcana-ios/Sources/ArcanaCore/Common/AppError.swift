@@ -195,10 +195,9 @@ extension AppError: LocalizedError {
     }
     
     var recoverySuggestion: String? {
-        if isRetryable {
-            return "Please try again"
-        }
-        
+        // Specific guidance first; the generic retry hint is only a fallback.
+        // (Checking isRetryable first made the E1000 case unreachable, since
+        // no-connection errors are always retryable.)
         switch self {
         case .networkError(.E1000_NO_CONNECTION, _, _, _):
             return "Check your internet connection and try again"
@@ -207,7 +206,7 @@ extension AppError: LocalizedError {
         case .authError(.E4003_SESSION_EXPIRED, _):
             return "Please sign in again"
         default:
-            return nil
+            return isRetryable ? "Please try again" : nil
         }
     }
 }

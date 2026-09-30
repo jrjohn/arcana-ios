@@ -104,6 +104,10 @@ final class MockUserRepository: UserRepository {
             throw error
         }
 
+        // Empty query means "no filter" (same as UserListViewModel), not "match nothing";
+        // String.localizedCaseInsensitiveContains("") is always false.
+        guard !query.isEmpty else { return users }
+
         return users.filter { user in
             user.fullName.localizedCaseInsensitiveContains(query) ||
             user.email.localizedCaseInsensitiveContains(query)

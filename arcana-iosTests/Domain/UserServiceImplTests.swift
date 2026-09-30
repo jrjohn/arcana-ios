@@ -86,9 +86,10 @@ struct UserServiceImplTests {
         _ = try await service.getUsers(page: 1, perPage: 2)
 
         #expect(analytics.trackedEvents.count == 2)
-        let params = analytics.trackedEvents[0].params as? [String: Int]
-        #expect(params?["page"] == 1)
-        #expect(params?["per_page"] == 2)
+        // params is heterogeneous ("operation" is a String), so read values individually
+        let params = analytics.trackedEvents[0].params
+        #expect(params["page"] as? Int == 1)
+        #expect(params["per_page"] as? Int == 2)
     }
 
     // MARK: - GetUser By ID Tests
