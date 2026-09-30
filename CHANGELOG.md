@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.2](https://github.com/jrjohn/arcana-ios/compare/v1.1.1...v1.1.2) (2026-09-30)
+
+
+### Bug Fixes
+
+* **deps:** list Alamofire and LRUCache in Package.swift so Renovate updates them ([#14](https://github.com/jrjohn/arcana-ios/issues/14)) ([b0889ae](https://github.com/jrjohn/arcana-ios/commit/b0889aefb0c712f0d27e37dd7e46efb1eff83d02))
+* **deps:** update dependency @mermaid-js/mermaid-cli to v12 ([#13](https://github.com/jrjohn/arcana-ios/issues/13)) ([d15c0a0](https://github.com/jrjohn/arcana-ios/commit/d15c0a0f8b09796008146ad03c70ed0f5cb75bb0))
+
 ## [1.1.1](https://github.com/jrjohn/arcana-ios/compare/v1.1.0...v1.1.1) (2026-08-03)
 
 
