@@ -131,6 +131,9 @@ pipeline {
                         else
                             echo "Starting fresh xcodebuild test..."
                             rm -rf "${XCRESULT}" "${LOG}" "${RC_FILE}"
+                            # Parallel testing is off: with it on, xcodebuild clones the simulator and a clone
+                            # that fails to launch the UI-test runner ("Simulator device failed to launch
+                            # ...xctrunner") makes the run exit 65 although every test passed (PR-17 #2).
                             # The wrapper records xcodebuild's exit code in RC_FILE, so the result survives
                             # an agent disconnect + resume (the old bare `nohup xcodebuild &` lost it and
                             # test failures never failed the build).
@@ -142,6 +145,7 @@ pipeline {
                                 -derivedDataPath "$1" \
                                 -resultBundlePath "$2" \
                                 -skipPackagePluginValidation \
+                                -parallel-testing-enabled NO \
                                 test; echo $? > "$3"' sh "${DERIVED}" "${XCRESULT}" "${RC_FILE}" > "${LOG}" 2>&1 &
                             echo $! > "${PID_FILE}"
                         fi
