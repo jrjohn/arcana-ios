@@ -468,7 +468,7 @@ struct UserFormView: View {
 ### Core Technologies
 | Category | Technology | Purpose |
 |----------|-----------|---------|
-| **Language** | Swift 6.0+ | Modern, safe, performant |
+| **Language** | Swift 5.9+ | Modern, safe, performant |
 | **UI Framework** | SwiftUI | Declarative UI |
 | **Architecture** | Clean Architecture + MVVM | Maintainable, testable |
 | **Async** | async/await + Actors | Concurrency safety |
@@ -512,8 +512,8 @@ struct UserFormView: View {
 ### Prerequisites
 
 - **Xcode** 26.1 or later
-- **iOS** 26.1+ deployment target
-- **Swift** 6.0+
+- **iOS** 16+ deployment target
+- **Swift** 5.9+
 - **CocoaPods** or **Swift Package Manager**
 
 ### Quick Start
