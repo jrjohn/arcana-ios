@@ -78,7 +78,7 @@ pipeline {
                         # legitimately returns 1 on a clean build since xcodebuild's actual
                         # success line is "** BUILD SUCCEEDED **", not "Build succeeded" —
                         # the old "| grep ... || true" chain swallowed genuine build failures too.
-                        BUILD_LOG=/tmp/arcana-ios-build.log
+                        BUILD_LOG="/tmp/arcana-ios-build-$(printf '%s' "${BRANCH_NAME}" | tr -c 'A-Za-z0-9_.-' '-').log"
                         xcodebuild \
                             -project arcana-ios.xcodeproj \
                             -scheme arcana-ios \
@@ -94,6 +94,11 @@ pipeline {
             }
         }
         stage('Test + Coverage') {
+            // One simulator run at a time across ALL branches: concurrent runs on the shared
+            // "iPhone 17" simulator and DerivedData made results unreliable (2026-09-30: 105 of 323
+            // tests failed while another branch was testing, ~25 when run alone). Stage-level
+            // options run before the agent is allocated, so a waiting build holds no Mac mini executor.
+            options { lock('ci-ios-simulator') }
             agent { label 'macos' }
             steps {
                 // Counts execution only: the stage's agent is allocated before `steps`, so time spent
@@ -111,10 +116,13 @@ pipeline {
                             xcrun simctl boot "$SIM_ID" 2>/dev/null || true
                         fi
 
-                        # Use explicit result bundle path so python script always gets a fresh xcresult
-                        XCRESULT=/tmp/arcana-ios-tests.xcresult
-                        LOG=/tmp/xcode-test.log
-                        PID_FILE=/tmp/xcode-test-pid
+                        # Per-branch scratch files. They used to be fixed paths, so a second branch's build
+                        # found the first one's PID file and "resumed" (and reported) the OTHER branch's run.
+                        SAFE=$(printf '%s' "${BRANCH_NAME}" | tr -c 'A-Za-z0-9_.-' '-')
+                        XCRESULT="/tmp/arcana-ios-tests-${SAFE}.xcresult"
+                        LOG="/tmp/xcode-test-${SAFE}.log"
+                        PID_FILE="/tmp/xcode-test-${SAFE}.pid"
+                        RC_FILE="/tmp/xcode-test-${SAFE}.rc"
 
                         # Launch xcodebuild with nohup so it survives Mac Mini agent disconnects
                         # If already running from a previous attempt, just resume waiting
@@ -122,16 +130,19 @@ pipeline {
                             echo "Resuming wait for existing xcodebuild (PID $(cat ${PID_FILE}))..."
                         else
                             echo "Starting fresh xcodebuild test..."
-                            rm -rf "${XCRESULT}" "${LOG}"
-                            nohup xcodebuild \
+                            rm -rf "${XCRESULT}" "${LOG}" "${RC_FILE}"
+                            # The wrapper records xcodebuild's exit code in RC_FILE, so the result survives
+                            # an agent disconnect + resume (the old bare `nohup xcodebuild &` lost it and
+                            # test failures never failed the build).
+                            nohup sh -c 'xcodebuild \
                                 -project arcana-ios.xcodeproj \
                                 -scheme arcana-ios \
-                                -destination 'platform=iOS Simulator,name=iPhone 17' \
+                                -destination "platform=iOS Simulator,name=iPhone 17" \
                                 -enableCodeCoverage YES \
-                                -derivedDataPath "${DERIVED}" \
-                                -resultBundlePath "${XCRESULT}" \
+                                -derivedDataPath "$1" \
+                                -resultBundlePath "$2" \
                                 -skipPackagePluginValidation \
-                                test > "${LOG}" 2>&1 &
+                                test; echo $? > "$3"' sh "${DERIVED}" "${XCRESULT}" "${RC_FILE}" > "${LOG}" 2>&1 &
                             echo $! > "${PID_FILE}"
                         fi
 
@@ -152,6 +163,16 @@ pipeline {
                             || echo "Coverage conversion failed (non-fatal)"
 
                         kill $CAFFEINE_PID 2>/dev/null || true
+
+                        # Test gate: xcodebuild's own exit code (0 only when every test passed).
+                        TEST_RC=$(cat "${RC_FILE}" 2>/dev/null || echo "missing")
+                        rm -f "${RC_FILE}"
+                        echo "xcodebuild test exit code: ${TEST_RC}"
+                        if [ "${TEST_RC}" != "0" ]; then
+                            echo "=== FAILED TESTS ==="
+                            grep -E "Test case .* failed|recorded an issue|error: -\\[" "${LOG}" 2>/dev/null | sort -u | head -60
+                            exit 1
+                        fi
                     '''
                     // Stash coverage + sources for sonar stage on master
                     stash includes: 'coverage-report.xml,arcana-ios/Sources/**,arcana-iosTests/**,sonar-project.properties', name: 'sonar-inputs', allowEmpty: true
