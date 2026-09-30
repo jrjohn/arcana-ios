@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Dependencies  // re-exports IssueReporting.isTesting
 
 @main
 struct arcana_iosApp: App {
@@ -24,8 +25,15 @@ struct arcana_iosApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .modelContainer(sharedModelContainer)
+            // When this app is only the host for unit tests, don't bring up the UI:
+            // MainView.onAppear would load data through the live dependencies from
+            // outside any test, which swift-dependencies reports as an issue
+            // attributed to no test («unknown»). UI tests launch the app as a
+            // separate process, where isTesting is false.
+            if !isTesting {
+                ContentView()
+                    .modelContainer(sharedModelContainer)
+            }
         }
     }
 }
