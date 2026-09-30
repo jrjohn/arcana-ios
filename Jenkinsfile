@@ -168,7 +168,13 @@ pipeline {
                         TEST_RC=$(cat "${RC_FILE}" 2>/dev/null || echo "missing")
                         rm -f "${RC_FILE}"
                         echo "xcodebuild test exit code: ${TEST_RC}"
-                        if [ "${TEST_RC}" != "0" ]; then
+                        # Swift Testing can record an issue outside any test (e.g. the app host touching a
+                        # live dependency: "Test «unknown» recorded an issue") and xcodebuild still exits 0.
+                        # Treat any recorded issue / failed test run as a failure too.
+                        ISSUES=$(grep -cE "recorded an issue|Test run with .* failed" "${LOG}" 2>/dev/null)
+                        ISSUES=${ISSUES:-0}
+                        echo "recorded test issues: ${ISSUES}"
+                        if [ "${TEST_RC}" != "0" ] || [ "${ISSUES}" -gt 0 ]; then
                             echo "=== FAILED TESTS ==="
                             grep -E "Test case .* failed|recorded an issue|error: -\\[" "${LOG}" 2>/dev/null | sort -u | head -60
                             exit 1
