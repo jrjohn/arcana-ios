@@ -21,7 +21,7 @@ let package = Package(
         // The app target in arcana-ios.xcodeproj also links Alamofire and LRUCache. Renovate only
         // reads Package.swift (not project.pbxproj), so they are listed here too — otherwise they are
         // never updated (both sat at their 2025 versions). Keep these in sync with the Xcode project.
-        .package(url: "https://github.com/Alamofire/Alamofire", from: "5.10.2"),
+        .package(url: "https://github.com/Alamofire/Alamofire", from: "5.12.2"),
         .package(url: "https://github.com/nicklockwood/LRUCache", from: "1.3.0"),
     ],
     targets: [
