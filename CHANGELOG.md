@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.5](https://github.com/jrjohn/arcana-ios/compare/v1.1.4...v1.1.5) (2026-10-01)
+
+
+### Bug Fixes
+
+* **deps:** update dependency alamofire/alamofire to from: "5.12.2" ([#20](https://github.com/jrjohn/arcana-ios/issues/20)) ([c63480c](https://github.com/jrjohn/arcana-ios/commit/c63480c530151cd93723fe375589ded302910383))
+
 ## [1.1.4](https://github.com/jrjohn/arcana-ios/compare/v1.1.3...v1.1.4) (2026-09-30)
 
 
