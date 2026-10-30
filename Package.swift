@@ -17,7 +17,7 @@ let package = Package(
     ],
     dependencies: [
         // Swift Dependencies - Modern dependency injection framework
-        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.17.1"),
+        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.17.2"),
         // The app target in arcana-ios.xcodeproj also links Alamofire and LRUCache. Renovate only
         // reads Package.swift (not project.pbxproj), so they are listed here too — otherwise they are
         // never updated (both sat at their 2025 versions). Keep these in sync with the Xcode project.
