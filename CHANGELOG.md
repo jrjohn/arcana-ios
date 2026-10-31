@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.6](https://github.com/jrjohn/arcana-ios/compare/v1.1.5...v1.1.6) (2026-10-31)
+
+
+### Bug Fixes
+
+* **deps:** update dependency pointfreeco/swift-dependencies to from: "1.17.2" ([#24](https://github.com/jrjohn/arcana-ios/issues/24)) ([f2d0b08](https://github.com/jrjohn/arcana-ios/commit/f2d0b08ec5d1bee4e0d65c01e849fc38fb9da79a))
+
 ## [1.1.5](https://github.com/jrjohn/arcana-ios/compare/v1.1.4...v1.1.5) (2026-10-01)
 
 
