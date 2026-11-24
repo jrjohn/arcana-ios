@@ -1,5 +1,10 @@
 .PHONY: help test test-unit test-ui coverage compliance clean build
 
+# `xcodebuild ... | tee log` reports tee's exit code under plain sh, so a failing test or build
+# printed TEST FAILED and still made `make test` exit 0. pipefail makes the recipe fail with xcodebuild.
+SHELL := /bin/bash
+.SHELLFLAGS := -o pipefail -c
+
 # Default target
 help:
 	@echo "📱 arcana-ios Build & Test Commands"
