@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/jrjohn/arcana-ios/compare/v1.1.6...v1.2.0) (2026-11-24)
+
+
+### Features
+
+* make arcana-ios self-explaining to AI agents (AGENTS.md, scaffolds, hook, pinned arch-check) ([#26](https://github.com/jrjohn/arcana-ios/issues/26)) ([b68eb8e](https://github.com/jrjohn/arcana-ios/commit/b68eb8ea313062975ad104ea68406eb12d683c89))
+
 ## [1.1.6](https://github.com/jrjohn/arcana-ios/compare/v1.1.5...v1.1.6) (2026-10-31)
 
 
