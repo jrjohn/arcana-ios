@@ -42,3 +42,6 @@ build/*.dSYM.zip
 *.cer
 *.p12
 *.mobileprovision
+
+# tools/arch-check.sh output
+arch-qube-reports/
