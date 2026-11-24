@@ -187,7 +187,7 @@ pipeline {
                         fi
                     '''
                     // Stash coverage + sources for sonar stage on master
-                    stash includes: 'coverage-report.xml,arcana-ios/Sources/**,arcana-iosTests/**,sonar-project.properties', name: 'sonar-inputs', allowEmpty: true
+                    stash includes: 'coverage-report.xml,arcana-ios/Sources/**,arcana-iosTests/**,sonar-project.properties,tools/arch-qube.version', name: 'sonar-inputs', allowEmpty: true
                 }
             }
             post {
@@ -296,12 +296,25 @@ pipeline {
                         # container mid-stage ("destination ...:/src must be a directory", 2026-09-30).
                         AQ="arcana-arch-qube-ios-$(printf '%s' "${BRANCH_NAME}-${BUILD_NUMBER}" | tr -c 'A-Za-z0-9_.-' '-')"
                         docker rm -f "$AQ" 2>/dev/null || true
+                        # Version pinned in tools/arch-qube.version (shared with tools/arch-check.sh).
+                        # ghcr.io first (public, multi-arch), then arcana.boo. Never :latest — a silent
+                        # fallback to latest already broke another template's CI when latest moved.
+                        V="$(tr -d '[:space:]' < tools/arch-qube.version)"
+                        IMG=""
+                        for cand in "ghcr.io/jrjohn/arch-qube:$V" "arcana.boo/arcana/arch-qube:$V"; do
+                            if docker image inspect "$cand" >/dev/null 2>&1 || docker pull -q "$cand" >/dev/null 2>&1; then
+                                IMG="$cand"; break
+                            fi
+                        done
+                        [ -n "$IMG" ] || { echo "arch-qube $V image unavailable (ghcr.io, arcana.boo) — NOT a pass"; exit 2; }
                         docker create --name "$AQ" --network devops_default \
                             -v /src -v /output \
-                            arcana.boo/arcana/arch-qube:latest \
+                            "$IMG" \
                             scan /src --framework ios --no-ai --ci \
                             --format json,markdown -o /output --threshold 90 || exit 1
-                        tar --exclude=./.git -C . -cf - . \
+                        # Same exclusions as tools/arch-check.sh.
+                        tar --exclude=./.git --exclude=./DerivedData --exclude=./build \
+                            --exclude=./.build --exclude=./arch-qube-reports -C . -cf - . \
                             | docker cp - "$AQ":/src || exit 1
                         docker start -a "$AQ"
                         AQ_RC=$?

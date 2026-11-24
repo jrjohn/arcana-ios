@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# Fast layering check on every commit (no Xcode, no docker). The full scan is
+# tools/arch-check.sh and the Jenkins stage "Architecture Qube". Rules: AGENTS.md §3.
+#
+# Regex, not `case` globs: in a case pattern `*` also matches `/`, so `*/Sources/*.swift` would
+# match every correctly layered file too (this exact bug false-blocked good files in another
+# template). Only ADDED files / ADDED lines are judged, so legacy code never blocks an edit.
+# The app folder is matched as [^/]+ because tools/new-app.sh renames arcana-ios/ per product.
+set -euo pipefail
+
+# Where a NEW .swift file may live (AGENTS.md §2). One alternative per layer.
+SRC='^[^/]+/Sources/'
+LAYER_RE="${SRC}("
+LAYER_RE+='ArcanaCore/(Analytics|Common|Configuration|DI|Localization|Network|Remote)'
+LAYER_RE+='|ArcanaData/(Local|Local/Entities|Local/impl|Remote|Remote/impl|Repository|Repository/impl)'
+LAYER_RE+='|ArcanaDomain/(Model|Service|Service/impl|Validation)'
+LAYER_RE+='|ArcanaPresentation/(Components|Theme|Screens/[A-Z][A-Za-z0-9]*)'
+LAYER_RE+=')/[^/]+\.swift$'
+TEST_RE='^[^/]+(Tests|UITests)/((Core|Data|Domain|Mocks|Presentation)/)?[^/]+\.swift$'
+DI_RE="${SRC}ArcanaCore/DI/"
+IMPL_DIR_RE='/impl/[^/]+\.swift$'
+
+fail=0
+
+# R8 — no NEW Swift file outside the layer / test directories.
+while IFS= read -r f; do
+    [ -n "$f" ] || continue
+    [[ "$f" =~ \.swift$ ]] || continue
+    [ "$f" = "Package.swift" ] && continue
+    if ! [[ "$f" =~ $LAYER_RE || "$f" =~ $TEST_RE ]]; then
+        echo "pre-commit: $f — not in a layer directory (AGENTS.md §2). Use tools/new-feature.sh or move it into a layer." >&2
+        fail=1
+    fi
+done <<< "$(git diff --cached --name-only --diff-filter=AR)"
+
+# R2 — on ADDED lines only: a concrete *Impl type may be named only in ArcanaCore/DI/
+# (the composition root), in impl/ files themselves, and in tests.
+while IFS= read -r f; do
+    [ -n "$f" ] || continue
+    [[ "$f" =~ \.swift$ ]] || continue
+    [[ "$f" =~ $TEST_RE || "$f" =~ $DI_RE || "$f" =~ $IMPL_DIR_RE ]] && continue
+    added="$(git diff --cached -U0 -- "$f" | grep -E '^\+[^+]' | sed 's/^+//' | grep -vE '^[[:space:]]*(//|\*|/\*)' || true)"
+    [ -n "$added" ] || continue
+    hits="$(printf '%s\n' "$added" | grep -E '\b[A-Z][A-Za-z0-9]*Impl\b' || true)"
+    if [ -n "$hits" ]; then
+        echo "pre-commit: $f names a concrete *Impl — only ArcanaCore/DI/AppDependencies.swift constructs implementations; depend on the protocol via @Dependency (AGENTS.md R2):" >&2
+        printf '    %s\n' "$hits" >&2
+        fail=1
+    fi
+done <<< "$(git diff --cached --name-only --diff-filter=ACMR)"
+
+if [ "$fail" -ne 0 ]; then
+    echo "pre-commit: blocked. Full check: tools/arch-check.sh" >&2
+    exit 1
+fi
