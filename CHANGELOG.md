@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/jrjohn/arcana-ios/compare/v1.2.0...v1.2.1) (2026-11-25)
+
+
+### Bug Fixes
+
+* **arch:** presentation 不再轉型成 OfflineFirstUserRepositoryImpl ([#28](https://github.com/jrjohn/arcana-ios/issues/28)) ([72706d1](https://github.com/jrjohn/arcana-ios/commit/72706d1064b4d2781a65e1bf0ee1acafc96763c2))
+
 ## [1.2.0](https://github.com/jrjohn/arcana-ios/compare/v1.1.6...v1.2.0) (2026-11-24)
 
 
