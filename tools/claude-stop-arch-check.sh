@@ -13,7 +13,9 @@
 set -u
 
 # Paths whose changes can change the arch-qube verdict (the layer directories of AGENTS.md).
-SOURCE_RE='^arcana-ios(Tests|UITests)?/'
+# The app directory is named after the Xcode project (tools/new-app.sh renames arcana-ios).
+APP_DIR="$(basename "$(ls -d "$(dirname "$0")"/../*.xcodeproj 2>/dev/null | head -1)" .xcodeproj)"
+SOURCE_RE="^${APP_DIR:-arcana-ios}(Tests|UITests)?/"
 MAX_BLOCKS=3
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

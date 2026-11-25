@@ -5,7 +5,9 @@
 # Note: arch-check scans the working tree — commit or stash unrelated edits before pushing.
 set -u
 
-SOURCE_RE='^arcana-ios(Tests|UITests)?/'   # keep equal to tools/claude-stop-arch-check.sh
+# The app directory is named after the Xcode project (tools/new-app.sh renames arcana-ios).
+APP_DIR="$(basename "$(ls -d "$(git rev-parse --show-toplevel)"/*.xcodeproj 2>/dev/null | head -1)" .xcodeproj)"
+SOURCE_RE="^${APP_DIR:-arcana-ios}(Tests|UITests)?/"   # keep equal to tools/claude-stop-arch-check.sh
 REMOTE="${1:-origin}"
 ZERO='0000000000000000000000000000000000000000'
 ROOT="$(git rev-parse --show-toplevel)"
