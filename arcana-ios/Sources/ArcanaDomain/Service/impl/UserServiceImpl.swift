@@ -246,4 +246,14 @@ final class UserServiceImpl: UserService {
             throw appError
         }
     }
+
+    @MainActor
+    func syncOfflineChanges() async -> Bool {
+        await repository.processOfflineChanges()
+    }
+
+    @MainActor
+    func pendingChangesCount() -> Int? {
+        repository.getPendingChangesCount()
+    }
 }

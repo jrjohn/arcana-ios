@@ -407,8 +407,9 @@ final class OfflineFirstUserRepositoryImpl: UserRepository {
 
     /// Process all pending offline changes
     @MainActor
-    func processOfflineChanges() async {
-        guard !isSyncing else { return }
+    @discardableResult
+    func processOfflineChanges() async -> Bool {
+        guard !isSyncing else { return true }
         isSyncing = true
         defer { isSyncing = false }
 
@@ -418,11 +419,11 @@ final class OfflineFirstUserRepositoryImpl: UserRepository {
         )
 
         guard let pendingEntities = try? modelContext.fetch(descriptor) else {
-            return
+            return true
         }
 
         guard !pendingEntities.isEmpty else {
-            return
+            return true
         }
 
         analyticsTracker.trackEvent(.syncStarted, params: [
@@ -494,11 +495,12 @@ final class OfflineFirstUserRepositoryImpl: UserRepository {
                 "failed_count": failedCount
             ])
         }
+        return true
     }
 
     /// Get count of pending changes
     @MainActor
-    func getPendingChangesCount() -> Int {
+    func getPendingChangesCount() -> Int? {
         let descriptor = FetchDescriptor<PendingChangeEntity>()
         return (try? modelContext.fetchCount(descriptor)) ?? 0
     }

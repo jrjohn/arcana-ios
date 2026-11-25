@@ -20,6 +20,9 @@ struct MainViewModelTests {
     // and check its state
 
     class MockUserService: UserService {
+    func syncOfflineChanges() async -> Bool { false }
+    func pendingChangesCount() -> Int? { nil }
+
         var users: [User] = []
         var shouldThrowError: Error?
         var getUsersCallCount = 0

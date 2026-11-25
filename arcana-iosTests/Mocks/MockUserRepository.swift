@@ -10,6 +10,9 @@ import Foundation
 
 /// Mock implementation of UserRepository for testing
 final class MockUserRepository: UserRepository {
+    func processOfflineChanges() async -> Bool { false }
+    func getPendingChangesCount() -> Int? { nil }
+
     var users: [User] = []
     var shouldThrowError: AppError?
     var getUsersCallCount = 0
