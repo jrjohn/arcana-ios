@@ -62,9 +62,6 @@ final class UserListViewModel {
     @Dependency(\.analyticsTracker) var analyticsTracker
 
     @ObservationIgnored
-    @Dependency(\.userRepository) var userRepository
-
-    @ObservationIgnored
     private var lastFailedOperation: Input?
 
     @ObservationIgnored
@@ -293,11 +290,9 @@ final class UserListViewModel {
     }
 
     private func syncOfflineChanges() async -> Effect? {
-        guard let repository = userRepository as? OfflineFirstUserRepositoryImpl else {
+        guard await userService.syncOfflineChanges() else {
             return nil
         }
-
-        await repository.processOfflineChanges()
 
         // Refresh the user list after sync
         _ = await refreshUsers()

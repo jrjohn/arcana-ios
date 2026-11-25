@@ -368,14 +368,13 @@ struct UserListView: View {
 
     @MainActor
     private func updatePendingCount() async {
-        // Access the repository through dependencies
-        @Dependency(\.userRepository) var userRepository
+        // Access the domain service through dependencies
+        @Dependency(\.userService) var userService
 
-        guard let repository = userRepository as? OfflineFirstUserRepositoryImpl else {
+        guard let count = userService.pendingChangesCount() else {
             return
         }
 
-        let count = repository.getPendingChangesCount()
         Task {
             _ = await viewModel.input(.updatePendingChangesCount(count))
         }

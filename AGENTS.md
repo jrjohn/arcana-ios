@@ -47,15 +47,14 @@ One Swift module (`arcana_ios`, target `arcana-ios`); layers are folders under
 
 Direction: View → ViewModel → `@Dependency(\.xService)` (Domain protocol) → `XServiceImpl`
 → `XRepository` → local DAO (SwiftData) / remote DAO. A lower layer never references a higher
-one. Known legacy, do not copy: `UserListViewModel.syncOfflineChanges` casts to
-`OfflineFirstUserRepositoryImpl`, and `NavGraph.swift` holds placeholder detail/settings views.
+one. Known legacy, do not copy: `NavGraph.swift` holds placeholder detail/settings views.
 
 ## 3. Rules
 
 | # | Rule | Enforced by |
 |---|---|---|
 | R1 | Every service, repository and DAO is a protocol next to an `impl/` folder holding `XServiceImpl` / `OfflineFirstXRepositoryImpl` / `XLocalDaoImpl` / `XRemoteDaoImpl`. | arch-qube "Interface/Impl Colocation", "Implementation Naming Convention" |
-| R2 | Only `ArcanaCore/DI/` names a concrete `*Impl`; everyone else depends on the protocol through `@Dependency(\.x)` or an init parameter typed as the protocol. Tests may construct impls. | pre-commit hook (arch-qube "Only DI Container Imports Impl" looks at imports, and one Swift module has none — it did not flag the legacy cast below) |
+| R2 | Only `ArcanaCore/DI/` names a concrete `*Impl`; everyone else depends on the protocol through `@Dependency(\.x)` or an init parameter typed as the protocol. Tests may construct impls. | pre-commit hook (arch-qube "Only DI Container Imports Impl" looks at imports, and one Swift module has none) |
 | R3 | Views never call a service, repository, DAO, `ModelContext` or `ApiService`; they send `await viewModel.input(.x)` and render `viewModel.output`. | arch-qube "View Cannot Call Service", "Layer Direction Enforcement" |
 | R4 | A ViewModel is `@MainActor @Observable final class` with `enum Input`, `struct Output` held in `private(set) var output`, `enum Effect`, and `func input(_:) async -> Effect?`; dependencies are `@ObservationIgnored @Dependency` properties; navigation goes through the injected `NavGraph`. | arch-qube "Unidirectional Data Flow"; review (arch-qube "MVVM I/O/E Structure" is AI-only, §4) |
 | R5 | A screen is reachable only through an `AppRoute` case (with `id`, `title`, `analyticsName`), a `NavGraphView.view(for:)` case and a `NavGraph.navigateTo…` method. | arch-qube "Type-Safe NavGraph"; the compiler (exhaustive `switch`) |

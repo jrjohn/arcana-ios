@@ -32,4 +32,12 @@ protocol UserService {
 
     /// Refresh users from remote source
     func refreshUsers() async throws -> [User]
+
+    /// Sync queued offline changes. Returns `false` when offline sync is not supported.
+    @MainActor
+    func syncOfflineChanges() async -> Bool
+
+    /// Number of queued offline changes, or `nil` when offline sync is not supported.
+    @MainActor
+    func pendingChangesCount() -> Int?
 }

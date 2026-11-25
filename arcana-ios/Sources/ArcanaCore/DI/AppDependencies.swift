@@ -290,6 +290,9 @@ extension AppDependencies {
 // MARK: - Mock Implementations for Testing & Previews
 
 private final class MockUserService: UserService {
+    func syncOfflineChanges() async -> Bool { false }
+    func pendingChangesCount() -> Int? { nil }
+
     var getUsersResult: Result<[User], Error> = .success([])
 
     func getUsers() async throws -> [User] {
@@ -377,6 +380,9 @@ private final class MockAnalyticsTracker: AnalyticsTracker {
 }
 
 private final class MockUserRepository: UserRepository {
+    func processOfflineChanges() async -> Bool { false }
+    func getPendingChangesCount() -> Int? { nil }
+
     var getUsersResult: Result<[User], Error> = .success([])
 
     func getUsers() async throws -> [User] {

@@ -40,4 +40,13 @@ protocol UserRepository {
 
     /// Force refresh from remote source
     func refreshUsers() async throws -> [User]
+
+    /// Replay queued offline changes against the remote source.
+    /// Returns `false` when this repository has no offline queue (nothing was done).
+    @MainActor
+    func processOfflineChanges() async -> Bool
+
+    /// Number of queued offline changes, or `nil` when this repository has no offline queue.
+    @MainActor
+    func getPendingChangesCount() -> Int?
 }

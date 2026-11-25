@@ -390,6 +390,9 @@ struct UserListViewModelTests {
 // MARK: - Mock Services
 
 class MockUserService: UserService {
+    func syncOfflineChanges() async -> Bool { false }
+    func pendingChangesCount() -> Int? { nil }
+
     var usersToReturn: [User] = []
     var searchResults: [User] = []
     var shouldThrowError: Error?
