@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/jrjohn/arcana-ios/compare/v1.2.1...v1.3.0) (2026-11-25)
+
+
+### Features
+
+* enforce arch-check locally (Claude Code Stop hook + pre-push) ([#32](https://github.com/jrjohn/arcana-ios/issues/32)) ([eae02e0](https://github.com/jrjohn/arcana-ios/commit/eae02e0d219532f454ab686a7658a07b05700329))
+
 ## [1.2.1](https://github.com/jrjohn/arcana-ios/compare/v1.2.0...v1.2.1) (2026-11-25)
 
 
