@@ -2,25 +2,25 @@
 
 > A modern iOS application demonstrating **Clean Architecture**, **Offline-First** design, and **Analytics Tracking** with SwiftUI.
 
-[![Architecture Rating](https://img.shields.io/badge/Architecture%20Rating-⭐⭐⭐⭐⭐%209.5%2F10-brightgreen.svg)](ARCHITECTURE_EVALUATION_V3.md)
-[![Grade](https://img.shields.io/badge/Grade-A+-yellow.svg)](ARCHITECTURE_EVALUATION_V3.md)
-[![Production Ready](https://img.shields.io/badge/Production%20Ready-✅-success.svg)](ARCHITECTURE_EVALUATION_V3.md)
-[![Swift](https://img.shields.io/badge/Swift-5.9+-orange.svg)](https://swift.org)
-[![SwiftUI](https://img.shields.io/badge/SwiftUI-Latest-blue.svg)](https://developer.apple.com/xcode/swiftui/)
-[![Architecture](https://img.shields.io/badge/Architecture-Clean-green.svg)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Architecture Rating](.github/badges/architecture-rating-9-5-10-brightgreen-s-6ff57dcf.svg)](ARCHITECTURE_EVALUATION_V3.md)
+[![Grade](.github/badges/grade-a-yellow-svg-84c6158a.svg)](ARCHITECTURE_EVALUATION_V3.md)
+[![Production Ready](.github/badges/production-ready-success-svg-5c3c60d7.svg)](ARCHITECTURE_EVALUATION_V3.md)
+[![Swift](.github/badges/swift-5-9-orange-svg-ed9a4a77.svg)](https://swift.org)
+[![SwiftUI](.github/badges/swiftui-latest-blue-svg-6cfa63c9.svg)](https://developer.apple.com/xcode/swiftui/)
+[![Architecture](.github/badges/architecture-clean-green-svg-dcc90edb.svg)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+[![License](.github/badges/license-mit-yellow-svg-7a4eb7dd.svg)](LICENSE)
 
 <!-- agent-managed badges START -->
 <p align="center">
-  <a href="https://arcana.boo/sonarqube/dashboard?id=ios-app"><img src="https://img.shields.io/badge/Quality_Gate-OK-brightgreen?style=for-the-badge" alt="Quality Gate"></a>
-  <a href="https://arcana.boo/jenkins/job/ios-app-mb/job/main/"><img src="https://img.shields.io/badge/Build-passing-brightgreen?style=for-the-badge" alt="Build"></a>
+  <a href="https://arcana.boo/sonarqube/dashboard?id=ios-app"><img src=".github/badges/quality-gate-ok-brightgreen-7365c32e.svg" alt="Quality Gate"></a>
+  <a href="https://arcana.boo/jenkins/job/ios-app-mb/job/main/"><img src=".github/badges/build-passing-brightgreen-f2a434e1.svg" alt="Build"></a>
 </p>
 <!-- agent-managed badges END -->
 <!-- arch-rank START -->
 <p align="center">
-  <img src="https://img.shields.io/badge/arch--qube-100%2F100-blue?style=for-the-badge" alt="arch-qube">
-  <img src="https://img.shields.io/badge/Grade-A%2B-brightgreen?style=for-the-badge" alt="Grade">
-  <img src="https://img.shields.io/badge/Arch_Gate-PASS-brightgreen?style=for-the-badge" alt="Architecture Gate">
+  <img src=".github/badges/arch-qube-100-100-blue-2f391344.svg" alt="arch-qube">
+  <img src=".github/badges/grade-a-brightgreen-1f1e6c73.svg" alt="Grade">
+  <img src=".github/badges/arch-gate-pass-brightgreen-887cab17.svg" alt="Architecture Gate">
 </p>
 <!-- arch-rank END -->
 
